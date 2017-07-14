@@ -1,4 +1,4 @@
-package sample;
+package retuss;
 
 public class Controller {
 }
