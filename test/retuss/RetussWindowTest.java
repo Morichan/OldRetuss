@@ -1,7 +1,5 @@
 package retuss;
 
-import static org.junit.Assert.*;
-
 import mockit.Expectations;
 import mockit.Mocked;
 
@@ -12,12 +10,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(JMockit.class)
-public class MainTest {
+public class RetussWindowTest {
     @Mocked
     private Application app;
 
     @Tested
-    private Main main = new Main();
+    private RetussWindow retussWindow = new RetussWindow();
 
     @Test
     public void main文を実行するとlaunchメソッドを1回実行する() {
@@ -32,6 +30,6 @@ public class MainTest {
         String[] args = {};
 
         // 検証
-        main.main( args );
+        retussWindow.main( args );
     }
 }
