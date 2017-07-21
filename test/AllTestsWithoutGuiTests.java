@@ -9,9 +9,8 @@ import retuss.UtilityJavaFXComponentTest;
 @Suite.SuiteClasses( {
         RetussWindowTest.class,
         ControllerTest.WithoutGuiTest.class,
-        ControllerTest.class,
         ClassDiagramCanvasTest.class,
         UtilityJavaFXComponentTest.class
 } )
-public class AllTests {
+public class AllTestsWithoutGuiTests {
 }

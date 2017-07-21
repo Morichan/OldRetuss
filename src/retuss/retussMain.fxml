@@ -51,13 +51,14 @@
                                                    <children>
                                                       <ToolBar prefHeight="20.0" prefWidth="200.0">
                                                         <items>
+                                                            <Button fx:id="normalButtonInCD" mnemonicParsing="false" onAction="#selectNormalInCD" text="Normal" />
                                                           <Button fx:id="classButtonInCD" mnemonicParsing="false" onAction="#selectClassInCD" text="Class" />
                                                             <Button fx:id="noteButtonInCD" mnemonicParsing="false" onAction="#selectNoteInCD" text="Note" />
                                                         </items>
                                                       </ToolBar>
                                                       <AnchorPane prefHeight="909.0" prefWidth="955.0">
                                                          <children>
-                                                            <Canvas height="845.0" width="956.0" />
+                                                            <Canvas fx:id="classDiagramCanvas" height="845.0" onMouseClicked="#clickedCanvasInCD" width="956.0" />
                                                          </children>
                                                       </AnchorPane>
                                                    </children>
