@@ -44,7 +44,7 @@ public class ControllerTest {
         }
 
         @Test
-        public void どのボタンもクリックしてない場合は全てのボタンをオフにする() {
+        public void どのボタンもクリックしていない場合はどれも選択していない() {
             Button normalButton = ( Button ) lookup( "#normalButtonInCD" ).query();
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
             Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();

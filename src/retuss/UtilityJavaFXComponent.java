@@ -25,4 +25,21 @@ public class UtilityJavaFXComponent {
 
         return buttons;
     }
+
+    /**
+     * 選択されているボタンを返す。
+     *
+     * @param buttons ボタンリスト（1つだけがtrueになっている）
+     */
+    public Button getDefaultButtonIn( List< Button > buttons ) {
+        int count = 0;
+
+        for( int i = 0; i < buttons.size(); i++ ) {
+            if( buttons.get( i ).isDefaultButton() ) {
+                count = i;
+                break;
+            }
+        }
+        return buttons.get( count );
+    }
 }

@@ -27,6 +27,7 @@ public class Controller {
     Canvas classDiagramCanvas;
 
     UtilityJavaFXComponent util = new UtilityJavaFXComponent();
+    ClassDiagramDrawer classDiagramDrawer = new ClassDiagramDrawer();
 
     List< Button > buttonsInCD = new ArrayList<>();
 
@@ -40,6 +41,7 @@ public class Controller {
     @FXML
     void initialize() {
         buttonsInCD.addAll( Arrays.asList( normalButtonInCD, classButtonInCD, noteButtonInCD ) );
+        // buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, normalButtonInCD );
     }
 
     @FXML
@@ -57,10 +59,13 @@ public class Controller {
 
     @FXML
     public void clickedCanvasInCD( MouseEvent event ) {
-        if( gc == null ) gc = classDiagramCanvas.getGraphicsContext2D();
+        if( gc == null ) {
+            gc = classDiagramCanvas.getGraphicsContext2D();
+            classDiagramDrawer.setGraphicsContext( gc );
+        }
 
         if( event.getButton() == MouseButton.PRIMARY ) {
-            clickedCanvasByPrimaryButtonInCD();
+            clickedCanvasByPrimaryButtonInCD( event.getX(), event.getY() );
         } else if( event.getButton() == MouseButton.SECONDARY ) {
             clickedCanvasBySecondaryButtonInCD();
         }
@@ -70,8 +75,9 @@ public class Controller {
     // シグナルハンドラここまで //
     //--------------------------//
 
-    private void clickedCanvasByPrimaryButtonInCD() {
-
+    private void clickedCanvasByPrimaryButtonInCD( double mouseX, double mouseY ) {
+        classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
+        classDiagramDrawer.drawNode( buttonsInCD );
     }
 
     private void clickedCanvasBySecondaryButtonInCD() {

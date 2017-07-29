@@ -1,6 +1,7 @@
 package retuss;
 
 import javafx.scene.control.Button;
+import jdk.internal.org.objectweb.asm.tree.ClassNode;
 import mockit.Expectations;
 import mockit.Mocked;
 import mockit.Tested;
@@ -14,10 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 @RunWith( Enclosed.class )
-public class ClassDiagramCanvasTest {
+public class ClassDiagramDrawerTest {
 
     @RunWith( JMockit.class )
     public static class クラスアイコンを選択している場合 {
@@ -25,7 +24,7 @@ public class ClassDiagramCanvasTest {
         ClassNodeDiagram classNodeDiagram;
 
         @Tested
-        ClassDiagramCanvas cdc;
+        ClassDiagramDrawer cdd;
 
         List< Button > buttons = new ArrayList<>();
         Button normalButton;
@@ -36,7 +35,7 @@ public class ClassDiagramCanvasTest {
 
         @Before
         public void setUp() {
-            cdc = new ClassDiagramCanvas();
+            cdd = new ClassDiagramDrawer();
             normalButton = new Button( "Normal" );
             classButton = new Button( "Class" );
             noteButton = new Button( "Note" );
@@ -54,7 +53,7 @@ public class ClassDiagramCanvasTest {
 
             buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
 
-            cdc.drawNode( buttons );
+            cdd.drawNode( buttons );
         }
     }
 
@@ -64,7 +63,7 @@ public class ClassDiagramCanvasTest {
         NoteNodeDiagram noteNodeDiagram;
 
         @Tested
-        ClassDiagramCanvas cdc;
+        ClassDiagramDrawer cdd;
 
         List< Button > buttons = new ArrayList<>();
         Button normalButton;
@@ -75,7 +74,7 @@ public class ClassDiagramCanvasTest {
 
         @Before
         public void setUp() {
-            cdc = new ClassDiagramCanvas();
+            cdd = new ClassDiagramDrawer();
             normalButton = new Button( "Normal" );
             classButton = new Button( "Class" );
             noteButton = new Button( "Note" );
@@ -93,7 +92,52 @@ public class ClassDiagramCanvasTest {
 
             buttons = util.setAllDefaultButtonIsFalseWithout( buttons, noteButton );
 
-            cdc.drawNode( buttons );
+            cdd.drawNode( buttons );
+        }
+    }
+
+    @RunWith( JMockit.class )
+    public static class ノーマルアイコンを選択している場合 {
+        @Mocked
+        NoteNodeDiagram noteNodeDiagram;
+        @Mocked
+        ClassNodeDiagram classNodeDiagram;
+
+        @Tested
+        ClassDiagramDrawer cdd;
+
+        List< Button > buttons = new ArrayList<>();
+        Button normalButton;
+        Button classButton;
+        Button noteButton;
+
+        UtilityJavaFXComponent util;
+
+        @Before
+        public void setUp() {
+            cdd = new ClassDiagramDrawer();
+            normalButton = new Button( "Normal" );
+            classButton = new Button( "Class" );
+            noteButton = new Button( "Note" );
+            buttons = Arrays.asList( normalButton, classButton, noteButton );
+
+            util = new UtilityJavaFXComponent();
+        }
+
+        @Test
+        public void キャンバスをクリックしても何も描画しない() {
+            new Expectations() {{
+                classNodeDiagram.draw();
+                times = 0;
+            }};
+            new Expectations() {{
+                noteNodeDiagram.draw();
+                times = 0;
+            }};
+
+            buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
+
+            cdd.drawNode( buttons );
         }
     }
 }
