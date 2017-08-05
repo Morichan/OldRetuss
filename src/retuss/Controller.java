@@ -4,12 +4,14 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * RETUSSウィンドウの動作管理クラス
@@ -25,6 +27,8 @@ public class Controller {
     Button noteButtonInCD;
     @FXML
     Canvas classDiagramCanvas;
+
+    TextInputDialog classNameInputDialog;
 
     UtilityJavaFXComponent util = new UtilityJavaFXComponent();
     ClassDiagramDrawer classDiagramDrawer = new ClassDiagramDrawer();
@@ -76,8 +80,23 @@ public class Controller {
     //--------------------------//
 
     private void clickedCanvasByPrimaryButtonInCD( double mouseX, double mouseY ) {
+        String className = showClassNameInputDialog();
         classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
-        classDiagramDrawer.drawNode( buttonsInCD );
+        classDiagramDrawer.setNodeText( className );
+        classDiagramDrawer.addDrawnNode( buttonsInCD );
+    }
+
+    private String showClassNameInputDialog() {
+        classNameInputDialog = new TextInputDialog();
+        classNameInputDialog.setTitle( "クラス名" );
+        classNameInputDialog.setHeaderText( "クラス名を入力してください。" );
+        Optional< String > result = classNameInputDialog.showAndWait();
+
+        if( result.isPresent() ) {
+            return classNameInputDialog.getEditor().getText();
+        } else {
+            return "";
+        }
     }
 
     private void clickedCanvasBySecondaryButtonInCD() {

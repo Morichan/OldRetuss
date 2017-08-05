@@ -5,8 +5,11 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.experimental.runners.Enclosed;
 import org.testfx.framework.junit.ApplicationTest;
@@ -95,13 +98,32 @@ public class ControllerTest {
         }
 
         @Test
-        public void クラスアイコンを選択している際にキャンバスをクリックするとクラスを描画する() {
-            // rightClickOn( "#classDiagramCanvas" ).clickOn();
+        public void クラスアイコンを選択している際にキャンバスをクリックするとクラス名の入力ウィンドウを表示する() {
+            rightClickOn( "#classButtonInCD" ).clickOn();
+            rightClickOn( "#classDiagramCanvas" ).clickOn();
 
-            Canvas canvas = ( Canvas ) lookup( "#classDiagramCanvas" ).query();
+            // ダイアログのバツボタンクリックの位置
+            rightClickOn( "#classDiagramCanvas" ).clickOn( 1050.0, 350.0 );
+        }
 
-            assertThat( canvas.getWidth(), is( 956.0 ) );
-            assertThat( canvas.getHeight(), is( 845.0 ) );
+        @Test
+        public void クラスアイコンを選択している際にキャンバスをクリックしクラス名を入力すると入力したクラス名のクラスを表示する() {
+            rightClickOn( "#classButtonInCD" ).clickOn();
+            rightClickOn( "#classDiagramCanvas" ).clickOn();
+
+            write( "ClassName" );
+
+            // ダイアログのOKボタンクリックの位置
+            rightClickOn( "#classDiagramCanvas" ).clickOn( 950.0, 500.0 );
+        }
+
+        @Test
+        public void クラスアイコンを選択している際にキャンバスをクリックしクラス名を入力しない場合は何も表示しない() {
+            rightClickOn( "#classButtonInCD" ).clickOn();
+            rightClickOn( "#classDiagramCanvas" ).clickOn();
+
+            // ダイアログのOKボタンクリックの位置
+            rightClickOn( "#classDiagramCanvas" ).clickOn( 950.0, 500.0 );
         }
     }
 }

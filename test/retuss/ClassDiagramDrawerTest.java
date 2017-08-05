@@ -53,7 +53,7 @@ public class ClassDiagramDrawerTest {
 
             buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
 
-            cdd.drawNode( buttons );
+            cdd.addDrawnNode( buttons );
         }
     }
 
@@ -92,7 +92,7 @@ public class ClassDiagramDrawerTest {
 
             buttons = util.setAllDefaultButtonIsFalseWithout( buttons, noteButton );
 
-            cdd.drawNode( buttons );
+            cdd.addDrawnNode( buttons );
         }
     }
 
@@ -137,7 +137,7 @@ public class ClassDiagramDrawerTest {
 
             buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
 
-            cdd.drawNode( buttons );
+            cdd.addDrawnNode( buttons );
         }
     }
 }

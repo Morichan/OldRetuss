@@ -12,6 +12,7 @@ public class ClassDiagramDrawer {
 
     private double mouseX = 0.0;
     private double mouseY = 0.0;
+    private String nodeText;
 
     public void setGraphicsContext( GraphicsContext gc ) {
         this.gc = gc;
@@ -22,33 +23,35 @@ public class ClassDiagramDrawer {
         mouseY = y;
     }
 
-    public void drawNode( int nodeNumber ) {
-        nodes.get( nodeNumber ).setGraphicsContext( gc );
-        nodes.get( nodeNumber ).setMouseCoordinates( mouseX, mouseY );
-        nodes.get( nodeNumber ).draw();
+    public void setNodeText( String text ) {
+        nodeText = text;
     }
 
-    public void drawNode( List< Button > buttons ) {
-        for( Button button : buttons ) {
-            if( button.getText().equals( "Normal" ) ) continue;
+    public void drawNode( NodeDiagram nodeDiagram ) {
+        nodeDiagram.setGraphicsContext(gc);
+        nodeDiagram.setMouseCoordinates(mouseX, mouseY);
+        nodeDiagram.setNodeText(nodeText);
+        nodeDiagram.draw();
+    }
 
+    public void addDrawnNode( List< Button > buttons ) {
+        for( Button button : buttons ) {
             if( button.isDefaultButton() ) {
-                int number = setDrawnNode( button );
-                drawNode( number );
+                setDrawnNode( button );
             }
         }
     }
 
-    private int setDrawnNode( Button button ) {
+    private void setDrawnNode( Button button ) {
         if( button.getText().equals( "Class" ) ) {
             ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
             nodes.add( classNodeDiagram );
+            drawNode( classNodeDiagram );
         } else if( button.getText().equals( "Note" ) ) {
             NoteNodeDiagram noteNodeDiagram = new NoteNodeDiagram();
             nodes.add( noteNodeDiagram );
+            drawNode( noteNodeDiagram );
         } else if( button.getText().equals( "Normal" ) ) {
         }
-
-        return nodes.size() - 1;
     }
 }

@@ -15,5 +15,7 @@
     <orderEntry type="library" name="testfx-junit-4.0.6-alpha" level="project" />
     <orderEntry type="library" name="testfx-core-4.0.6-alpha" level="project" />
     <orderEntry type="library" name="guava-21.0" level="project" />
+    <orderEntry type="library" name="jacocoagent" level="project" />
+    <orderEntry type="library" exported="" name="org.jacoco.core-0.7.9.201702052155" level="project" />
   </component>
 </module>
