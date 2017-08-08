@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -47,7 +48,7 @@
                                        <content>
                                           <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                              <children>
-                                                <VBox layoutX="414.0" layoutY="69.0" prefHeight="879.0" prefWidth="955.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <VBox prefHeight="879.0" prefWidth="955.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <ToolBar prefHeight="20.0" prefWidth="200.0">
                                                         <items>
@@ -56,9 +57,17 @@
                                                             <Button fx:id="noteButtonInCD" mnemonicParsing="false" onAction="#selectNoteInCD" text="Note" />
                                                         </items>
                                                       </ToolBar>
-                                                      <AnchorPane prefHeight="909.0" prefWidth="955.0">
+                                                      <AnchorPane prefHeight="845.0" prefWidth="952.0">
                                                          <children>
-                                                            <Canvas fx:id="classDiagramCanvas" height="845.0" onMouseClicked="#clickedCanvasInCD" width="956.0" />
+                                                            <ScrollPane fx:id="classDiagramScrollPane" prefHeight="844.0" prefWidth="955.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <content>
+                                                                  <AnchorPane prefHeight="844.0" prefWidth="951.0">
+                                                                     <children>
+                                                                        <Canvas fx:id="classDiagramCanvas" height="843.0" onMouseClicked="#clickedCanvasInCD" width="954.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                                     </children>
+                                                                  </AnchorPane>
+                                                               </content>
+                                                            </ScrollPane>
                                                          </children>
                                                       </AnchorPane>
                                                    </children>

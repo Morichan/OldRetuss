@@ -1,13 +1,16 @@
 package retuss;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +29,8 @@ public class Controller {
     Button classButtonInCD;
     @FXML
     Button noteButtonInCD;
+    @FXML
+    ScrollPane classDiagramScrollPane;
     @FXML
     Canvas classDiagramCanvas;
 
@@ -101,6 +106,9 @@ public class Controller {
     }
 
     private void clickedCanvasBySecondaryButtonInCD() {
-
+        ContextMenu popup = new ContextMenu();
+        MenuItem item = new MenuItem( "処理" );
+        popup.getItems().add( item );
+        classDiagramScrollPane.setContextMenu( popup );
     }
 }
