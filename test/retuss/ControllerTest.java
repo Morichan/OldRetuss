@@ -6,6 +6,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.junit.Rule;
 import org.junit.Test;
@@ -124,6 +125,12 @@ public class ControllerTest {
 
             // ダイアログのOKボタンクリックの位置
             rightClickOn( "#classDiagramCanvas" ).clickOn( 950.0, 500.0 );
+        }
+
+        @Test
+        public void クラスアイコンを選択している際に何も描画されていないキャンバスを右クリックした場合は何も表示しない() {
+            rightClickOn( "#classButtonInCD" ).clickOn();
+            rightClickOn( "#classDiagramCanvas" ).clickOn( MouseButton.SECONDARY );
         }
     }
 }
