@@ -1,13 +1,14 @@
 package retuss;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
 abstract public class NodeDiagram {
     protected static GraphicsContext gc = null;
 
-    protected double mouseX = 0.0;
-    protected double mouseY = 0.0;
+    protected Point2D mouse = Point2D.ZERO;
     protected String nodeText = "";
+    protected String diagramFont = "Consolas";
 
     abstract public void draw();
 
@@ -16,8 +17,7 @@ abstract public class NodeDiagram {
     }
 
     public void setMouseCoordinates( double x, double y ) {
-        mouseX = x;
-        mouseY = y;
+        mouse = new Point2D( x, y );
     }
 
     public void setNodeText( String text ) {

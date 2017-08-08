@@ -4,6 +4,6 @@ public class NoteNodeDiagram extends NodeDiagram {
 
     @Override
     public void draw() {
-        gc.fillText( "noteOfCD", mouseX, mouseY );
+        gc.fillText( "noteOfCD", mouse.getX(), mouse.getY() );
     }
 }
