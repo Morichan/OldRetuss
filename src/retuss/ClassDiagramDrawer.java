@@ -54,4 +54,8 @@ public class ClassDiagramDrawer {
         } else if( button.getText().equals( "Normal" ) ) {
         }
     }
+
+    public boolean isAlreadyDrawnAnyDiagram( double mouseX, double mouseY ) {
+        return true;
+    }
 }

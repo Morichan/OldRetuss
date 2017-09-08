@@ -77,7 +77,7 @@ public class Controller {
         if( event.getButton() == MouseButton.PRIMARY ) {
             clickedCanvasByPrimaryButtonInCD( event.getX(), event.getY() );
         } else if( event.getButton() == MouseButton.SECONDARY ) {
-            clickedCanvasBySecondaryButtonInCD();
+            clickedCanvasBySecondaryButtonInCD( event.getX(), event.getY() );
         }
     }
 
@@ -105,7 +105,9 @@ public class Controller {
         }
     }
 
-    private void clickedCanvasBySecondaryButtonInCD() {
+    private void clickedCanvasBySecondaryButtonInCD( double mouseX, double mouseY ) {
+        if( classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) return;
+
         ContextMenu popup = new ContextMenu();
         MenuItem item = new MenuItem( "処理" );
         popup.getItems().add( item );
