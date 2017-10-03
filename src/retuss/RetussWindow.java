@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * 機能：ウィンドウを表示
  */
-public class RetussWindow extends Application {
+public class RetussWindow extends Application
 
     /**
      * RETUSSを開始する。
