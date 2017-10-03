@@ -18,6 +18,10 @@ configurations {
 }
 
 dependencies {
+    compile files("${System.properties['java.home']}/lib/ext/jfxrt.jar")
+}
+
+dependencies {
     jmockit 'org.jmockit:jmockit:1.21'
     testCompile configurations.jmockit.dependencies
     testCompile group: 'junit', name: 'junit', version: "4.12"
