@@ -6,4 +6,4 @@ jdk:
   - openjdk8
 
 script:
-  - sudo sh ./gradlew test jacocoTestReport
+  - chmod 777 ./gradlew && ./gradlew test jacocoTestReport
