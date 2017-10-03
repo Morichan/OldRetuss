@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'jacoco'
 
 def defaultEncoding = 'UTF-8'
 
@@ -13,4 +14,19 @@ repositories {
 
 dependencies {
     testCompile "junit:junit:4.12"
+}
+
+jacoco {
+    toolVersion = "0.7.+"
+    // reportsDir = file("$buildDir/reports/jacoco")
+}
+
+task jacoco(type: JacocoReport, dependsOn: 'test') {
+    sourceSets sourceSets.main
+    executionData = files(tasks.jacocoTestReport.executionData)
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        csv.enabled = true
+    }
 }
