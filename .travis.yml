@@ -6,5 +6,5 @@ jdk:
   - openjdk8
 
 script:
-  javac test/AllTests.java
+  javac test/AllTests.java &&
   java org.junit.runner.JUnitCore test/AllTests
