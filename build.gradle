@@ -7,28 +7,21 @@ def defaultEncoding = 'UTF-8'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-sourceSets {
-    main {
-        java {
-            srcDir 'src/retuss'
-        }
-        resources {
-            srcDir 'src/retuss'
-        }
-    }
-
-    test {
-        java.srcDir file( 'test' )
-    }
-}
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
+configurations {
+    jmockit
+}
 
 dependencies {
+    jmockit 'org.jmockit:jmockit:1.21'
+    testCompile configurations.jmockit.dependencies
     testCompile group: 'junit', name: 'junit', version: "4.12"
+    testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.5-alpha'
 }
 
 apply plugin: 'jacoco'
