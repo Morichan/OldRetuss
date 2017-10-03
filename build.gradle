@@ -18,7 +18,11 @@ configurations {
     jmockit
 }
 
-apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/8.1.1/javafx.plugin'
+apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/0.4.0/javafx.plugin'
+
+javafx {
+    mainClass = 'retuss.RetussWindow'
+}
 
 dependencies {
     compile files("$javafxHome/rt/lib/jfxrt.jar")
