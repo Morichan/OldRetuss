@@ -5,6 +5,7 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../src/deploy">
       <sourceFolder url="file://$MODULE_DIR$/../../src/deploy/package" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/../../src/deploy/resources" type="java-resource" />
     </content>
     <content url="file://$MODULE_DIR$/../../src/package">
       <sourceFolder url="file://$MODULE_DIR$/../../src/package/java" isTestSource="false" />
