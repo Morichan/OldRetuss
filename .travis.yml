@@ -6,7 +6,7 @@ jdk:
   - openjdk8
 
 before_install:
-  - nkt -w ./gradlew && chmod 755 ./gradlew
+  - nkf -w ./gradlew && chmod 755 ./gradlew
 
 script:
   - chmod 755 ./gradlew && ./gradlew test jacocoTestReport
