@@ -8,6 +8,21 @@ def defaultEncoding = 'UTF-8'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+sourceSets {
+    main {
+        java {
+            srcDir 'src/retuss'
+        }
+        resources {
+            srcDir 'src/retuss'
+        }
+    }
+
+    integrationTest {
+        java.srcDir file( 'test' )
+    }
+}
+
 buildscript {
     repositories {
         mavenCentral()
