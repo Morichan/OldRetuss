@@ -6,4 +6,4 @@ jdk:
   - openjdk8
 
 script:
-  - gradle test jacocoTestReport
+  - ./gradlew test jacocoTestReport
