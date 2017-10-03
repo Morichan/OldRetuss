@@ -7,6 +7,9 @@ def defaultEncoding = 'UTF-8'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+group = 'org.waman'    // グループ名 & implementation-vendor
+version = 1.0               // アプリケーション・バージョン& implementation-version
+def mainClass = 'org.sample.Main'    // 実行可能 Jar ファイルのメインクラス
 def javafxHome = System.getenv('JAVAFX_HOME')
 def antJavafxJar = 'build/classes/ant-javafx'
 
@@ -25,6 +28,17 @@ dependencies {
     testCompile configurations.jmockit.dependencies
     testCompile group: 'junit', name: 'junit', version: "4.12"
     testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.5-alpha'
+}
+
+// ***** Settings for Executable Jar *****
+jar {
+    manifest {
+        // 2. Jar のマニフェストを設定
+        attributes('Manifest-Version':1.0, 'JavaFX-Version':2.0, 'Main-Class':'com/javafx/main/Main',
+                'implemetation-vendor':group, 'implementation-title':name, 'implementation-version':version,
+                'JavaFX-Application-Class':mainClass)
+    }
+    from "$antJavafxJar/resources/classes"    // 3. JavaFX アプリケーションに必要なクラス群
 }
 
 apply plugin: 'jacoco'
