@@ -2,7 +2,7 @@ apply plugin: 'java'
 
 def defaultEncoding = 'UTF-8'
 
-compileJava.potions.encoding = defaultEncoding
+compileJava.options.encoding = defaultEncoding
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
