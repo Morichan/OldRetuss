@@ -5,7 +5,7 @@ sudo: false
 jdk:
   - openjdk8
 
-before-build:
+install:
   sudo apt-get install junit4
 
 script:
