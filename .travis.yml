@@ -1,0 +1,10 @@
+language: java
+
+sudo: false
+
+jdk:
+  - openjdk8
+
+script:
+  javac test/AllTests.java
+  java org.junit.runner.JUnitCore test/AllTests
