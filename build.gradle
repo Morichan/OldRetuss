@@ -8,18 +8,12 @@ def defaultEncoding = 'UTF-8'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-repositories {
-    mavenCentral()
-}
+retuss {
+    repositories {
+        mavenCentral()
+    }
 
-dependencies {
-    testCompile "junit:junit:4.12"
-}
-
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        csv.enabled false
-        html.enabled true
+    dependencies {
+        testCompile "junit:junit:4.12"
     }
 }
