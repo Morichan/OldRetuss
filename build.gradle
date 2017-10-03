@@ -18,9 +18,10 @@ configurations {
     jmockit
 }
 
-apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/0.4.0/javafx.plugin'
+apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/8.1.1/javafx.plugin'
 
 dependencies {
+    compile files("$javafxHome/rt/lib/jfxrt.jar")
     jmockit 'org.jmockit:jmockit:1.21'
     testCompile configurations.jmockit.dependencies
     testCompile group: 'junit', name: 'junit', version: "4.12"
