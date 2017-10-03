@@ -9,4 +9,4 @@ install:
   sudo apt-get install junit4
 
 script:
-  javac retuss.RetussWindow.java && java retuss.RetussWindow
+  ls -all && javac retuss.RetussWindow.java && java retuss.RetussWindow
