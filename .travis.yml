@@ -5,5 +5,8 @@ sudo: false
 jdk:
   - openjdk8
 
+before_install:
+  - chmod 755 ./gradlew
+
 script:
-  - chmod 777 ./gradlew && ./gradlew test jacocoTestReport
+  - chmod 755 ./gradlew && ./gradlew test jacocoTestReport
