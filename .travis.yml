@@ -9,5 +9,4 @@ install:
   sudo apt-get install junit4
 
 script:
-  javac test/AllTests.java &&
-  java org.junit.runner.JUnitCore test/AllTests
+  javac retuss.RetussWindow.java && java retuss.RetussWindow
