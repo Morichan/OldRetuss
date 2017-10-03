@@ -13,6 +13,7 @@
     </wildcardResourcePatterns>
     <bytecodeTargetLevel>
       <module name="Retuss_main" target="1.8" />
+      <module name="Retuss_package" target="1.8" />
       <module name="Retuss_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
