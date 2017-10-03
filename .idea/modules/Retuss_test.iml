@@ -13,7 +13,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../null/rt/lib/jfxrt.jar!/" />
+          <root url="jar://C:/Program Files/Java/jdk1.8.0_112/lib/ant-javafx.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
