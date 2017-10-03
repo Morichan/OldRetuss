@@ -5,8 +5,5 @@ sudo: false
 jdk:
   - openjdk8
 
-install:
-  sudo apt-get install junit4
-
 script:
-  ls -all && javac retuss.RetussWindow.java && java retuss.RetussWindow
+  gradle build
