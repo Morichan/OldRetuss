@@ -17,7 +17,7 @@ sourceSets {
         }
     }
 
-    integrationTest {
+    test {
         java.srcDir file( 'test' )
     }
 }
