@@ -1,6 +1,6 @@
 # RETUSSについて
 
-https://travis-ci.org/Morichan/Retuss.svg?branch=dev-installTravisCI
+[![Build Status](https://travis-ci.org/Morichan/Retuss.svg?branch=dev-installTravisCI)](https://travis-ci.org/Morichan/Retuss)
 
 __RETUSS__ (Real-time Ensure Traceability between UML and Source-code System) は、UMLとソースコード間のトレーサビリティをリアルタイムに維持するツールです。
 
