@@ -9,4 +9,4 @@ before_install:
   - sudo apt-get install nkf && nkf -w ./gradlew > ./gradlew && chmod 755 ./gradlew
 
 script:
-  - chmod 755 ./gradlew && ./gradlew test jacocoTestReport
+  - ./gradlew test jacocoTestReport
