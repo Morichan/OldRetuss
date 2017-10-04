@@ -21,12 +21,12 @@ configurations {
 apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/0.4.0/javafx.plugin'
 
 javafx {
-    mainClass = 'retuss.RetussWindow'
+    mainClass = 'RetussWindow'
 }
 
 dependencies {
-    compile files("${System.properties['java.home']}/../lib/ant-javafx.jar")
-    compile fileTree(dir: "${System.properties['java.home']}", include: '**/jfxrt.jar')
+    //compile files("${System.properties['java.home']}/../lib/ant-javafx.jar")
+    //compile fileTree(dir: "${System.properties['java.home']}", include: '**/jfxrt.jar')
     jmockit 'org.jmockit:jmockit:1.21'
     testCompile configurations.jmockit.dependencies
     testCompile group: 'junit', name: 'junit', version: "4.12"
