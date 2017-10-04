@@ -18,10 +18,27 @@ configurations {
     jmockit
 }
 
-apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/0.4.0/javafx.plugin'
-
-javafx {
-    mainClass = 'RetussWindow'
+buildscript {
+    repositories {
+        mavenLocal()
+        maven {
+            name = 'BinTray'
+            url = 'http://dl.bintray.com/content/shemnon/javafx-gradle/'
+        }
+        maven {
+            name = 'CloudBees Snapshot'
+            url = 'http://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot'
+        }
+        ivy {
+            url = 'http://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot'
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.bitbucket.shemnon.javafxplugin:gradle-javafx-plugin:0.3.0'
+        classpath project.files("${System.properties['java.home']}/../lib/ant-javafx.jar")
+        classpath project.files("${System.properties['java.home']}/lib/jfxrt.jar")
+    }
 }
 
 dependencies {
