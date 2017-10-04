@@ -12,9 +12,14 @@ repositories {
     jcenter()
 }
 
+apply plugin: 'application'
+mainClassName = 'RetussWindow'
+
 configurations {
     jmockit
 }
+
+apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/0.4.0/javafx.plugin'
 
 dependencies {
     compile files("${System.properties['java.home']}/../lib/ant-javafx.jar")

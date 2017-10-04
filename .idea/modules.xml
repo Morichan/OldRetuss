@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Retuss.iml" filepath="$PROJECT_DIR$/Retuss.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Retuss_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Retuss_main.iml" group="Retuss" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Retuss_package.iml" filepath="$PROJECT_DIR$/.idea/modules/Retuss_package.iml" group="Retuss" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Retuss_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Retuss_test.iml" group="Retuss" />
     </modules>
   </component>
