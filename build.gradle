@@ -7,8 +7,6 @@ def defaultEncoding = 'UTF-8'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-def javafxHome = System.getenv('JAVAFX_HOME')
-
 repositories {
     mavenCentral()
     jcenter()
@@ -18,44 +16,11 @@ configurations {
     jmockit
 }
 
-buildscript {
-    repositories {
-        mavenLocal()
-        maven {
-            name = 'BinTray'
-            url = 'http://dl.bintray.com/content/shemnon/javafx-gradle/'
-        }
-        maven {
-            name = 'CloudBees Snapshot'
-            url = 'http://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot'
-        }
-        ivy {
-            url = 'http://repository-javafx-gradle-plugin.forge.cloudbees.com/snapshot'
-        }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'org.bitbucket.shemnon.javafxplugin:gradle-javafx-plugin:0.4.0'
-        classpath project.files("${System.properties['java.home']}/../lib/ant-javafx.jar")
-        classpath project.files("${System.properties['java.home']}/lib/jfxrt.jar")
-    }
-}
-
 dependencies {
-    //compile files("${System.properties['java.home']}/../lib/ant-javafx.jar")
-    //compile fileTree(dir: "${System.properties['java.home']}", include: '**/jfxrt.jar')
+    compile files("${System.properties['java.home']}/../lib/ant-javafx.jar")
+    compile fileTree(dir: "${System.properties['java.home']}", include: '**/jfxrt.jar')
     jmockit 'org.jmockit:jmockit:1.21'
     testCompile configurations.jmockit.dependencies
     testCompile group: 'junit', name: 'junit', version: "4.12"
     testCompile group: 'org.testfx', name: 'testfx-junit', version: '4.0.5-alpha'
-}
-
-apply plugin: 'jacoco'
-
-jacocoTestReport {
-    reports {
-        xml.enabled = true
-        csv.enabled = false
-        html.enabled = true
-    }
 }
