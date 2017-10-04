@@ -9,7 +9,7 @@ before_install:
   - chmod 755 ./gradlew
 
 script:
-  - ./gradlew && gradle test jacocoTestReport
+  - ./gradlew test jacocoTestReport
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
