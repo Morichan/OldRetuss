@@ -3,12 +3,15 @@ package retuss;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.WindowEvent;
 
@@ -86,10 +89,12 @@ public class Controller {
     //--------------------------//
 
     private void clickedCanvasByPrimaryButtonInCD( double mouseX, double mouseY ) {
-        String className = showClassNameInputDialog();
-        classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
-        classDiagramDrawer.setNodeText( className );
-        classDiagramDrawer.addDrawnNode( buttonsInCD );
+        if( util.getDefaultButtonIn( buttonsInCD ) == classButtonInCD ) {
+            String className = showClassNameInputDialog();
+            classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
+            classDiagramDrawer.setNodeText( className );
+            classDiagramDrawer.addDrawnNode( buttonsInCD );
+        }
     }
 
     private String showClassNameInputDialog() {
@@ -106,11 +111,22 @@ public class Controller {
     }
 
     private void clickedCanvasBySecondaryButtonInCD( double mouseX, double mouseY ) {
-        if( classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) return;
+        if( ! classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) return;
+        if( util.getDefaultButtonIn( buttonsInCD ) != normalButtonInCD ) return;
 
-        ContextMenu popup = new ContextMenu();
-        MenuItem item = new MenuItem( "処理" );
-        popup.getItems().add( item );
-        classDiagramScrollPane.setContextMenu( popup );
+        NodeDiagram nodeDiagram = classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
+        ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType() );
+
+        classDiagramScrollPane.setContextMenu( formatClassContextMenuInCD( contextMenu, mouseX, mouseY ) );
+    }
+
+    private ContextMenu formatClassContextMenuInCD( ContextMenu contextMenu, double mouseX, double mouseY ) {
+        contextMenu.getItems().get( 0 ).setOnAction( event -> {
+            classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
+            classDiagramDrawer.deleteDrawnNode( classDiagramDrawer.getCurrentNodeNumber() );
+            classDiagramDrawer.allReDrawNode();
+        } );
+
+        return contextMenu;
     }
 }

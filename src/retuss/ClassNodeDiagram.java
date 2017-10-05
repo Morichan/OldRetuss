@@ -24,11 +24,19 @@ public class ClassNodeDiagram extends NodeDiagram {
     private double width = 0.0;
     private double height = 0.0;
 
-    ClassNodeDiagram() {
-    }
-
     public double getSpace() {
         return space;
+    }
+
+    @Override
+    public boolean isAlreadyDrawnNode( double x, double y ) {
+        boolean act = false;
+
+        if( upperLeftCorner.getX() < x && upperLeftCorner.getY() < y
+                && x < bottomRightCorner.getX() && y < bottomRightCorner.getY() )
+            act = true;
+
+        return act;
     }
 
     @Override
@@ -36,17 +44,17 @@ public class ClassNodeDiagram extends NodeDiagram {
         if( nodeText.length() <= 0 ) return;
 
         Text text = new Text( nodeText );
-        text.setFont( Font.font( diagramFont , FontWeight.BOLD, classNameFontSize ) );
-        Bounds className = text.getLayoutBounds();
-        double maxWidth = calculateMaxWidth( className.getWidth(), Arrays.asList( 10.0, 20.0 ), Arrays.asList( 5.0, 25.0 ) );
+        double maxWidth = calculateMaxWidth( text, Arrays.asList( 10.0, 20.0 ), Arrays.asList( 5.0, 25.0 ) );
         double classHeight = defaultClassHeight;
         double attributeHeight = calculateMaxAttributeHeight( Arrays.asList() );
         double operationHeight = calculateMaxOperationHeight( Arrays.asList() );
 
-        calculateUpperLeftCorner( mouse, maxWidth );
-        calculateBottomRightCorner( mouse, maxWidth );
-        calculateWidthAndHeight();
+        calculateWidthAndHeight( maxWidth );
 
+        drawGraphicsContext( text, maxWidth, classHeight, attributeHeight, operationHeight );
+    }
+
+    public void drawGraphicsContext( Text text, double maxWidth, double classHeight, double attributeHeight, double operationHeight ) {
         gc.setFill( Color.BEIGE );
         gc.fillRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributeHeight + operationHeight );
 
@@ -66,13 +74,14 @@ public class ClassNodeDiagram extends NodeDiagram {
         // gc.fillOval( ( mouse.getX() + hoge.getWidth() / 2 ) - 5, mouse.getY() - 5, 10, 10);
     }
 
-    public double calculateMaxWidth( double classNameWidth, List< Double > classAttributes, List< Double > classOperations ) {
+    public double calculateMaxWidth( Text text, List< Double > classAttributes, List< Double > classOperations ) {
         double width = defaultWidth - space;
 
+        text.setFont( Font.font( diagramFont , FontWeight.BOLD, classNameFontSize ) );
         classAttributes.sort( Comparator.reverseOrder() );
         classOperations.sort( Comparator.reverseOrder() );
 
-        List< Double > classWidth = Arrays.asList( classNameWidth, classAttributes.get( 0 ), classOperations.get( 0 ) );
+        List< Double > classWidth = Arrays.asList( text.getLayoutBounds().getWidth(), classAttributes.get( 0 ), classOperations.get( 0 ) );
 
         classWidth.sort( Comparator.reverseOrder() );
 
@@ -102,16 +111,18 @@ public class ClassNodeDiagram extends NodeDiagram {
         return height;
     }
 
+    public void calculateWidthAndHeight( double maxWidth ) {
+        calculateUpperLeftCorner( mouse, maxWidth );
+        calculateBottomRightCorner( mouse, maxWidth );
+        width = bottomRightCorner.subtract( upperLeftCorner ).getX();
+        height = bottomRightCorner.subtract( upperLeftCorner ).getY();
+    }
+
     private void calculateUpperLeftCorner( Point2D point, double width ) {
         upperLeftCorner = new Point2D( point.getX() - width/2, point.getY() - 40.0 );
     }
 
     private void calculateBottomRightCorner( Point2D point, double width ) {
         bottomRightCorner = new Point2D( point.getX() + width/2, point.getY() + 40.0 );
-    }
-
-    private void calculateWidthAndHeight() {
-        width = bottomRightCorner.subtract( upperLeftCorner ).getX();
-        height = bottomRightCorner.subtract( upperLeftCorner ).getY();
     }
 }

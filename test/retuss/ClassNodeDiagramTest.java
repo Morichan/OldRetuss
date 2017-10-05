@@ -1,5 +1,7 @@
 package retuss;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.text.Text;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,55 +23,55 @@ public class ClassNodeDiagramTest {
 
     @Test
     public void デフォルトのクラスの幅より大きい数値がクラス名に存在する場合大きな値にゆとり分を追加した幅を返す() {
-        double wideWidthFromDefault = 100.0;
+        Text longClassName = new Text( "VeryVeryLongClassName" );
         List< Double > attributesAreNotWideWidthFromDefault = Arrays.asList( 10.0, 20.0 );
         List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
 
-        double actual = obj.calculateMaxWidth( wideWidthFromDefault, attributesAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
+        double actual = obj.calculateMaxWidth( longClassName, attributesAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
-        assertThat( actual, is( wideWidthFromDefault + obj.getSpace() ) );
+        assertThat( actual, is( longClassName.getLayoutBounds().getWidth() + obj.getSpace() ) );
     }
 
     @Test
     public void デフォルトのクラスの幅より大きい数値がクラス属性の1つ目に存在する場合大きな値にゆとり分を追加した幅を返す() {
-        double notWideWidth = 100.0 - obj.getSpace();
+        Text shortClassName = new Text( "a" );
         List< Double > attributesAreWideWidthInFirstWidthFromDefault = Arrays.asList( 100.0, 20.0 );
         List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
 
-        double actual = obj.calculateMaxWidth( notWideWidth, attributesAreWideWidthInFirstWidthFromDefault, operationsAreNotWideWidthFromDefault );
+        double actual = obj.calculateMaxWidth( shortClassName, attributesAreWideWidthInFirstWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
         assertThat( actual, is( attributesAreWideWidthInFirstWidthFromDefault.get( 0 ) + obj.getSpace() ) );
     }
 
     @Test
     public void デフォルトのクラスの幅より大きい数値がクラス属性の2つ目に存在する場合大きな値にゆとり分を追加した幅を返す() {
-        double notWideWidth = 100.0 - obj.getSpace();
+        Text shortClassName = new Text( "a" );
         List< Double > attributesAreWideWidthInSecondFromDefault = Arrays.asList( 10.0, 120.0 );
         List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
 
-        double actual = obj.calculateMaxWidth( notWideWidth, attributesAreWideWidthInSecondFromDefault, operationsAreNotWideWidthFromDefault );
+        double actual = obj.calculateMaxWidth( shortClassName, attributesAreWideWidthInSecondFromDefault, operationsAreNotWideWidthFromDefault );
 
         assertThat( actual, is( attributesAreWideWidthInSecondFromDefault.get( 0 ) + obj.getSpace() ) );
     }
 
     @Test
     public void デフォルトのクラスの幅より大きい数値がクラス操作の3つ目に存在する場合大きな値にゆとり分を追加した幅を返す() {
-        double notWideWidth = 100.0 - obj.getSpace();
+        Text shortClassName = new Text( "a" );
         List< Double > attributesAreWideWidthInSecondFromDefault = Arrays.asList( 10.0, 20.0 );
         List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 200.0 );
 
-        double actual = obj.calculateMaxWidth( notWideWidth, attributesAreWideWidthInSecondFromDefault, operationsAreNotWideWidthFromDefault );
+        double actual = obj.calculateMaxWidth( shortClassName, attributesAreWideWidthInSecondFromDefault, operationsAreNotWideWidthFromDefault );
 
         assertThat( actual, is( operationsAreNotWideWidthFromDefault.get( 0 ) + obj.getSpace() ) );
     }
 
     @Test
     public void デフォルトのクラスの幅より大きい数値が存在しない場合デフォルト幅を返す() {
-        double notWideWidth = 100.0 - obj.getSpace();
+        Text shortClassName = new Text( "a" );
         List< Double > attributesAreNotWideWidthFromDefault = Arrays.asList( 10.0, 20.0 );
         List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
 
-        double actual = obj.calculateMaxWidth( notWideWidth, attributesAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
+        double actual = obj.calculateMaxWidth( shortClassName, attributesAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
         assertThat( actual, is( 100.0 ) );
     }
@@ -147,24 +149,47 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
-        assertThat( actual, is( 20.0 * 2 ));
+        assertThat( actual, is( 20.0 * 2 ) );
 
         operationsAreMoreTwo.add( "operation3" );
 
         actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
-        assertThat( actual, is( 20.0 * 3 ));
+        assertThat( actual, is( 20.0 * 3 ) );
 
         operationsAreMoreTwo.add( "operation4" );
 
         actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
-        assertThat( actual, is( 20.0 * 4 ));
+        assertThat( actual, is( 20.0 * 4 ) );
 
         operationsAreMoreTwo.add( "operation5" );
 
         actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
-        assertThat( actual, is( 20.0 * 5 ));
+        assertThat( actual, is( 20.0 * 5 ) );
+    }
+
+    @Test
+    public void クラスの位置に存在するかどうかを判定する() {
+        double clickedX = 100;
+        double clickedY = 200;
+        obj.setNodeText( "ClassName" );
+        obj.setMouseCoordinates( clickedX, clickedY );
+        obj.calculateWidthAndHeight( 100 );
+
+        boolean actual = obj.isAlreadyDrawnNode( clickedX, clickedY );
+
+        assertThat( actual, is( true ) );
+    }
+
+    @Test
+    public void クラス名を取得する() {
+        String className = "ClassName";
+        obj.setNodeText( className );
+
+        String actual = obj.getNodeText();
+
+        assertThat( actual, is( className ) );
     }
 }

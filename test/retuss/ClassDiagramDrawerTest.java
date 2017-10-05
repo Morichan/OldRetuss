@@ -1,15 +1,17 @@
 package retuss;
 
 import javafx.scene.control.Button;
+import javafx.scene.text.Text;
 import jdk.internal.org.objectweb.asm.tree.ClassNode;
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Tested;
+import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,18 +44,107 @@ public class ClassDiagramDrawerTest {
             buttons = Arrays.asList( normalButton, classButton, noteButton );
 
             util = new UtilityJavaFXComponent();
+
+            buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
+
+            new Expectations( ClassNodeDiagram.class ) {{
+                classNodeDiagram.draw();
+            }};
+
+            classNodeDiagram.resetNodeCount();
         }
 
         @Test
         public void キャンバスをクリックするとクラスを描画する() {
-            new Expectations() {{
-                classNodeDiagram.draw();
-                times = 1;
-            }};
-
-            buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
-
             cdd.addDrawnNode( buttons );
+
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+        }
+
+        @Test
+        public void キャンバスを2回クリックするとクラスを2回描画する() {
+            cdd.addDrawnNode( buttons );
+            cdd.addDrawnNode( buttons );
+
+            assertThat( cdd.getNodes().size(), is( 2 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 1 ).getNodeId(), is( 1 ) );
+        }
+
+        @Test
+        public void 描画しているクラスを削除する() {
+            cdd.addDrawnNode( buttons );
+            cdd.deleteDrawnNode( 0 );
+
+            assertThat( cdd.getNodes().size(), is( 0 ) );
+        }
+
+        @Test
+        public void 描画しているクラス2つの内前半のクラスを削除する() {
+            cdd.setNodeText( "FirstClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            cdd.setNodeText( "SecondClassName" );
+            cdd.setMouseCoordinates( 500.0, 600.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+
+            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "SecondClassName" ) );
+        }
+
+        @Test
+        public void 描画しているクラス2つの内後半のクラスを削除する() {
+            cdd.setNodeText( "FirstClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            cdd.setNodeText( "SecondClassName" );
+            cdd.setMouseCoordinates( 500.0, 600.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+
+            int id = cdd.getNodeDiagramId( 500.0, 600.0 );
+            cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
+
+            assertThat( id, is( 1 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 1 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "FirstClassName" ) );
+        }
+
+        @Test
+        public void 描画しているクラス3つの内2つ目のクラスを削除する() {
+            cdd.setNodeText( "FirstClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            cdd.setNodeText( "SecondClassName" );
+            cdd.setMouseCoordinates( 300.0, 400.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            cdd.setNodeText( "ThirdClassName" );
+            cdd.setMouseCoordinates( 500.0, 600.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0 );
+
+            int id = cdd.getNodeDiagramId( 300.0, 400.0 );
+            cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
+
+            assertThat( id, is( 1 ) );
+            assertThat( cdd.getNodes().size(), is( 2 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 1 ).getNodeId(), is( 2 ) );
+            assertThat( cdd.getNodes().get( 1 ).getNodeText(), is( "ThirdClassName" ) );
         }
     }
 
@@ -81,6 +172,8 @@ public class ClassDiagramDrawerTest {
             buttons = Arrays.asList( normalButton, classButton, noteButton );
 
             util = new UtilityJavaFXComponent();
+
+            buttons = util.setAllDefaultButtonIsFalseWithout( buttons, noteButton );
         }
 
         @Test
@@ -90,9 +183,9 @@ public class ClassDiagramDrawerTest {
                 times = 1;
             }};
 
-            buttons = util.setAllDefaultButtonIsFalseWithout( buttons, noteButton );
-
             cdd.addDrawnNode( buttons );
+
+            assertThat( cdd.getNodes().size(), is( 1 ) );
         }
     }
 
@@ -122,6 +215,8 @@ public class ClassDiagramDrawerTest {
             buttons = Arrays.asList( normalButton, classButton, noteButton );
 
             util = new UtilityJavaFXComponent();
+
+            buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
         }
 
         @Test
@@ -135,9 +230,9 @@ public class ClassDiagramDrawerTest {
                 times = 0;
             }};
 
-            buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
-
             cdd.addDrawnNode( buttons );
+
+            assertThat( cdd.getNodes().size(), is( 0 ) );
         }
     }
 }

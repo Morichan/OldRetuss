@@ -1,7 +1,8 @@
 package retuss;
 
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 
+import javax.naming.Context;
 import java.util.List;
 
 /**
@@ -41,5 +42,43 @@ public class UtilityJavaFXComponent {
             }
         }
         return buttons.get( count );
+    }
+
+    public ContextMenu getClassContextMenuInCD( String nodeName, String nodeType ) {
+        ContextMenu popup = new ContextMenu();
+
+        if( nodeType.equals( "クラス" ) ) {
+            popup.getItems().add( new MenuItem( nodeName + "クラスをモデルから削除" ) );
+            popup.getItems().add( new MenuItem( "名前の変更") );
+            popup.getItems().add( new SeparatorMenuItem() );
+
+            Menu attributionMenu = new Menu( "属性" );
+            Menu operationMenu = new Menu( "操作" );
+            MenuItem addAttributionMenuItem = new MenuItem( "追加" );
+            MenuItem changeAttributionMenuItem = new MenuItem( "変更" );
+            MenuItem deleteAttributionMenuItem = new MenuItem( "削除" );
+            MenuItem displayAttributionMenuItem = new MenuItem( "表示選択" );
+            MenuItem addOperationMenuItem = new MenuItem( "追加" );
+            MenuItem changeOperationMenuItem = new MenuItem( "変更" );
+            MenuItem deleteOperationMenuItem = new MenuItem( "削除" );
+            MenuItem displayOperationMenuItem = new MenuItem( "表示選択" );
+
+            attributionMenu.getItems().add( addAttributionMenuItem );
+            attributionMenu.getItems().add( changeAttributionMenuItem );
+            attributionMenu.getItems().add( deleteAttributionMenuItem );
+            attributionMenu.getItems().add( displayAttributionMenuItem );
+            operationMenu.getItems().add( addOperationMenuItem );
+            operationMenu.getItems().add( changeOperationMenuItem );
+            operationMenu.getItems().add( deleteOperationMenuItem );
+            operationMenu.getItems().add( displayOperationMenuItem );
+
+            popup.getItems().add( attributionMenu );
+            popup.getItems().add( operationMenu );
+        } else {
+            popup.getItems().add( new MenuItem( "モデルから削除" ) );
+            popup.getItems().add( new MenuItem( "内容の変更" ) );
+        }
+
+        return popup;
     }
 }

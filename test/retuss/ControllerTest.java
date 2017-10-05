@@ -6,18 +6,23 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import mockit.Expectations;
+import mockit.Mocked;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.experimental.runners.Enclosed;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.service.query.PointQuery;
 
 import java.io.IOException;
 
@@ -46,6 +51,7 @@ public class ControllerTest {
         Stage stage;
         Point2D xButtonOnDialogBox;
         Point2D okButtonOnDialogBox;
+        Point2D secondClickedClassDiagramCanvas;
 
         @Override
         public void start( Stage stage ) throws IOException {
@@ -60,6 +66,7 @@ public class ControllerTest {
         public void setup() {
             xButtonOnDialogBox = new Point2D( 1050.0, 350.0 );
             okButtonOnDialogBox = new Point2D( 950.0, 500.0 );
+            secondClickedClassDiagramCanvas = new Point2D( 1050.0, 300.0);
         }
 
         @Test
@@ -114,11 +121,24 @@ public class ControllerTest {
         }
 
         @Test
-        public void クラスアイコンを選択している際にキャンバスをクリックするとクラス名の入力ウィンドウを表示する() {
+        public void クラスアイコンを選択していない際にキャンバスをクリックしても何も表示しない( @Mocked TextInputDialog mock ) {
+            new Expectations( TextInputDialog.class ) {{
+                mock.showAndWait();
+                times = 0;
+            }};
+
+            clickOn( "#classDiagramCanvas" );
+        }
+
+        @Test
+        public void クラスアイコンを選択している際にキャンバスをクリックするとクラス名の入力ウィンドウを表示する( @Mocked TextInputDialog mock ) {
+            new Expectations( TextInputDialog.class ) {{
+                mock.showAndWait();
+                times = 1;
+            }};
+
             clickOn( "#classButtonInCD" );
             clickOn( "#classDiagramCanvas" );
-
-            clickOn( xButtonOnDialogBox );
         }
 
         @Test
@@ -127,8 +147,35 @@ public class ControllerTest {
             clickOn( "#classDiagramCanvas" );
 
             write( "ClassName" );
-
             clickOn( okButtonOnDialogBox );
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Test
+        public void クラスアイコンを選択している際に2つのクラスを表示する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( "#classDiagramCanvas" );
+
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
         }
 
         @Test
@@ -137,6 +184,14 @@ public class ControllerTest {
             clickOn( "#classDiagramCanvas" );
 
             clickOn( okButtonOnDialogBox );
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.LEFT ) );
         }
 
         @Test
@@ -146,22 +201,104 @@ public class ControllerTest {
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
 
-            assertThat( scrollPane.getContextMenu(), nullValue() );
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
         @Test
-        public void クラスアイコンを選択している際にキャンバスに描かれているClassNameクラスを右クリックした場合ClassNameクラスをモデルから削除メニューを表示する() {
-            Point2D classDiagramCanvas = new Point2D( 900.0, 600.0 );
+        public void クラスアイコンを選択している際にキャンバスに描かれているClassNameクラスを右クリックした場合は何も表示しない() {
+            Point2D clickedClassDiagramCanvas = new Point2D( 900.0, 600.0 );
 
             clickOn( "#classButtonInCD" );
-            clickOn( classDiagramCanvas );
+            clickOn( clickedClassDiagramCanvas );
             write( "ClassName" );
             clickOn( okButtonOnDialogBox );
 
-            rightClickOn( classDiagramCanvas );
+            rightClickOn( clickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスを右クリックした場合1番目にClassNameクラスをモデルから削除メニューを表示する() {
+            Point2D clickedClassDiagramCanvas = new Point2D( 900.0, 600.0 );
+
+            clickOn( "#classButtonInCD" );
+            clickOn( clickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+
+            rightClickOn( clickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
 
             assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( "ClassNameクラスをモデルから削除" ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスのClassNameクラスをモデルから削除メニューを選択した場合描画していたClassNameクラスを削除する() {
+            Point2D clickedClassDiagramCanvas = new Point2D( 900.0, 600.0 );
+            Point2D deleteClassMenu = new Point2D( 910.0, 610.0 );
+
+            clickOn( "#classButtonInCD" );
+            clickOn( clickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+
+            rightClickOn( clickedClassDiagramCanvas );
+            clickOn( deleteClassMenu );
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている2つのクラスの内1つ目のクラスを削除する() {
+            Point2D firstClickedClassDiagramCanvas = new Point2D( 900.0, 600.0 );
+            Point2D deleteClassMenu = new Point2D( 910.0, 610.0 );
+
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            clickOn( deleteClassMenu );
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスを右クリックした後で何も描かれていない箇所を右クリックしても何も表示しない() {
+            Point2D firstClickedClassDiagramCanvas = new Point2D( 900.0, 600.0 );
+
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            rightClickOn( secondClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
 
@@ -173,7 +310,7 @@ public class ControllerTest {
          *
          * @return クラス図キャンバス直下のスクロールパネル
          */
-        public ScrollPane getScrollPaneBelowClassDiagramCanvas() {
+        private ScrollPane getScrollPaneBelowClassDiagramCanvas() {
             BorderPane borderPaneOnStage = (BorderPane) stage.getScene().getRoot().getChildrenUnmodifiable().get( 0 );
             AnchorPane anchorPaneOnBorderPane = (AnchorPane) borderPaneOnStage.getCenter();
             SplitPane splitPaneOnAnchorPaneOnBorderPane = (SplitPane) anchorPaneOnBorderPane.getChildren().get( 0 );
@@ -192,10 +329,22 @@ public class ControllerTest {
          *
          * @return クラス図キャンバス
          */
-        public Canvas getCanvasOnScrollPane() {
+        private Canvas getCanvasOnScrollPane() {
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
             AnchorPane anchorPane = (AnchorPane) scrollPane.getContent();
             return (Canvas) anchorPane.getChildren().get( 0 );
+        }
+
+        /**
+         * クラス図キャンバスのグラフィックスコンテキストを取得する。
+         *
+         * getScrollPaneBelowClassDiagramCanvasとgetCanvasOnScrollPaneに依存する。
+         *
+         * @return クラス図キャンバス
+         */
+        public GraphicsContext getGraphicsContext() {
+            Canvas canvas = getCanvasOnScrollPane();
+            return canvas.getGraphicsContext2D();
         }
     }
 }
