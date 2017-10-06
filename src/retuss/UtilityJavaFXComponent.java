@@ -75,8 +75,8 @@ public class UtilityJavaFXComponent {
             popup.getItems().add( attributionMenu );
             popup.getItems().add( operationMenu );
         } else {
-            popup.getItems().add( new MenuItem( "モデルから削除" ) );
-            popup.getItems().add( new MenuItem( "内容の変更" ) );
+            //popup.getItems().add( new MenuItem( "モデルから削除" ) );
+            //popup.getItems().add( new MenuItem( "内容の変更" ) );
         }
 
         return popup;

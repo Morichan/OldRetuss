@@ -14,6 +14,7 @@ abstract public class NodeDiagram {
 
     abstract public boolean isAlreadyDrawnNode( double x, double y );
     abstract public void draw();
+    abstract public String getNodeContentText();
 
     NodeDiagram() {
         nodeId = nodeCount;

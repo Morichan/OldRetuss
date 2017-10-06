@@ -39,6 +39,10 @@ public class ClassNodeDiagram extends NodeDiagram {
         return act;
     }
 
+    public String getNodeContentText() {
+        return "- content : int";
+    }
+
     @Override
     public void draw() {
         if( nodeText.length() <= 0 ) return;

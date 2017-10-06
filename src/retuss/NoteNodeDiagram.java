@@ -8,6 +8,11 @@ public class NoteNodeDiagram extends NodeDiagram {
     }
 
     @Override
+    public String getNodeContentText() {
+        return "";
+    }
+
+    @Override
     public void draw() {
         gc.fillText( "noteOfCD", mouse.getX(), mouse.getY() );
     }

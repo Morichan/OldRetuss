@@ -48,10 +48,15 @@ public class ClassDiagramDrawer {
         }
     }
 
-    public void drawNode( int number ) {
+    public void createDrawnNode( int number ) {
         nodes.get( number ).setGraphicsContext( gc );
         nodes.get( number ).setMouseCoordinates( mouseX, mouseY );
         nodes.get( number ).setNodeText( nodeText );
+        nodes.get( number ).draw();
+    }
+
+    public void drawNode( int number ) {
+        nodes.get( number ).setGraphicsContext( gc );
         nodes.get( number ).draw();
     }
 
@@ -68,19 +73,27 @@ public class ClassDiagramDrawer {
         nodes.remove( number );
     }
 
+    public void changeDrawnNodeText( int number, String text ) {
+        nodes.get( number ).setNodeText( text );
+    }
+
     private void createDrawnNode( Button button ) {
         if( button.getText().equals( "Class" ) ) {
             ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
             nodes.add( classNodeDiagram );
-            currentNodeNumber++;
-            drawNode( currentNodeNumber );
+            currentNodeNumber = nodes.size() - 1;
+            createDrawnNode( currentNodeNumber );
         } else if( button.getText().equals( "Note" ) ) {
             NoteNodeDiagram noteNodeDiagram = new NoteNodeDiagram();
             nodes.add( noteNodeDiagram );
-            currentNodeNumber++;
-            drawNode( currentNodeNumber );
+            currentNodeNumber = nodes.size() - 1;
+            createDrawnNode( currentNodeNumber );
         } else if( button.getText().equals( "Normal" ) ) {
         }
+    }
+
+    public void createDrawnNodeContentText( int number, String text ) {
+
     }
 
     public NodeDiagram findNodeDiagram( double mouseX, double mouseY ) {
@@ -108,7 +121,8 @@ public class ClassDiagramDrawer {
 
         // if( ! isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) return act;
 
-        for( int i = 0; i < nodes.size(); i++ ) {
+        // 重なっているノードの内1番上に描画しているノードはnodesリストの1番後半に存在するため、1番上に描画しているノードを取るためには尻尾から見なければならない。
+        for( int i = nodes.size() - 1; i >= 0; i-- ) {
             if( nodes.get( i ).isAlreadyDrawnNode( mouseX, mouseY ) ) {
                 act = nodes.get( i ).getNodeId();
                 currentNodeNumber = i;
