@@ -18,11 +18,13 @@ import javafx.stage.Stage;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.experimental.runners.Enclosed;
+import org.testfx.api.FxRobotException;
 import org.testfx.framework.junit.ApplicationTest;
-import org.testfx.service.query.PointQuery;
 
 import java.io.IOException;
 
@@ -48,15 +50,21 @@ public class ControllerTest {
     }
 
     public static class クラス図の場合 extends ApplicationTest {
+        @Rule
+        public ExpectedException fxRobotException = ExpectedException.none();
+
         Stage stage;
         Point2D xButtonOnDialogBox;
-        Point2D okButtonOnDialogBox;
+        String okButtonOnDialogBox;
         Point2D firstClickedClassDiagramCanvas;
         Point2D secondClickedClassDiagramCanvas;
         Point2D thirdClickedClassDiagramCanvas;
-        Point2D deleteClassMenu;
-        Point2D changeClassMenu;
-
+        String changeClassMenu;
+        String deleteClassMenu;
+        String classAttributionMenu;
+        String addMenu;
+        String changeMenu;
+        String deleteMenu;
 
         @Override
         public void start( Stage stage ) throws IOException {
@@ -70,12 +78,16 @@ public class ControllerTest {
         @Before
         public void setup() {
             xButtonOnDialogBox = new Point2D( 1050.0, 350.0 );
-            okButtonOnDialogBox = new Point2D( 950.0, 500.0 );
+            okButtonOnDialogBox = "OK";
             firstClickedClassDiagramCanvas = new Point2D( 900.0, 600.0 );
             secondClickedClassDiagramCanvas = new Point2D( 1050.0, 300.0 );
             thirdClickedClassDiagramCanvas = new Point2D( 800.0, 450.0 );
-            deleteClassMenu = new Point2D( 910.0, 610.0 );
-            changeClassMenu = new Point2D( 910.0, 640.0 );
+            changeClassMenu = "クラスの名前の変更";
+            deleteClassMenu = "クラスをモデルから削除";
+            classAttributionMenu = "属性";
+            addMenu = "追加";
+            changeMenu = "変更";
+            deleteMenu = "削除";
         }
 
         @Test
@@ -90,6 +102,19 @@ public class ControllerTest {
         }
 
         @Test
+        public void ノーマルボタンをクリックするとノーマルボタンをオンにして他をオフにする() {
+            clickOn( "#normalButtonInCD" );
+
+            Button normalButton = ( Button ) lookup( "#normalButtonInCD" ).query();
+            Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
+            Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();
+
+            assertThat( normalButton.isDefaultButton(), is( true ) );
+            assertThat( classButton.isDefaultButton(), is( false ) );
+            assertThat( noteButton.isDefaultButton(), is( false ) );
+        }
+
+        @Test
         public void クラスボタンをクリックするとクラスボタンをオンにして他をオフにする() {
             clickOn( "#classButtonInCD" );
 
@@ -97,8 +122,8 @@ public class ControllerTest {
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
             Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();
 
-            assertThat( classButton.isDefaultButton(), is( true ) );
             assertThat( normalButton.isDefaultButton(), is( false ) );
+            assertThat( classButton.isDefaultButton(), is( true ) );
             assertThat( noteButton.isDefaultButton(), is( false ) );
         }
 
@@ -110,9 +135,9 @@ public class ControllerTest {
             Button normalButton = ( Button ) lookup( "#normalButtonInCD" ).query();
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
 
-            assertThat( noteButton.isDefaultButton(), is( true ) );
             assertThat( normalButton.isDefaultButton(), is( false ) );
             assertThat( classButton.isDefaultButton(), is( false ) );
+            assertThat( noteButton.isDefaultButton(), is( true ) );
         }
 
         @Test
@@ -124,8 +149,8 @@ public class ControllerTest {
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
             Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();
 
-            assertThat( classButton.isDefaultButton(), is( true ) );
             assertThat( normalButton.isDefaultButton(), is( false ) );
+            assertThat( classButton.isDefaultButton(), is( true ) );
             assertThat( noteButton.isDefaultButton(), is( false ) );
         }
 
@@ -136,6 +161,9 @@ public class ControllerTest {
                 times = 0;
             }};
 
+            clickOn( "#classDiagramCanvas" );
+
+            fxRobotException.expect( FxRobotException.class );
             clickOn( "#classDiagramCanvas" );
         }
 
@@ -227,7 +255,7 @@ public class ControllerTest {
         }
 
         @Test
-        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスを右クリックした場合1番目にClassNameクラスをモデルから削除メニューを表示する() {
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスを右クリックした場合1番目と2番目にClassNameクラスの名前の変更メニューとClassNameクラスをモデルから削除メニューを表示する() {
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
             write( "ClassName" );
@@ -237,7 +265,8 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
 
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( "ClassNameクラスをモデルから削除" ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( "ClassNameクラスの名前の変更" ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 1 ).getText(), is( "ClassNameクラスをモデルから削除" ) );
         }
 
         @Test
@@ -249,7 +278,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
 
             rightClickOn( firstClickedClassDiagramCanvas );
-            clickOn( deleteClassMenu );
+            clickOn( "ClassName" + deleteClassMenu );
             GraphicsContext gc = getGraphicsContext();
             Paint fillColor = gc.getFill();
             Paint strokeColor = gc.getStroke();
@@ -272,7 +301,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
 
             rightClickOn( firstClickedClassDiagramCanvas );
-            clickOn( deleteClassMenu );
+            clickOn( "FirstClassName" + deleteClassMenu );
             GraphicsContext gc = getGraphicsContext();
             Paint fillColor = gc.getFill();
             Paint strokeColor = gc.getStroke();
@@ -295,7 +324,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
 
             rightClickOn( firstClickedClassDiagramCanvas );
-            clickOn( deleteClassMenu );
+            clickOn( "FirstClassName" + deleteClassMenu );
 
             clickOn( "#classButtonInCD" );
             clickOn( thirdClickedClassDiagramCanvas );
@@ -324,7 +353,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
 
             rightClickOn( firstClickedClassDiagramCanvas );
-            clickOn( deleteClassMenu );
+            clickOn( "FirstClassName" + deleteClassMenu );
 
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
@@ -364,7 +393,7 @@ public class ControllerTest {
             clickOn( okButtonOnDialogBox );
             clickOn( "#normalButtonInCD" );
             rightClickOn( firstClickedClassDiagramCanvas );
-            clickOn( changeClassMenu );
+            clickOn( "ClassName" + changeClassMenu );
             write( "ChangedClassName" );
             clickOn( okButtonOnDialogBox );
 
@@ -378,12 +407,118 @@ public class ControllerTest {
             assertThat( textAlignment, is( TextAlignment.CENTER ) );
         }
 
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスのClassNameクラスの変更メニューを選択し何も入力しなかった場合描画していたClassNameクラスのクラス名は変更しない() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            clickOn( "ClassName" + changeClassMenu );
+            clickOn( okButtonOnDialogBox );
+
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスの属性の追加メニューを選択した場合描画していたClassNameクラスに属性を追加する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn(addMenu);
+            write( "- attribution : int" );
+            clickOn( okButtonOnDialogBox );
+
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した属性の変更メニューを選択した場合描画していたClassNameクラスに変更した属性を描画する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- attribution : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+
+            moveTo( classAttributionMenu );
+            moveTo( addMenu );
+            moveTo( changeMenu );
+            clickOn( "- attribution : int" );
+            write( "- attribution : double" );
+            clickOn( okButtonOnDialogBox );
+
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した属性の削除メニューを選択した場合描画していたClassNameクラスの属性を削除する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- attribution : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+
+            moveTo( classAttributionMenu );
+            moveTo( addMenu );
+            moveTo( deleteMenu );
+            clickOn( "- attribution : int" );
+
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+        }
+
 
         /**
          * クラス図キャンバス直下に存在するスクロールパネルを取得する。
          *
          * 具体的には、ステージ上のボーダーパネル上のアンカーパネル上のスプリットパネル上の2つ目のアンカーパネル上の
          * タブパネル上のアンカーパネル上のVボックス上の2つ目のアンカーパネル上のスクロールパネルを取得する。
+         *
+         * 右クリックメニューを表示する大元のパネルがこのスクロールパネルであるため、主に右クリックメニューのテストに利用する。
          *
          * @return クラス図キャンバス直下のスクロールパネル
          */

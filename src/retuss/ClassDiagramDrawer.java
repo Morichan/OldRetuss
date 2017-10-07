@@ -51,7 +51,7 @@ public class ClassDiagramDrawer {
     public void createDrawnNode( int number ) {
         nodes.get( number ).setGraphicsContext( gc );
         nodes.get( number ).setMouseCoordinates( mouseX, mouseY );
-        nodes.get( number ).setNodeText( nodeText );
+        nodes.get( number ).createNodeText( ContentType.Title, nodeText );
         nodes.get( number ).draw();
     }
 
@@ -69,12 +69,26 @@ public class ClassDiagramDrawer {
         }
     }
 
+    public List< String > getDrawnNodeTextList( int nodeNumber, ContentType type ) {
+        return nodes.get( nodeNumber ).getNodeContents( type );
+    }
+
+    public void addDrawnNodeText( int number, ContentType type, String text ) {
+        if( text.length() <= 0 ) return;
+        nodes.get( number ).createNodeText( type, text );
+    }
+
+    public void changeDrawnNodeText( int nodeNumber, ContentType type, int contentNumber, String text ) {
+        if( text.length() <= 0 ) return;
+        nodes.get( nodeNumber ).changeNodeText( type, contentNumber, text );
+    }
+
     public void deleteDrawnNode( int number ) {
         nodes.remove( number );
     }
 
-    public void changeDrawnNodeText( int number, String text ) {
-        nodes.get( number ).setNodeText( text );
+    public void deleteDrawnNodeText( int nodeNumber, ContentType type, int contentNumber ) {
+        nodes.get( nodeNumber ).deleteNodeText( type, contentNumber );
     }
 
     private void createDrawnNode( Button button ) {
@@ -90,10 +104,6 @@ public class ClassDiagramDrawer {
             createDrawnNode( currentNodeNumber );
         } else if( button.getText().equals( "Normal" ) ) {
         }
-    }
-
-    public void createDrawnNodeContentText( int number, String text ) {
-
     }
 
     public NodeDiagram findNodeDiagram( double mouseX, double mouseY ) {

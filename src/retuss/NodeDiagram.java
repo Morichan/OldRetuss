@@ -3,6 +3,8 @@ package retuss;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.util.List;
+
 abstract public class NodeDiagram {
     private static int nodeCount = 0;
     protected static GraphicsContext gc = null;
@@ -14,7 +16,11 @@ abstract public class NodeDiagram {
 
     abstract public boolean isAlreadyDrawnNode( double x, double y );
     abstract public void draw();
-    abstract public String getNodeContentText();
+    abstract public void createNodeText( ContentType type, String text );
+    abstract public void changeNodeText( ContentType type, int number, String text );
+    abstract public void deleteNodeText( ContentType type, int number );
+    abstract public String getNodeContentText( ContentType type, int number );
+    abstract public List< String > getNodeContents( ContentType type );
 
     NodeDiagram() {
         nodeId = nodeCount;
@@ -37,16 +43,12 @@ abstract public class NodeDiagram {
         mouse = new Point2D( x, y );
     }
 
-    public void setNodeText( String text ) {
-        nodeText = text;
-    }
-
     public String getNodeText() {
         return nodeText;
     }
 
-    public String getNodeType() {
-        return "クラス";
+    public ContentType getNodeType() {
+        return ContentType.Class;
     }
 
     public int getNodeId() {

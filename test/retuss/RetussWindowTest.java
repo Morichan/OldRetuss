@@ -1,11 +1,11 @@
 package retuss;
 
+import mockit.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import mockit.*;
 
 import javafx.application.Application;
 import mockit.integration.junit4.JMockit;
@@ -43,7 +43,7 @@ public class RetussWindowTest {
     }
 
     @Test
-    public void FXMLLoaderのloadを1回行う( @Mocked FXMLLoader fxmlLoader, @Mocked Stage stage, @Mocked Scene scene, @Mocked BorderPane borderPane ) throws IOException {
+    public void メインステージにステージを追加する際はFXMLLoaderのloadを1回行う( @Mocked FXMLLoader fxmlLoader, @Mocked Stage stage, @Mocked Scene scene, @Mocked BorderPane borderPane ) throws IOException {
         String fileName = "FxmlFile.fxml";
         String title = "WindowTitle";
         new Expectations( fxmlLoader ) {{
@@ -56,7 +56,7 @@ public class RetussWindowTest {
     }
 
     @Test
-    public void mainStageとcodeStageを2回描画する( @Mocked FXMLLoader fxmlLoader, @Mocked Stage mock, @Mocked Scene scene, @Mocked BorderPane borderPane ) throws IOException {
+    public void mainStageとcodeStageを各1回ずつ描画するため合計2回showメソッドを実行する( @Mocked FXMLLoader fxmlLoader, @Mocked Stage mock, @Mocked Scene scene, @Mocked BorderPane borderPane ) throws IOException {
         new Expectations( mock ) {{
             mock.show();
             times = 2;

@@ -1,6 +1,5 @@
 package retuss;
 
-import com.sun.javafx.scene.control.skin.TabPaneSkin;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

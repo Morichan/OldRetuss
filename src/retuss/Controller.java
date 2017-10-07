@@ -108,15 +108,23 @@ public class Controller {
     }
 
     private String showCreateClassNameInputDialog() {
-        return showClassNameInputDialog( "クラス名", "クラス名を入力してください。" );
+        return showClassDiagramInputDialog( "クラス名", "クラス名を入力してください。" );
     }
 
     private String showChangeClassNameInputDialog() {
-        return showClassNameInputDialog( "クラス名の変更", "変更後のクラス名を入力してください。" );
+        return showClassDiagramInputDialog( "クラス名の変更", "変更後のクラス名を入力してください。" );
+    }
+
+    private String showAddClassAttributionInputDialog() {
+        return showClassDiagramInputDialog( "属性の追加", "追加する属性を入力してください" );
+    }
+
+    private String showChangeClassAttributionInputDialog( String attribution ) {
+        return showClassDiagramInputDialog( "属性の変更", attribution + "\n変更後の属性を入力してください" );
     }
 
     /**
-     * クラスのテキスト入力ダイアログを表示する。
+     * クラス図のテキスト入力ダイアログを表示する。
      * 表示中はダイアログ以外の本機能の他ウィンドウは入力を受け付けない。
      * テキスト入力ダイアログを消したまたは入力を受け付けた場合は他ウィンドウの入力受付を再開する。
      *
@@ -124,7 +132,7 @@ public class Controller {
      * @param headerText テキスト入力ダイアログのヘッダーテキスト
      * @return 入力された文字列 入力せずにOKボタンを押した場合や×ボタンを押した場合は空文字を返す。
      */
-    private String showClassNameInputDialog( String title, String headerText ) {
+    private String showClassDiagramInputDialog( String title, String headerText ) {
         classNameInputDialog = new TextInputDialog();
         classNameInputDialog.setTitle( title );
         classNameInputDialog.setHeaderText( headerText );
@@ -152,7 +160,9 @@ public class Controller {
         if( util.getDefaultButtonIn( buttonsInCD ) != normalButtonInCD ) return;
 
         NodeDiagram nodeDiagram = classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
-        ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType() );
+        ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType(),
+                classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution ),
+                classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ) );
 
         classDiagramScrollPane.setContextMenu( formatClassContextMenuInCD( contextMenu, nodeDiagram.getNodeType(), mouseX, mouseY ) );
     }
@@ -167,23 +177,33 @@ public class Controller {
      * @param mouseY 右クリック時のマウス位置のY軸
      * @return 動作整形済みの右クリックメニュー UtilityJavaFXComponentクラスで整形していないメニューや未分類の要素の種類を{@code contextMenu}や{@code type}に入れた場合は{@code null}を返す。
      */
-    private ContextMenu formatClassContextMenuInCD( ContextMenu contextMenu, String type, double mouseX, double mouseY ) {
-        if( type.equals( "クラス" ) ) {
+    private ContextMenu formatClassContextMenuInCD( ContextMenu contextMenu, ContentType type, double mouseX, double mouseY ) {
+        if( type == ContentType.Class ) {
             if( contextMenu.getItems().size() != 5 ) return null;
 
             contextMenu.getItems().get( 0 ).setOnAction( event -> {
-                classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
-                classDiagramDrawer.deleteDrawnNode( classDiagramDrawer.getCurrentNodeNumber() );
+                String className = showChangeClassNameInputDialog();
+                classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Title, 0, className );
                 classDiagramDrawer.allReDrawNode();
             } );
             contextMenu.getItems().get( 1 ).setOnAction( event -> {
-                String className = showChangeClassNameInputDialog();
-                classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
-                classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), className );
+                classDiagramDrawer.deleteDrawnNode( classDiagramDrawer.getCurrentNodeNumber() );
                 classDiagramDrawer.allReDrawNode();
             } );
             ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 0 ).setOnAction( event -> {
+                String addAttribution = showAddClassAttributionInputDialog();
+                classDiagramDrawer.addDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, addAttribution );
+                classDiagramDrawer.allReDrawNode();
             } );
+            List< String > attributions = classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution );
+            for( int i = 0; i < attributions.size(); i++ ) {
+                int contentNumber = i;
+                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
+                    String changedAttribution = showChangeClassAttributionInputDialog( attributions.get( contentNumber ) );
+                    classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber, changedAttribution );
+                    classDiagramDrawer.allReDrawNode();
+                } );
+            }
         } else {
             return null;
         }

@@ -2,7 +2,6 @@ package retuss;
 
 import javafx.scene.control.*;
 
-import javax.naming.Context;
 import java.util.List;
 
 /**
@@ -44,33 +43,69 @@ public class UtilityJavaFXComponent {
         return buttons.get( count );
     }
 
-    public ContextMenu getClassContextMenuInCD( String nodeName, String nodeType ) {
+    public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType, List< String > nodeContents1, List< String > nodeContents2 ) {
         ContextMenu popup = new ContextMenu();
 
-        if( nodeType.equals( "クラス" ) ) {
+        if( nodeType == ContentType.Class ) {
+            popup.getItems().add( new MenuItem( nodeName + "クラスの名前の変更") );
             popup.getItems().add( new MenuItem( nodeName + "クラスをモデルから削除" ) );
-            popup.getItems().add( new MenuItem( "名前の変更") );
             popup.getItems().add( new SeparatorMenuItem() );
 
             Menu attributionMenu = new Menu( "属性" );
             Menu operationMenu = new Menu( "操作" );
             MenuItem addAttributionMenuItem = new MenuItem( "追加" );
-            MenuItem changeAttributionMenuItem = new MenuItem( "変更" );
-            MenuItem deleteAttributionMenuItem = new MenuItem( "削除" );
-            MenuItem displayAttributionMenuItem = new MenuItem( "表示選択" );
+            Menu changeAttributionMenu = new Menu( "変更" );
+            Menu deleteAttributionMenu = new Menu( "削除" );
+            Menu displayAttributionMenu = new Menu( "表示選択" );
             MenuItem addOperationMenuItem = new MenuItem( "追加" );
-            MenuItem changeOperationMenuItem = new MenuItem( "変更" );
-            MenuItem deleteOperationMenuItem = new MenuItem( "削除" );
-            MenuItem displayOperationMenuItem = new MenuItem( "表示選択" );
+            Menu changeOperationMenu = new Menu( "変更" );
+            Menu deleteOperationMenu = new Menu( "削除" );
+            Menu displayOperationMenu = new Menu( "表示選択" );
+
+            if( nodeContents1.size() > 0 ) {
+                for( String attribution : nodeContents1 ) {
+                    changeAttributionMenu.getItems().add( new MenuItem( attribution ) );
+                    deleteAttributionMenu.getItems().add( new MenuItem( attribution ) );
+                    displayAttributionMenu.getItems().add( new CheckMenuItem( attribution ) );
+                }
+            } else {
+                MenuItem hasNotChangeAttributionMenuItem = new MenuItem( "なし" );
+                MenuItem hasNotDeleteAttributionMenuItem = new MenuItem( "なし" );
+                MenuItem hasNotDisplayAttributionMenuItem = new MenuItem( "なし" );
+                hasNotChangeAttributionMenuItem.setDisable( true );
+                hasNotDeleteAttributionMenuItem.setDisable( true );
+                hasNotDisplayAttributionMenuItem.setDisable( true );
+                changeAttributionMenu.getItems().add( hasNotChangeAttributionMenuItem );
+                deleteAttributionMenu.getItems().add( hasNotDeleteAttributionMenuItem );
+                displayAttributionMenu.getItems().add( hasNotDisplayAttributionMenuItem );
+            }
+
+            if( nodeContents2.size() > 0 ) {
+                for( String operation : nodeContents2 ) {
+                    changeOperationMenu.getItems().add( new MenuItem( operation ) );
+                    deleteOperationMenu.getItems().add( new MenuItem( operation ) );
+                    displayOperationMenu.getItems().add( new CheckMenuItem( operation ) );
+                }
+            } else {
+                MenuItem hasNotChangeOperationMenuItem = new MenuItem( "なし" );
+                MenuItem hasNotDeleteOperationMenuItem = new MenuItem( "なし" );
+                MenuItem hasNotDisplayOperationMenuItem = new MenuItem( "なし" );
+                hasNotChangeOperationMenuItem.setDisable( true );
+                hasNotDeleteOperationMenuItem.setDisable( true );
+                hasNotDisplayOperationMenuItem.setDisable( true );
+                changeOperationMenu.getItems().add( hasNotChangeOperationMenuItem );
+                deleteOperationMenu.getItems().add( hasNotDeleteOperationMenuItem );
+                displayOperationMenu.getItems().add( hasNotDisplayOperationMenuItem );
+            }
 
             attributionMenu.getItems().add( addAttributionMenuItem );
-            attributionMenu.getItems().add( changeAttributionMenuItem );
-            attributionMenu.getItems().add( deleteAttributionMenuItem );
-            attributionMenu.getItems().add( displayAttributionMenuItem );
+            attributionMenu.getItems().add( changeAttributionMenu );
+            attributionMenu.getItems().add( deleteAttributionMenu );
+            attributionMenu.getItems().add( displayAttributionMenu );
             operationMenu.getItems().add( addOperationMenuItem );
-            operationMenu.getItems().add( changeOperationMenuItem );
-            operationMenu.getItems().add( deleteOperationMenuItem );
-            operationMenu.getItems().add( displayOperationMenuItem );
+            operationMenu.getItems().add( changeOperationMenu );
+            operationMenu.getItems().add( deleteOperationMenu );
+            operationMenu.getItems().add( displayOperationMenu );
 
             popup.getItems().add( attributionMenu );
             popup.getItems().add( operationMenu );
