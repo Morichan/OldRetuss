@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.text.Font;
 
+import javax.swing.text.AbstractDocument;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -30,6 +31,9 @@ public class ClassNodeDiagram extends NodeDiagram {
     private List< String > attributions = new ArrayList<>();
     private List< String > operations = new ArrayList<>();
 
+    private List< Boolean > attributionIsVisibility = new ArrayList<>();
+    private int attributionNotVisibilityCount = 0;
+
     public double getClassNameSpace() {
         return classNameSpace;
     }
@@ -51,6 +55,7 @@ public class ClassNodeDiagram extends NodeDiagram {
             nodeText = text;
         } else if( type == ContentType.Attribution ) {
             attributions.add( text );
+            attributionIsVisibility.add( true );
         }
     }
 
@@ -67,6 +72,7 @@ public class ClassNodeDiagram extends NodeDiagram {
     public void deleteNodeText( ContentType type, int number ) {
         if( type == ContentType.Attribution ) {
             attributions.remove( number );
+            attributionIsVisibility.remove( number );
         }
     }
 
@@ -93,6 +99,18 @@ public class ClassNodeDiagram extends NodeDiagram {
             list = null;
         }
         return list;
+    }
+
+    @Override
+    public void setNodeContentBoolean( ContentType type, int contentNumber, boolean isChecked ) {
+        if( type == ContentType.Visibility ) {
+            attributionIsVisibility.set( contentNumber, isChecked );
+        }
+    }
+
+    @Override
+    public List< Boolean > getNodeContentsBoolean( ContentType type ) {
+        return attributionIsVisibility;
     }
 
     @Override
@@ -134,8 +152,17 @@ public class ClassNodeDiagram extends NodeDiagram {
         if( attributionsText.size() > 0 ) {
             gc.setTextAlign( TextAlignment.LEFT );
             gc.setFont( attributionsText.get( 0 ).getFont() );
+            int notDrawAttributionCount = 0;
             for( int i = 0; i < attributionsText.size(); i++ ) {
-                gc.fillText( attributionsText.get( i ).getText(), upperLeftCorner.getX() + leftSpace, mouse.getY() + 15.0 + ( defaultAttributionHeight * i ) );
+                if( attributionIsVisibility.get( i ) ) {
+                    gc.fillText( attributionsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, mouse.getY() + 15.0 + ( defaultAttributionHeight * ( i - notDrawAttributionCount ) ) );
+                } else {
+                    notDrawAttributionCount++;
+                }
+            }
+            if( attributionIsVisibility.contains( false ) ) {
+                gc.setTextAlign( TextAlignment.CENTER );
+                gc.fillText( "... " + attributionNotVisibilityCount + " more", mouse.getX(), mouse.getY() + 15.0 + ( defaultAttributionHeight * ( attributionsText.size() - attributionNotVisibilityCount ) ) );
             }
         }
 
@@ -167,9 +194,21 @@ public class ClassNodeDiagram extends NodeDiagram {
 
     public double calculateMaxAttributeHeight( List< String > attributes ) {
         double height = defaultAttributionHeight;
+        attributionNotVisibilityCount = 0;
+
+        for( Boolean isVisibility : attributionIsVisibility ) {
+            if( ! isVisibility ) attributionNotVisibilityCount++;
+        }
 
         if( attributes.size() > 0 ) {
-            height = attributes.size() * defaultAttributionHeight;
+            if( attributionNotVisibilityCount > 0 ) {
+                if( attributionNotVisibilityCount != attributes.size() )
+                    height = ( attributes.size() - attributionNotVisibilityCount + 1 ) * defaultAttributionHeight;
+                else
+                    height = defaultAttributionHeight;
+            } else {
+                height = attributes.size() * defaultAttributionHeight;
+            }
         }
 
         return height;

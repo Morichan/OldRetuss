@@ -162,7 +162,8 @@ public class Controller {
         NodeDiagram nodeDiagram = classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
         ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType(),
                 classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution ),
-                classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ) );
+                classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ),
+                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Visibility ));
 
         classDiagramScrollPane.setContextMenu( formatClassContextMenuInCD( contextMenu, nodeDiagram.getNodeType(), mouseX, mouseY ) );
     }
@@ -201,6 +202,21 @@ public class Controller {
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
                     String changedAttribution = showChangeClassAttributionInputDialog( attributions.get( contentNumber ) );
                     classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber, changedAttribution );
+                    classDiagramDrawer.allReDrawNode();
+                } );
+            }
+            for( int i = 0; i < attributions.size(); i++ ) {
+                int contentNumber = i;
+                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 2 ) ).getItems().get( i ).setOnAction( event -> {
+                    classDiagramDrawer.deleteDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber );
+                    classDiagramDrawer.allReDrawNode();
+                } );
+            }
+            for( int i = 0; i < attributions.size(); i++ ) {
+                int contentNumber = i;
+                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( i ).setOnAction( event -> {
+                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Visibility, contentNumber,
+                            ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( contentNumber ) ).isSelected() );
                     classDiagramDrawer.allReDrawNode();
                 } );
             }

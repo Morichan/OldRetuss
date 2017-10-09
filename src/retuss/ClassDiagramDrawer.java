@@ -73,6 +73,14 @@ public class ClassDiagramDrawer {
         return nodes.get( nodeNumber ).getNodeContents( type );
     }
 
+    public void setDrawnNodeContentBoolean( int nodeNumber, ContentType type, int contentNumber, boolean isChecked ) {
+        nodes.get( nodeNumber ).setNodeContentBoolean( type, contentNumber, isChecked );
+    }
+
+    public List< Boolean > getDrawnNodeContentsBooleanList( int nodeNumber, ContentType type ) {
+        return nodes.get( nodeNumber ).getNodeContentsBoolean( type );
+    }
+
     public void addDrawnNodeText( int number, ContentType type, String text ) {
         if( text.length() <= 0 ) return;
         nodes.get( number ).createNodeText( type, text );

@@ -43,7 +43,7 @@ public class UtilityJavaFXComponent {
         return buttons.get( count );
     }
 
-    public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType, List< String > nodeContents1, List< String > nodeContents2 ) {
+    public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType, List< String > nodeContents1, List< String > nodeContents2, List< Boolean > nodeContents3 ) {
         ContextMenu popup = new ContextMenu();
 
         if( nodeType == ContentType.Class ) {
@@ -63,39 +63,43 @@ public class UtilityJavaFXComponent {
             Menu displayOperationMenu = new Menu( "表示選択" );
 
             if( nodeContents1.size() > 0 ) {
-                for( String attribution : nodeContents1 ) {
-                    changeAttributionMenu.getItems().add( new MenuItem( attribution ) );
-                    deleteAttributionMenu.getItems().add( new MenuItem( attribution ) );
-                    displayAttributionMenu.getItems().add( new CheckMenuItem( attribution ) );
+                for( int i = 0; i < nodeContents1.size(); i++ ) {
+                    changeAttributionMenu.getItems().add( new MenuItem( nodeContents1.get( i ) ) );
+                    deleteAttributionMenu.getItems().add( new MenuItem( nodeContents1.get( i ) ) );
+                    CheckMenuItem checkMenuItem = new CheckMenuItem( nodeContents1.get( i ) );
+                    checkMenuItem.setSelected( nodeContents3.get( i ) );
+                    displayAttributionMenu.getItems().add( checkMenuItem );
                 }
             } else {
                 MenuItem hasNotChangeAttributionMenuItem = new MenuItem( "なし" );
                 MenuItem hasNotDeleteAttributionMenuItem = new MenuItem( "なし" );
-                MenuItem hasNotDisplayAttributionMenuItem = new MenuItem( "なし" );
+                CheckMenuItem hasNotDisplayAttributionCheckMenuItem = new CheckMenuItem( "なし" );
                 hasNotChangeAttributionMenuItem.setDisable( true );
                 hasNotDeleteAttributionMenuItem.setDisable( true );
-                hasNotDisplayAttributionMenuItem.setDisable( true );
+                hasNotDisplayAttributionCheckMenuItem.setDisable( true );
                 changeAttributionMenu.getItems().add( hasNotChangeAttributionMenuItem );
                 deleteAttributionMenu.getItems().add( hasNotDeleteAttributionMenuItem );
-                displayAttributionMenu.getItems().add( hasNotDisplayAttributionMenuItem );
+                displayAttributionMenu.getItems().add( hasNotDisplayAttributionCheckMenuItem );
             }
 
             if( nodeContents2.size() > 0 ) {
                 for( String operation : nodeContents2 ) {
                     changeOperationMenu.getItems().add( new MenuItem( operation ) );
                     deleteOperationMenu.getItems().add( new MenuItem( operation ) );
-                    displayOperationMenu.getItems().add( new CheckMenuItem( operation ) );
+                    CheckMenuItem checkMenuItem = new CheckMenuItem( operation );
+                    checkMenuItem.setSelected( true );
+                    displayOperationMenu.getItems().add( checkMenuItem );
                 }
             } else {
                 MenuItem hasNotChangeOperationMenuItem = new MenuItem( "なし" );
                 MenuItem hasNotDeleteOperationMenuItem = new MenuItem( "なし" );
-                MenuItem hasNotDisplayOperationMenuItem = new MenuItem( "なし" );
+                CheckMenuItem hasNotDisplayOperationCheckMenuItem = new CheckMenuItem( "なし" );
                 hasNotChangeOperationMenuItem.setDisable( true );
                 hasNotDeleteOperationMenuItem.setDisable( true );
-                hasNotDisplayOperationMenuItem.setDisable( true );
+                hasNotDisplayOperationCheckMenuItem.setDisable( true );
                 changeOperationMenu.getItems().add( hasNotChangeOperationMenuItem );
                 deleteOperationMenu.getItems().add( hasNotDeleteOperationMenuItem );
-                displayOperationMenu.getItems().add( hasNotDisplayOperationMenuItem );
+                displayOperationMenu.getItems().add( hasNotDisplayOperationCheckMenuItem );
             }
 
             attributionMenu.getItems().add( addAttributionMenuItem );

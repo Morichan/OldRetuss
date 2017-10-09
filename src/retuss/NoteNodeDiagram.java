@@ -26,6 +26,12 @@ public class NoteNodeDiagram extends NodeDiagram {
     }
 
     @Override
+    public void setNodeContentBoolean( ContentType type, int contentNumber, boolean isChecked ) {}
+
+    @Override
+    public List< Boolean > getNodeContentsBoolean( ContentType type ) { return null; }
+
+    @Override
     public void draw() {
         gc.fillText( "noteOfCD", mouse.getX(), mouse.getY() );
     }

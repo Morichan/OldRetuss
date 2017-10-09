@@ -377,6 +377,30 @@ public class ClassDiagramDrawerTest {
             assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
             assertThat( cdd.getDrawnNodeTextList( 0, ContentType.Attribution ).size(), is( 0 ) );
         }
+
+        @Test
+        public void 描画しているクラスに追加した属性を非表示にする() {
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+
+            cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content1 : int" );
+            cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content2 : double" );
+            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Visibility, 0, false );
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution ).size(), is( 2 ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution ).get( 0 ), is( false ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution ).get( 1 ), is( true ) );
+        }
     }
 
     @RunWith( JMockit.class )

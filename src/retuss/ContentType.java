@@ -5,5 +5,9 @@ public enum ContentType {
     Class,
     Note,
     Attribution,
-    Operation;
+    Operation,
+    Visibility,
+    Abstraction,
+    Static,
+    Derived;
 }

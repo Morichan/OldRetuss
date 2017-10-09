@@ -65,6 +65,7 @@ public class ControllerTest {
         String addMenu;
         String changeMenu;
         String deleteMenu;
+        String checkMenu;
 
         @Override
         public void start( Stage stage ) throws IOException {
@@ -88,6 +89,7 @@ public class ControllerTest {
             addMenu = "追加";
             changeMenu = "変更";
             deleteMenu = "削除";
+            checkMenu = "表示選択";
         }
 
         @Test
@@ -164,7 +166,7 @@ public class ControllerTest {
             clickOn( "#classDiagramCanvas" );
 
             fxRobotException.expect( FxRobotException.class );
-            clickOn( "#classDiagramCanvas" );
+            clickOn( okButtonOnDialogBox );
         }
 
         @Test
@@ -193,6 +195,12 @@ public class ControllerTest {
             assertThat( fillColor, is( Color.BLACK ) );
             assertThat( strokeColor, is( Color.BLACK ) );
             assertThat( textAlignment, is( TextAlignment.CENTER ) );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( "#classDiagramCanvas" );
+
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ClassName" ) ) );
         }
 
         @Test
@@ -205,14 +213,14 @@ public class ControllerTest {
             clickOn( secondClickedClassDiagramCanvas );
             write( "SecondClassName" );
             clickOn( okButtonOnDialogBox );
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( "#classDiagramCanvas" );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "FirstClassName" ) ) );
+            rightClickOn( secondClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
         }
 
         @Test
@@ -221,14 +229,11 @@ public class ControllerTest {
             clickOn( "#classDiagramCanvas" );
 
             clickOn( okButtonOnDialogBox );
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( "#classDiagramCanvas" );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
         @Test
@@ -279,14 +284,11 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             clickOn( "ClassName" + deleteClassMenu );
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
         @Test
@@ -302,14 +304,14 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             clickOn( "FirstClassName" + deleteClassMenu );
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( secondClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
         }
 
         @Test
@@ -331,14 +333,16 @@ public class ControllerTest {
             write( "ThirdClassName" );
             clickOn( okButtonOnDialogBox );
 
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
-
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( secondClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
+            rightClickOn( thirdClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ThirdClassName" ) ) );
         }
 
         @Test
@@ -360,14 +364,13 @@ public class ControllerTest {
             write( "ThirdClassName" );
             clickOn( okButtonOnDialogBox );
 
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
-
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ThirdClassName" ) ) );
+            rightClickOn( secondClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
         }
 
         @Test
@@ -396,15 +399,12 @@ public class ControllerTest {
             clickOn( "ClassName" + changeClassMenu );
             write( "ChangedClassName" );
             clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
 
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
+            rightClickOn( firstClickedClassDiagramCanvas );
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ChangedClassName" ) ) );
         }
 
         @Test
@@ -417,15 +417,12 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas );
             clickOn( "ClassName" + changeClassMenu );
             clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
 
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
+            rightClickOn( firstClickedClassDiagramCanvas );
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ClassName" ) ) );
         }
 
         @Test
@@ -437,7 +434,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( firstClickedClassDiagramCanvas );
             moveTo( classAttributionMenu );
-            clickOn(addMenu);
+            clickOn( addMenu );
             write( "- attribution : int" );
             clickOn( okButtonOnDialogBox );
 
@@ -449,6 +446,10 @@ public class ControllerTest {
             assertThat( fillColor, is( Color.BLACK ) );
             assertThat( strokeColor, is( Color.BLACK ) );
             assertThat( textAlignment, is( TextAlignment.LEFT ) );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "- attribution : int" ) );
         }
 
         @Test
@@ -463,8 +464,8 @@ public class ControllerTest {
             clickOn( addMenu );
             write( "- attribution : int" );
             clickOn( okButtonOnDialogBox );
-            rightClickOn( firstClickedClassDiagramCanvas );
 
+            rightClickOn( firstClickedClassDiagramCanvas );
             moveTo( classAttributionMenu );
             moveTo( addMenu );
             moveTo( changeMenu );
@@ -472,14 +473,9 @@ public class ControllerTest {
             write( "- attribution : double" );
             clickOn( okButtonOnDialogBox );
 
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
-
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "- attribution : double" ) );
         }
 
         @Test
@@ -494,21 +490,75 @@ public class ControllerTest {
             clickOn( addMenu );
             write( "- attribution : int" );
             clickOn( okButtonOnDialogBox );
-            rightClickOn( firstClickedClassDiagramCanvas );
 
+            rightClickOn( firstClickedClassDiagramCanvas );
             moveTo( classAttributionMenu );
             moveTo( addMenu );
             moveTo( deleteMenu );
             clickOn( "- attribution : int" );
 
-            GraphicsContext gc = getGraphicsContext();
-            Paint fillColor = gc.getFill();
-            Paint strokeColor = gc.getStroke();
-            TextAlignment textAlignment = gc.getTextAlign();
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "なし" ) );
+        }
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した属性の表示選択チェックメニューのチェックを外した場合描画していたClassNameクラスの属性を非表示にする() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- attribution : int" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "- attribution : int" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+
+            GraphicsContext gc = getGraphicsContext();
+            TextAlignment textAlignment = gc.getTextAlign();
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した非表示の属性の表示選択チェックメニューのチェックを付けた場合描画していたClassNameクラスの属性を表示する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- attribution : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "- attribution : int" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+            moveTo( classAttributionMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "- attribution : int" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( true ) );
         }
 
 

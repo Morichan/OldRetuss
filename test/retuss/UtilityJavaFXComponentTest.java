@@ -135,6 +135,7 @@ public class UtilityJavaFXComponentTest {
 
         List< String > attributions = Arrays.asList( "- content1 : int", "- content2 : double", "- content3 : char" );
         List< String > operations = Arrays.asList( "- content1() : int", "- content2( argv : int ) : double", "- content3( argv1 : int, argv2 : double ) : char" );
+        List< Boolean > attributionsVisibility = Arrays.asList( true, true, true );
 
         for( String attribution: attributions ) {
             changeAttributionMenu.getItems().add( new MenuItem( attribution ) );
@@ -162,7 +163,7 @@ public class UtilityJavaFXComponentTest {
         expected.getItems().add( attributionMenu );
         expected.getItems().add( operationMenu );
 
-        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations );
+        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility );
 
         assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
         assertThat( actual.getItems().size(), is( 5 ) );
@@ -187,6 +188,11 @@ public class UtilityJavaFXComponentTest {
                 assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getText(), is( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getText() ) );
                 assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ), instanceOf( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getClass() ) );
             }
+
+            if( i != 3 ) continue;
+            for( int j = 0; j < ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size(); j++ ) {
+                assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ) ).isSelected(), is( true ) );
+            }
         }
 
         assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().size(), is( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().size() ) );
@@ -199,6 +205,11 @@ public class UtilityJavaFXComponentTest {
             for( int j = 0; j < ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().size(); j++ ) {
                 assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getText(), is( ( ( Menu ) ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getText() ) );
                 assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ), instanceOf( ( ( Menu ) ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getClass() ) );
+            }
+
+            if( i != 3 ) continue;
+            for( int j = 0; j < ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size(); j++ ) {
+                assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ) ).isSelected(), is( true ) );
             }
         }
     }
@@ -223,6 +234,7 @@ public class UtilityJavaFXComponentTest {
         String expectedMenuText = "なし";
         List< String > attributions = new ArrayList<>();
         List< String > operations = new ArrayList<>();
+        List< Boolean > attributionsVisibility = new ArrayList<>();
 
         attributionMenu.getItems().add( addAttributionMenuItem );
         attributionMenu.getItems().add( changeAttributionMenu );
@@ -239,7 +251,7 @@ public class UtilityJavaFXComponentTest {
         expected.getItems().add( attributionMenu );
         expected.getItems().add( operationMenu );
 
-        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations );
+        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility );
 
         assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
         assertThat( actual.getItems().size(), is( 5 ) );
