@@ -21,8 +21,8 @@ abstract public class NodeDiagram {
     abstract public void deleteNodeText( ContentType type, int number );
     abstract public String getNodeContentText( ContentType type, int number );
     abstract public List< String > getNodeContents( ContentType type );
-    abstract public void setNodeContentBoolean( ContentType type, int contentNumber, boolean isChecked );
-    abstract public List< Boolean > getNodeContentsBoolean( ContentType type );
+    abstract public void setNodeContentBoolean( ContentType parent, ContentType child, int contentNumber, boolean isChecked );
+    abstract public List< Boolean > getNodeContentsBoolean( ContentType parent, ContentType child );
 
     NodeDiagram() {
         nodeId = nodeCount;

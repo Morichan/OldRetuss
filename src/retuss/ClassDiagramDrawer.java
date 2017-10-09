@@ -49,6 +49,8 @@ public class ClassDiagramDrawer {
     }
 
     public void createDrawnNode( int number ) {
+        if( nodeText.length() <= 0 ) return;
+
         nodes.get( number ).setGraphicsContext( gc );
         nodes.get( number ).setMouseCoordinates( mouseX, mouseY );
         nodes.get( number ).createNodeText( ContentType.Title, nodeText );
@@ -73,12 +75,12 @@ public class ClassDiagramDrawer {
         return nodes.get( nodeNumber ).getNodeContents( type );
     }
 
-    public void setDrawnNodeContentBoolean( int nodeNumber, ContentType type, int contentNumber, boolean isChecked ) {
-        nodes.get( nodeNumber ).setNodeContentBoolean( type, contentNumber, isChecked );
+    public void setDrawnNodeContentBoolean( int nodeNumber, ContentType parent, ContentType child, int contentNumber, boolean isChecked ) {
+        nodes.get( nodeNumber ).setNodeContentBoolean( parent, child, contentNumber, isChecked );
     }
 
-    public List< Boolean > getDrawnNodeContentsBooleanList( int nodeNumber, ContentType type ) {
-        return nodes.get( nodeNumber ).getNodeContentsBoolean( type );
+    public List< Boolean > getDrawnNodeContentsBooleanList( int nodeNumber, ContentType parent, ContentType child ) {
+        return nodes.get( nodeNumber ).getNodeContentsBoolean( parent, child );
     }
 
     public void addDrawnNodeText( int number, ContentType type, String text ) {
@@ -100,6 +102,8 @@ public class ClassDiagramDrawer {
     }
 
     private void createDrawnNode( Button button ) {
+        if( nodeText.length() <= 0 ) return;
+
         if( button.getText().equals( "Class" ) ) {
             ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
             nodes.add( classNodeDiagram );
@@ -110,7 +114,7 @@ public class ClassDiagramDrawer {
             nodes.add( noteNodeDiagram );
             currentNodeNumber = nodes.size() - 1;
             createDrawnNode( currentNodeNumber );
-        } else if( button.getText().equals( "Normal" ) ) {
+        //} else if( button.getText().equals( "Normal" ) ) {
         }
     }
 

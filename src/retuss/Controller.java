@@ -123,6 +123,10 @@ public class Controller {
         return showClassDiagramInputDialog( "属性の変更", attribution + "\n変更後の属性を入力してください" );
     }
 
+    private String showAddClassOperationInputDialog() {
+        return showClassDiagramInputDialog( "操作の追加", "追加する操作を入力してください" );
+    }
+
     /**
      * クラス図のテキスト入力ダイアログを表示する。
      * 表示中はダイアログ以外の本機能の他ウィンドウは入力を受け付けない。
@@ -163,7 +167,7 @@ public class Controller {
         ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType(),
                 classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution ),
                 classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ),
-                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Visibility ));
+                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility ));
 
         classDiagramScrollPane.setContextMenu( formatClassContextMenuInCD( contextMenu, nodeDiagram.getNodeType(), mouseX, mouseY ) );
     }
@@ -182,21 +186,32 @@ public class Controller {
         if( type == ContentType.Class ) {
             if( contextMenu.getItems().size() != 5 ) return null;
 
+            // クラス名の変更
             contextMenu.getItems().get( 0 ).setOnAction( event -> {
                 String className = showChangeClassNameInputDialog();
                 classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Title, 0, className );
                 classDiagramDrawer.allReDrawNode();
             } );
+            // クラスの削除
             contextMenu.getItems().get( 1 ).setOnAction( event -> {
                 classDiagramDrawer.deleteDrawnNode( classDiagramDrawer.getCurrentNodeNumber() );
                 classDiagramDrawer.allReDrawNode();
             } );
+            // クラスの属性の追加
             ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 0 ).setOnAction( event -> {
                 String addAttribution = showAddClassAttributionInputDialog();
                 classDiagramDrawer.addDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, addAttribution );
                 classDiagramDrawer.allReDrawNode();
             } );
+            // クラスの操作の追加
+            ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 0 ).setOnAction( event -> {
+                String addOperation = showAddClassOperationInputDialog();
+                classDiagramDrawer.addDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, addOperation );
+                classDiagramDrawer.allReDrawNode();
+            } );
             List< String > attributions = classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution );
+            List< String > operations = classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation );
+            // クラスの各属性の変更
             for( int i = 0; i < attributions.size(); i++ ) {
                 int contentNumber = i;
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
@@ -205,6 +220,7 @@ public class Controller {
                     classDiagramDrawer.allReDrawNode();
                 } );
             }
+            // クラスの各属性の削除
             for( int i = 0; i < attributions.size(); i++ ) {
                 int contentNumber = i;
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 2 ) ).getItems().get( i ).setOnAction( event -> {
@@ -212,11 +228,21 @@ public class Controller {
                     classDiagramDrawer.allReDrawNode();
                 } );
             }
+            // クラスの各属性の表示選択
             for( int i = 0; i < attributions.size(); i++ ) {
                 int contentNumber = i;
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( i ).setOnAction( event -> {
-                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Visibility, contentNumber,
+                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility, contentNumber,
                             ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( contentNumber ) ).isSelected() );
+                    classDiagramDrawer.allReDrawNode();
+                } );
+            }
+            // クラスの各操作の変更
+            for( int i = 0; i < operations.size(); i++ ) {
+                int contentNumber = i;
+                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
+                    String changedOperation = showAddClassOperationInputDialog();
+                    classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber, changedOperation );
                     classDiagramDrawer.allReDrawNode();
                 } );
             }

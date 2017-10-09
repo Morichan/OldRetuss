@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -62,6 +63,7 @@ public class ControllerTest {
         String changeClassMenu;
         String deleteClassMenu;
         String classAttributionMenu;
+        String classOperationMenu;
         String addMenu;
         String changeMenu;
         String deleteMenu;
@@ -86,6 +88,7 @@ public class ControllerTest {
             changeClassMenu = "クラスの名前の変更";
             deleteClassMenu = "クラスをモデルから削除";
             classAttributionMenu = "属性";
+            classOperationMenu = "操作";
             addMenu = "追加";
             changeMenu = "変更";
             deleteMenu = "削除";
@@ -559,6 +562,60 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( true ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスの操作の追加メニューを選択した場合描画していたClassNameクラスに操作を追加する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ operation() : void" );
+            clickOn( okButtonOnDialogBox );
+
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "+ operation() : void" ) );
+        }
+
+        @Ignore
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した操作の変更メニューを選択した場合描画していたClassNameクラスに変更した操作を描画する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- attribution : int" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            moveTo( addMenu );
+            moveTo( changeMenu );
+            clickOn( "- attribution : int" );
+            write( "- attribution : double" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "- attribution : double" ) );
         }
 
 

@@ -2,7 +2,9 @@ package retuss;
 
 import javafx.scene.text.Text;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +14,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 public class ClassNodeDiagramTest {
+
+    @Rule
+    public ExpectedException indexOutOfBoundsException = ExpectedException.none();
 
     ClassNodeDiagram obj;
 
@@ -24,7 +29,12 @@ public class ClassNodeDiagramTest {
     public void デフォルトのクラスの幅より大きい数値がクラス名に存在する場合大きな値にゆとり分を追加した幅を返す() {
         Text longClassName = new Text( "VeryVeryLongClassName" );
         List< Text > attributionsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "attribution" ) );
-        List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
+        List< Text > operationsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "operation" ) );
+
+        for( Text attribution :  attributionsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Attribution, attribution.getText() );
+        for( Text operation :  operationsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Operation, operation.getText() );
 
         double actual = obj.calculateMaxWidth( longClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
@@ -35,7 +45,12 @@ public class ClassNodeDiagramTest {
     public void デフォルトのクラスの幅より大きい数値がクラス属性の1つ目に存在する場合大きな値にゆとり分を追加した幅を返す() {
         Text shortClassName = new Text( "a" );
         List< Text > attributionsAreNotWideWidthFromDefault = Arrays.asList( new Text( "- veryVeryLongClassAttribution : double" ), new Text( "attribution" ) );
-        List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
+        List< Text > operationsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "operation" ) );
+
+        for( Text attribution :  attributionsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Attribution, attribution.getText() );
+        for( Text operation :  operationsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Operation, operation.getText() );
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
@@ -46,7 +61,12 @@ public class ClassNodeDiagramTest {
     public void デフォルトのクラスの幅より大きい数値がクラス属性の2つ目に存在する場合大きな値にゆとり分を追加した幅を返す() {
         Text shortClassName = new Text( "a" );
         List< Text > attributionsAreNotWideWidthFromDefault = Arrays.asList( new Text( "attribution" ), new Text( "- veryVeryLongClassAttribution : double" ) );
-        List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
+        List< Text > operationsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "operation" ) );
+
+        for( Text attribution :  attributionsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Attribution, attribution.getText() );
+        for( Text operation :  operationsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Operation, operation.getText() );
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
@@ -57,18 +77,28 @@ public class ClassNodeDiagramTest {
     public void デフォルトのクラスの幅より大きい数値がクラス操作の3つ目に存在する場合大きな値にゆとり分を追加した幅を返す() {
         Text shortClassName = new Text( "a" );
         List< Text > attributionsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "attribution" ) );
-        List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 200.0 );
+        List< Text > operationsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "operation" ), new Text( "+ isVeryVeryLongClassOperation() : boolean") );
+
+        for( Text attribution :  attributionsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Attribution, attribution.getText() );
+        for( Text operation :  operationsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Operation, operation.getText() );
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
-        assertThat( actual, is( operationsAreNotWideWidthFromDefault.get( 0 ) + obj.getClassNameSpace() ) );
+        assertThat( actual, is( operationsAreNotWideWidthFromDefault.get( 2 ).getLayoutBounds().getWidth() + obj.getClassNameSpace() ) );
     }
 
     @Test
     public void デフォルトのクラスの幅より大きい数値が存在しない場合デフォルト幅を返す() {
         Text shortClassName = new Text( "a" );
         List< Text > attributionsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "attribution" ) );
-        List< Double > operationsAreNotWideWidthFromDefault = Arrays.asList( 5.0, 25.0 );
+        List< Text > operationsAreNotWideWidthFromDefault = Arrays.asList( new Text( "short" ), new Text( "operation" ) );
+
+        for( Text attribution :  attributionsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Attribution, attribution.getText() );
+        for( Text operation :  operationsAreNotWideWidthFromDefault )
+            obj.createNodeText( ContentType.Operation, operation.getText() );
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
@@ -77,49 +107,106 @@ public class ClassNodeDiagramTest {
 
     @Test
     public void クラス属性が存在しない場合はデフォルト高を返す() {
-        List< String > attributesAreNot = new ArrayList<>();
+        List< String > attributionsAreNot = new ArrayList<>();
 
-        double actual = obj.calculateMaxAttributeHeight( attributesAreNot );
+        double actual = obj.calculateMaxAttributionHeight( attributionsAreNot );
 
         assertThat( actual, is( 20.0 ));
     }
 
     @Test
     public void クラス属性が1つ存在する場合はデフォルト高を返す() {
-        List< String > attributeIsOne = Arrays.asList( "attribute1" );
+        List< String > attributionIsOne = Arrays.asList( "attribution1" );
 
-        double actual = obj.calculateMaxAttributeHeight( attributeIsOne );
+        double actual = obj.calculateMaxAttributionHeight( attributionIsOne );
 
         assertThat( actual, is( 20.0 ));
     }
 
     @Test
     public void クラス属性が複数存在する場合はデフォルト高の複数倍を返す() {
-        List< String > attributesAreMoreTwo = new ArrayList<>();
-        attributesAreMoreTwo.add( "attribute1" );
-        attributesAreMoreTwo.add( "attribute2" );
+        List< String > attributionsAreMoreTwo = new ArrayList<>();
+        attributionsAreMoreTwo.add( "attribution1" );
+        attributionsAreMoreTwo.add( "attribution2" );
 
-        double actual = obj.calculateMaxAttributeHeight( attributesAreMoreTwo );
+        double actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
         assertThat( actual, is( 20.0 * 2 ));
 
-        attributesAreMoreTwo.add( "attribute3" );
+        attributionsAreMoreTwo.add( "attribution3" );
 
-        actual = obj.calculateMaxAttributeHeight( attributesAreMoreTwo );
+        actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
         assertThat( actual, is( 20.0 * 3 ));
 
-        attributesAreMoreTwo.add( "attribute4" );
+        attributionsAreMoreTwo.add( "attribution4" );
 
-        actual = obj.calculateMaxAttributeHeight( attributesAreMoreTwo );
+        actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
         assertThat( actual, is( 20.0 * 4 ));
 
-        attributesAreMoreTwo.add( "attribute5" );
+        attributionsAreMoreTwo.add( "attribution5" );
 
-        actual = obj.calculateMaxAttributeHeight( attributesAreMoreTwo );
+        actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
         assertThat( actual, is( 20.0 * 5 ));
+    }
+
+    @Test
+    public void クラス属性が1つ存在しそれが未表示の場合はデフォルト高を返す() {
+        List< String > attributionIsOne = Arrays.asList( "attribution1" );
+        obj.createNodeText( ContentType.Attribution, attributionIsOne.get( 0 ) );
+
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+
+        double actual = obj.calculateMaxAttributionHeight( attributionIsOne );
+
+        assertThat( actual, is( 20.0 ));
+    }
+
+    @Test
+    public void クラス属性が3つ存在し1つが未表示の場合はデフォルト高の3倍を返す() {
+        List< String > attributions = Arrays.asList( "notVisibilityAttribution", "visibilityAttribution1", "visibilityAttribution2" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+
+        double actual = obj.calculateMaxAttributionHeight( attributions );
+
+        assertThat( actual, is( 20.0 * 3 ));
+    }
+
+    @Test
+    public void クラス属性が3つ存在し2つが未表示の場合はデフォルト高の2倍を返す() {
+        List< String > attributions = Arrays.asList( "notVisibilityAttribution1", "notVisibilityAttribution2", "visibilityAttribution" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 1, false );
+
+        double actual = obj.calculateMaxAttributionHeight( attributions );
+
+        assertThat( actual, is( 20.0 * 2 ));
+    }
+
+    @Test
+    public void クラス属性が3つ存在し全て未表示の場合はデフォルト高を返す() {
+        List< String > attributions = Arrays.asList( "notVisibilityAttribution1", "notVisibilityAttribution2", "notVisibilityAttribution3" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 1, false );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 2, false );
+
+        double actual = obj.calculateMaxAttributionHeight( attributions );
+
+        assertThat( actual, is( 20.0 ) );
     }
 
     @Test
@@ -170,6 +257,63 @@ public class ClassNodeDiagramTest {
     }
 
     @Test
+    public void クラス操作が1つ存在しそれが未表示の場合はデフォルト高を返す() {
+        List< String > operationIsOne = Arrays.asList( "operation1" );
+        obj.createNodeText( ContentType.Operation, operationIsOne.get( 0 ) );
+
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 0, false );
+
+        double actual = obj.calculateMaxOperationHeight( operationIsOne );
+
+        assertThat( actual, is( 20.0 ) );
+    }
+
+    @Test
+    public void クラス操作が3つ存在し1つが未表示の場合はデフォルト高の3倍を返す() {
+        List< String > operations = Arrays.asList( "notVisibilityOperation", "visibilityOperation1", "visibilityOperation2" );
+        for( String operation : operations ) {
+            obj.createNodeText( ContentType.Operation, operation );
+        }
+
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 0, false );
+
+        double actual = obj.calculateMaxOperationHeight( operations );
+
+        assertThat( actual, is( 20.0 * 3 ));
+    }
+
+    @Test
+    public void クラス操作が3つ存在し2つが未表示の場合はデフォルト高の2倍を返す() {
+        List< String > operations = Arrays.asList( "notVisibilityOperation1", "notVisibilityOperation2", "visibilityOperation" );
+        for( String operation : operations ) {
+            obj.createNodeText( ContentType.Operation, operation );
+        }
+
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 0, false );
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 1, false );
+
+        double actual = obj.calculateMaxOperationHeight( operations );
+
+        assertThat( actual, is( 20.0 * 2 ));
+    }
+
+    @Test
+    public void クラス操作が3つ存在し全て未表示の場合はデフォルト高を返す() {
+        List< String > operations = Arrays.asList( "notVisibilityOperation1", "notVisibilityOperation2", "notVisibilityOperation3" );
+        for( String operation : operations ) {
+            obj.createNodeText( ContentType.Operation, operation );
+        }
+
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 0, false );
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 1, false );
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 2, false );
+
+        double actual = obj.calculateMaxOperationHeight( operations );
+
+        assertThat( actual, is( 20.0 ) );
+    }
+
+    @Test
     public void クラスの位置に存在するかどうかを判定する() {
         double clickedX = 100;
         double clickedY = 200;
@@ -190,5 +334,109 @@ public class ClassNodeDiagramTest {
         String actual = obj.getNodeText();
 
         assertThat( actual, is( className ) );
+    }
+
+    @Test
+    public void 属性を追加する() {
+        String className = "ClassName";
+        String expected = "- attribution : int";
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Attribution, expected );
+        String actual = obj.getNodeContentText( ContentType.Attribution, 0 );
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 属性を変更する() {
+        String className = "ClassName";
+        String firstInputClassAttribution = "- attribution : int";
+        String expected = "- attribution : double";
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Attribution, firstInputClassAttribution );
+        obj.changeNodeText( ContentType.Attribution, 0, expected );
+        String actual = obj.getNodeContentText( ContentType.Attribution, 0 );
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 属性を削除する() {
+        String className = "ClassName";
+        String expected = "- attribution : int";
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Attribution, expected );
+        obj.deleteNodeText( ContentType.Attribution, 0 );
+
+        indexOutOfBoundsException.expect( IndexOutOfBoundsException.class );
+        obj.getNodeContentText( ContentType.Attribution, 0 );
+    }
+
+    @Test
+    public void 属性を非表示にする() {
+        String className = "ClassName";
+        String classAttribution = "- attribution : int";
+        boolean expected = false;
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Attribution, classAttribution );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, expected );
+
+        assertThat( obj.getNodeContentsBoolean( ContentType.Attribution, ContentType.Visibility ).get( 0 ), is( expected ) );
+    }
+
+    @Test
+    public void 操作を追加する() {
+        String className = "ClassName";
+        String expected = "+ operation() : void";
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Operation, expected );
+        String actual = obj.getNodeContentText( ContentType.Operation, 0 );
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 操作を変更する() {
+        String className = "ClassName";
+        String firstInputClassOperation = "+ operation() : void";
+        String expected = "+ operation() : int";
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Operation, firstInputClassOperation );
+        obj.changeNodeText( ContentType.Operation, 0, expected );
+        String actual = obj.getNodeContentText( ContentType.Operation, 0 );
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 操作を削除する() {
+        String className = "ClassName";
+        String expected = "- operation() : void";
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Operation, expected );
+        obj.deleteNodeText( ContentType.Operation, 0 );
+
+        indexOutOfBoundsException.expect( IndexOutOfBoundsException.class );
+        obj.getNodeContentText( ContentType.Operation, 0 );
+    }
+
+    @Test
+    public void 操作を非表示にする() {
+        String className = "ClassName";
+        String classOperation = "- operation() : void";
+        boolean expected = false;
+
+        obj.createNodeText( ContentType.Title, className );
+        obj.createNodeText( ContentType.Operation, classOperation );
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Visibility, 0, expected );
+
+        assertThat( obj.getNodeContentsBoolean( ContentType.Operation, ContentType.Visibility ).get( 0 ), is( expected ) );
     }
 }

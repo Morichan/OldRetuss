@@ -5,6 +5,7 @@ import javafx.scene.text.Text;
 import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -55,6 +56,7 @@ public class ClassDiagramDrawerTest {
 
         @Test
         public void キャンバスをクリックするとクラスを描画する() {
+            cdd.setNodeText( "ClassName" );
             cdd.addDrawnNode( buttons );
 
             assertThat( cdd.getNodes().size(), is( 1 ) );
@@ -63,6 +65,7 @@ public class ClassDiagramDrawerTest {
 
         @Test
         public void キャンバスを2回クリックするとクラスを2回描画する() {
+            cdd.setNodeText( "ClassName" );
             cdd.addDrawnNode( buttons );
             cdd.addDrawnNode( buttons );
 
@@ -73,6 +76,7 @@ public class ClassDiagramDrawerTest {
 
         @Test
         public void 描画しているクラスを削除する() {
+            cdd.setNodeText( "ClassName" );
             cdd.addDrawnNode( buttons );
             cdd.deleteDrawnNode( 0 );
 
@@ -209,7 +213,21 @@ public class ClassDiagramDrawerTest {
         }
 
         @Test
+        public void クラスを追加する際に空文字を入力した場合は追加しない() {
+            cdd.setNodeText( "" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+
+            new Expectations( ClassNodeDiagram.class ) {{
+                classNodeDiagram.draw();
+                times = 0;
+            }};
+            assertThat( cdd.getNodes().size(), is( 0 ) );
+        }
+
+        @Test
         public void 描画しているクラスのクラス名を変更する() {
+            cdd.setNodeText( "ClassName" );
             cdd.addDrawnNode( buttons );
             cdd.changeDrawnNodeText( 0, ContentType.Title, 0, "ChangedClassName" );
 
@@ -390,16 +408,146 @@ public class ClassDiagramDrawerTest {
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content2 : double" );
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
-            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Visibility, 0, false );
+            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility, 0, false );
 
             assertThat( id, is( 0 ) );
             assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
             assertThat( cdd.getNodes().size(), is( 1 ) );
             assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
             assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution ).size(), is( 2 ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution ).get( 0 ), is( false ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution ).get( 1 ), is( true ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Visibility ).size(), is( 2 ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Visibility ).get( 0 ), is( false ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Visibility ).get( 1 ), is( true ) );
+        }
+
+        @Test
+        public void 描画しているクラスに操作を追加する() {
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+
+            int id = -1;
+            List< String > operations = Arrays.asList( "- content1 : int", "- content2 : double", "- content3 : char" );
+
+            for( String operation : operations ) {
+                id = cdd.getNodeDiagramId( 100.0, 200.0 );
+                cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, operation );
+            }
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
+            assertThat( cdd.getDrawnNodeTextList( 0, ContentType.Operation ).size(), is( operations.size() ) );
+            for( int i = 0; i < operations.size(); i++ ) {
+                assertThat( cdd.getDrawnNodeTextList( 0, ContentType.Operation ).get( i ), is( operations.get( i ) ) );
+            }
+        }
+
+        @Test
+        public void 描画しているクラスに操作を追加する際に空文字を入力した場合は追加しない() {
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            String attribution = "";
+
+            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, attribution );
+
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
+            assertThat( cdd.getDrawnNodeTextList( 0, ContentType.Operation ).size(), is( 0 ) );
+        }
+
+        @Test
+        public void 描画しているクラスに追加した操作を変更する() {
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+
+            cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "+ content() : int" );
+            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.changeDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, 0, "+ content() : double" );
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeContentText( ContentType.Operation, 0 ), is( "+ content() : double" ) );
+        }
+
+        @Test
+        public void 描画しているクラスに追加した操作を変更する際に空文字を入力した場合は変更しない() {
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+
+            cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "+ content() : int" );
+            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.changeDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, 0, "" );
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeContentText( ContentType.Operation, 0 ), is( "+ content() : int" ) );
+        }
+
+        @Test
+        public void 描画しているクラスに追加した操作を削除する() {
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+
+            cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "- content() : int" );
+            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.deleteDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, 0 );
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
+            assertThat( cdd.getDrawnNodeTextList( 0, ContentType.Operation ).size(), is( 0 ) );
+        }
+
+        @Test
+        public void 描画しているクラスに追加した操作を非表示にする() {
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+
+            cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "- content1() : int" );
+            cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "- content2() : double" );
+            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
+            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Operation, ContentType.Visibility, 0, false );
+
+            assertThat( id, is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+            assertThat( cdd.getNodes().size(), is( 1 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
+            assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Visibility ).size(), is( 2 ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Visibility ).get( 0 ), is( false ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Visibility ).get( 1 ), is( true ) );
         }
     }
 
@@ -438,6 +586,7 @@ public class ClassDiagramDrawerTest {
                 times = 1;
             }};
 
+            cdd.setNodeText( "Note" );
             cdd.addDrawnNode( buttons );
 
             assertThat( cdd.getNodes().size(), is( 1 ) );
@@ -485,6 +634,7 @@ public class ClassDiagramDrawerTest {
                 times = 0;
             }};
 
+            cdd.setNodeText( "Item" );
             cdd.addDrawnNode( buttons );
 
             assertThat( cdd.getNodes().size(), is( 0 ) );
