@@ -167,7 +167,8 @@ public class Controller {
         ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType(),
                 classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution ),
                 classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ),
-                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility ));
+                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility ),
+                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Visibility ) );
 
         classDiagramScrollPane.setContextMenu( formatClassContextMenuInCD( contextMenu, nodeDiagram.getNodeType(), mouseX, mouseY ) );
     }
@@ -243,6 +244,23 @@ public class Controller {
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
                     String changedOperation = showAddClassOperationInputDialog();
                     classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber, changedOperation );
+                    classDiagramDrawer.allReDrawNode();
+                } );
+            }
+            // クラスの各操作の削除
+            for( int i = 0; i < operations.size(); i++ ) {
+                int contentNumber = i;
+                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 2 ) ).getItems().get( i ).setOnAction( event -> {
+                    classDiagramDrawer.deleteDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber );
+                    classDiagramDrawer.allReDrawNode();
+                } );
+            }
+            // クラスの各操作の表示選択
+            for( int i = 0; i < operations.size(); i++ ) {
+                int contentNumber = i;
+                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( i ).setOnAction( event -> {
+                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Visibility, contentNumber,
+                            ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( contentNumber ) ).isSelected() );
                     classDiagramDrawer.allReDrawNode();
                 } );
             }

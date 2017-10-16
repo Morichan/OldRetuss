@@ -90,13 +90,13 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "FirstClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             // クラスを描画する際の一連の動作
             cdd.setNodeText( "SecondClassName" );
             cdd.setMouseCoordinates( 500.0, 600.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
@@ -113,11 +113,11 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "FirstClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             cdd.setNodeText( "SecondClassName" );
             cdd.setMouseCoordinates( 500.0, 600.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = cdd.getNodeDiagramId( 500.0, 600.0 );
             cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
@@ -134,11 +134,11 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "FirstClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             cdd.setNodeText( "SecondClassName" );
             cdd.setMouseCoordinates( 500.0, 600.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = cdd.getNodeDiagramId( 500.0, 600.0 );
             cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
@@ -146,7 +146,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ThirdClassName" );
             cdd.setMouseCoordinates( 300.0, 400.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             assertThat( id, is( 1 ) );
             assertThat( cdd.getCurrentNodeNumber(), is( 1 ) );
@@ -162,15 +162,15 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "FirstClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             cdd.setNodeText( "SecondClassName" );
             cdd.setMouseCoordinates( 300.0, 400.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             cdd.setNodeText( "ThirdClassName" );
             cdd.setMouseCoordinates( 500.0, 600.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = cdd.getNodeDiagramId( 300.0, 400.0 );
             cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
@@ -188,22 +188,22 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "FirstClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             cdd.setNodeText( "SecondClassName" );
             cdd.setMouseCoordinates( 300.0, 400.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             cdd.setNodeText( "ThirdClassName" );
             cdd.setMouseCoordinates( 500.0, 600.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             int id = cdd.getNodeDiagramId( 300.0, 400.0 );
             cdd.deleteDrawnNode( cdd.getCurrentNodeNumber() );
 
             cdd.setNodeText( "FourthClassName" );
             cdd.setMouseCoordinates( 700.0, 800.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             assertThat( id, is( 1 ) );
             assertThat( cdd.getNodes().size(), is( 3 ) );
@@ -240,7 +240,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "NotChangedClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.changeDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Title, 0, "" );
@@ -254,11 +254,11 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             cdd.setNodeText( "NotChangingClassName" );
             cdd.setMouseCoordinates( 500.0, 600.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.changeDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Title, 0, "ChangedClassName" );
@@ -277,7 +277,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = -1;
             List< String > attributions = Arrays.asList( "- content1 : int", "- content2 : double", "- content3 : char" );
@@ -303,7 +303,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             String attribution = "";
 
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
@@ -323,7 +323,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content : int" );
@@ -341,7 +341,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content : int" );
@@ -361,7 +361,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content : int" );
@@ -381,7 +381,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content : int" );
@@ -401,7 +401,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content1 : int" );
@@ -425,7 +425,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             int id = -1;
             List< String > operations = Arrays.asList( "- content1 : int", "- content2 : double", "- content3 : char" );
@@ -451,7 +451,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             String attribution = "";
 
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
@@ -471,7 +471,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "+ content() : int" );
@@ -491,7 +491,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "+ content() : int" );
@@ -511,7 +511,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "- content() : int" );
@@ -531,7 +531,7 @@ public class ClassDiagramDrawerTest {
             cdd.setNodeText( "ClassName" );
             cdd.setMouseCoordinates( 100.0, 200.0 );
             cdd.addDrawnNode( buttons );
-            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0 );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( 100.0, 80.0 );
 
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "- content1() : int" );

@@ -43,7 +43,7 @@ public class UtilityJavaFXComponent {
         return buttons.get( count );
     }
 
-    public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType, List< String > nodeContents1, List< String > nodeContents2, List< Boolean > nodeContents3 ) {
+    public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType, List< String > nodeContents1, List< String > nodeContents2, List< Boolean > nodeContents3, List< Boolean > nodeContents4 ) {
         ContextMenu popup = new ContextMenu();
 
         if( nodeType == ContentType.Class ) {
@@ -83,11 +83,11 @@ public class UtilityJavaFXComponent {
             }
 
             if( nodeContents2.size() > 0 ) {
-                for( String operation : nodeContents2 ) {
-                    changeOperationMenu.getItems().add( new MenuItem( operation ) );
-                    deleteOperationMenu.getItems().add( new MenuItem( operation ) );
-                    CheckMenuItem checkMenuItem = new CheckMenuItem( operation );
-                    checkMenuItem.setSelected( true );
+                for(int i = 0; i < nodeContents2.size(); i++ ) {
+                    changeOperationMenu.getItems().add( new MenuItem( nodeContents2.get( i ) ) );
+                    deleteOperationMenu.getItems().add( new MenuItem( nodeContents2.get( i ) ) );
+                    CheckMenuItem checkMenuItem = new CheckMenuItem( nodeContents2.get( i ) );
+                    checkMenuItem.setSelected( nodeContents4.get( i ) );
                     displayOperationMenu.getItems().add( checkMenuItem );
                 }
             } else {

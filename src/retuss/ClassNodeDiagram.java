@@ -161,13 +161,14 @@ public class ClassNodeDiagram extends NodeDiagram {
         double classHeight = defaultClassHeight;
         double attributionHeight = calculateMaxAttributionHeight( attributions );
         double operationHeight = calculateMaxOperationHeight( operations );
+        double operationStartHeight = calculateStartOperationHeight( attributions );
 
-        calculateWidthAndHeight( maxWidth );
+        calculateWidthAndHeight( maxWidth, classHeight + attributionHeight + operationHeight );
 
-        drawGraphicsContext( classNameText, attributionsText, operationsText, maxWidth, classHeight, attributionHeight, operationHeight );
+        drawGraphicsContext( classNameText, attributionsText, operationsText, maxWidth, classHeight, attributionHeight, operationHeight, operationStartHeight );
     }
 
-    public void drawGraphicsContext( Text classNameText, List< Text > attributionsText, List< Text > operationsText, double maxWidth, double classHeight, double attributionHeight, double operationHeight ) {
+    public void drawGraphicsContext( Text classNameText, List< Text > attributionsText, List< Text > operationsText, double maxWidth, double classHeight, double attributionHeight, double operationHeight, double operationStartHeight ) {
         gc.setFill( Color.BEIGE );
         gc.fillRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributionHeight + operationHeight );
 
@@ -181,8 +182,6 @@ public class ClassNodeDiagram extends NodeDiagram {
         gc.setFont( classNameText.getFont() );
         gc.fillText( classNameText.getText(), mouse.getX(), mouse.getY() - classHeight/2 );
 
-        double underAttribution = 0;
-
         if( attributionsText.size() > 0 ) {
             gc.setTextAlign( TextAlignment.LEFT );
             gc.setFont( attributionsText.get( 0 ).getFont() );
@@ -190,7 +189,6 @@ public class ClassNodeDiagram extends NodeDiagram {
             for( int i = 0; i < attributionsText.size(); i++ ) {
                 if( attributionIsVisibility.get( i ) ) {
                     gc.fillText( attributionsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, mouse.getY() + 15.0 + ( defaultAttributionHeight * ( i - notDrawAttributionCount ) ) );
-                    underAttribution += defaultAttributionHeight;
                 } else {
                     notDrawAttributionCount++;
                 }
@@ -198,11 +196,7 @@ public class ClassNodeDiagram extends NodeDiagram {
             if( attributionIsVisibility.contains( false ) ) {
                 gc.setTextAlign( TextAlignment.CENTER );
                 gc.fillText( "... " + attributionNotVisibilityCount + " more", mouse.getX(), mouse.getY() + 15.0 + ( defaultAttributionHeight * ( attributionsText.size() - attributionNotVisibilityCount ) ) );
-                underAttribution += defaultAttributionHeight;
             }
-            if( attributionsText.size() == attributionNotVisibilityCount ) underAttribution = defaultAttributionHeight;
-        } else {
-            underAttribution = defaultAttributionHeight;
         }
 
         if( operationsText.size() > 0 ) {
@@ -211,14 +205,14 @@ public class ClassNodeDiagram extends NodeDiagram {
             int notDrawOperationCount = 0;
             for( int i = 0; i < operationsText.size(); i++ ) {
                 if( operationIsVisibility.get( i ) ) {
-                    gc.fillText( operationsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, mouse.getY() + 15.0 + ( defaultOperationHeight * ( i - notDrawOperationCount ) ) + underAttribution );
+                    gc.fillText( operationsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, mouse.getY() + 15.0 + ( defaultOperationHeight * ( i - notDrawOperationCount ) ) + operationStartHeight );
                 } else {
                     notDrawOperationCount++;
                 }
             }
             if( operationIsVisibility.contains( false ) ) {
                 gc.setTextAlign( TextAlignment.CENTER );
-                gc.fillText( "... " + operationNotVisibilityCount + " more", mouse.getX(), mouse.getY() + 15.0 + ( defaultOperationHeight * ( operationsText.size() - operationNotVisibilityCount ) ) );
+                gc.fillText( "... " + operationNotVisibilityCount + " more", mouse.getX(), mouse.getY() + 15.0 + ( defaultOperationHeight * ( operationsText.size() - operationNotVisibilityCount ) ) + operationStartHeight );
             }
         }
     }
@@ -254,11 +248,7 @@ public class ClassNodeDiagram extends NodeDiagram {
 
     public double calculateMaxAttributionHeight( List< String > attributions ) {
         double height = defaultAttributionHeight;
-        attributionNotVisibilityCount = 0;
-
-        for( Boolean isVisibility : attributionIsVisibility ) {
-            if( ! isVisibility ) attributionNotVisibilityCount++;
-        }
+        attributionNotVisibilityCount = countNotBooleanContents( attributionIsVisibility );
 
         if( attributions.size() > 0 ) {
             if( attributionNotVisibilityCount > 0 ) {
@@ -274,13 +264,25 @@ public class ClassNodeDiagram extends NodeDiagram {
         return height;
     }
 
+    public double calculateStartOperationHeight( List< String > attributions ) {
+        double height = 20.0;
+
+        if( attributions.size() > 0 ) {
+            height = attributions.size() * 20.0;
+        }
+        if( attributionNotVisibilityCount > 0 ) {
+            height -= ( ( attributionNotVisibilityCount - 1 ) * 20 );
+        }
+        if( attributions.size() == attributionNotVisibilityCount ) {
+            height = 20.0;
+        }
+
+        return height;
+    }
+
     public double calculateMaxOperationHeight( List< String > operations ) {
         double height = defaultOperationHeight;
-        operationNotVisibilityCount = 0;
-
-        for( Boolean isVisibility : operationIsVisibility ) {
-            if( ! isVisibility ) operationNotVisibilityCount++;
-        }
+        operationNotVisibilityCount = countNotBooleanContents( operationIsVisibility );
 
         if( operations.size() > 0 ) {
             if( operationNotVisibilityCount > 0 ) {
@@ -296,9 +298,17 @@ public class ClassNodeDiagram extends NodeDiagram {
         return height;
     }
 
-    public void calculateWidthAndHeight( double maxWidth ) {
+    public int countNotBooleanContents( List< Boolean > isNotBooleans ) {
+        int count = 0;
+        for( Boolean isVisibility : isNotBooleans ) {
+            if( ! isVisibility ) count++;
+        }
+        return count;
+    }
+
+    public void calculateWidthAndHeight( double maxWidth, double maxHeight ) {
         calculateUpperLeftCorner( mouse, maxWidth );
-        calculateBottomRightCorner( mouse, maxWidth );
+        calculateBottomRightCorner( mouse, maxWidth, maxHeight );
         width = bottomRightCorner.subtract( upperLeftCorner ).getX();
         height = bottomRightCorner.subtract( upperLeftCorner ).getY();
     }
@@ -307,7 +317,7 @@ public class ClassNodeDiagram extends NodeDiagram {
         upperLeftCorner = new Point2D( point.getX() - width/2, point.getY() - 40.0 );
     }
 
-    private void calculateBottomRightCorner( Point2D point, double width ) {
-        bottomRightCorner = new Point2D( point.getX() + width/2, point.getY() + 40.0 );
+    private void calculateBottomRightCorner( Point2D point, double width, double height ) {
+        bottomRightCorner = new Point2D( point.getX() + width/2, point.getY() + height - defaultClassHeight );
     }
 }

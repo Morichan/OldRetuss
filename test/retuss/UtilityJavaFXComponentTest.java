@@ -136,6 +136,7 @@ public class UtilityJavaFXComponentTest {
         List< String > attributions = Arrays.asList( "- content1 : int", "- content2 : double", "- content3 : char" );
         List< String > operations = Arrays.asList( "- content1() : int", "- content2( argv : int ) : double", "- content3( argv1 : int, argv2 : double ) : char" );
         List< Boolean > attributionsVisibility = Arrays.asList( true, true, true );
+        List< Boolean > operationsVisibility = Arrays.asList( true, true, true );
 
         for( String attribution: attributions ) {
             changeAttributionMenu.getItems().add( new MenuItem( attribution ) );
@@ -163,7 +164,7 @@ public class UtilityJavaFXComponentTest {
         expected.getItems().add( attributionMenu );
         expected.getItems().add( operationMenu );
 
-        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility );
+        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility, operationsVisibility );
 
         assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
         assertThat( actual.getItems().size(), is( 5 ) );
@@ -235,6 +236,7 @@ public class UtilityJavaFXComponentTest {
         List< String > attributions = new ArrayList<>();
         List< String > operations = new ArrayList<>();
         List< Boolean > attributionsVisibility = new ArrayList<>();
+        List< Boolean > operationsVisibility = new ArrayList<>();
 
         attributionMenu.getItems().add( addAttributionMenuItem );
         attributionMenu.getItems().add( changeAttributionMenu );
@@ -251,7 +253,7 @@ public class UtilityJavaFXComponentTest {
         expected.getItems().add( attributionMenu );
         expected.getItems().add( operationMenu );
 
-        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility );
+        ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility, operationsVisibility );
 
         assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
         assertThat( actual.getItems().size(), is( 5 ) );

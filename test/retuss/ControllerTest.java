@@ -591,7 +591,6 @@ public class ControllerTest {
             assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "+ operation() : void" ) );
         }
 
-        @Ignore
         @Test
         public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した操作の変更メニューを選択した場合描画していたClassNameクラスに変更した操作を描画する() {
             clickOn( "#classButtonInCD" );
@@ -600,22 +599,344 @@ public class ControllerTest {
             clickOn( okButtonOnDialogBox );
             clickOn( "#normalButtonInCD" );
             rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ operation() : int" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            moveTo( addMenu );
+            moveTo( changeMenu );
+            clickOn( "+ operation() : int" );
+            write( "+ operation() : double" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "+ operation() : double" ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した操作の削除メニューを選択した場合描画していたClassNameクラスの操作を削除する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ operation() : int" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            moveTo( addMenu );
+            moveTo( deleteMenu );
+            clickOn( "+ operation() : int" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "なし" ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した操作の表示選択チェックメニューのチェックを外した場合描画していたClassNameクラスの操作を非表示にする() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ operation() : int" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "+ operation() : int" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+
+            GraphicsContext gc = getGraphicsContext();
+            TextAlignment textAlignment = gc.getTextAlign();
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているClassNameクラスに追加した非表示の操作の表示選択チェックメニューのチェックを付けた場合描画していたClassNameクラスの操作を表示する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ operation() : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "+ operation() : int" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+            moveTo( classOperationMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "+ operation() : int" );
+
+            rightClickOn( firstClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( true ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているTestクラスの4隅を右クリックすると各箇所でメニューを表示する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "Test" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 39 );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれているTestクラスの4隅より広い8箇所を右クリックしても何も表示しない() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "Test" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 41 );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている属性と操作を2つづつ持つTestクラスの4隅を右クリックすると各箇所でメニューを表示する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "Test" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
             moveTo( classAttributionMenu );
             clickOn( addMenu );
-            write( "- attribution : int" );
+            write( "- x : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- y : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ z() : T" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ w() : T" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 79 );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 79 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている属性と操作を2つづつ持つTestクラスの4隅より広い8箇所を右クリックしても何も表示しない() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "Test" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- x : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- y : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ z() : T" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ w() : T" );
+            clickOn( okButtonOnDialogBox );
+
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 81 );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 81 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 81 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている非表示の属性と操作を2つづつ持つTestクラスの4隅を右クリックするとメニューを表示しそれより広い8箇所を右クリックしても何も表示しない() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "Test" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- longAttribution1 : int" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            clickOn( addMenu );
+            write( "- longAttribution2 : double" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ longOperation1() : void" );
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            clickOn( addMenu );
+            write( "+ longOperation2() : double" );
             clickOn( okButtonOnDialogBox );
 
             rightClickOn( firstClickedClassDiagramCanvas );
             moveTo( classAttributionMenu );
             moveTo( addMenu );
-            moveTo( changeMenu );
-            clickOn( "- attribution : int" );
-            write( "- attribution : double" );
-            clickOn( okButtonOnDialogBox );
-
+            moveTo( checkMenu );
+            clickOn( "- longAttribution1 : int" );
             rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classAttributionMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "- longAttribution2 : double" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "+ longOperation1() : void" );
+            rightClickOn( firstClickedClassDiagramCanvas );
+            moveTo( classOperationMenu );
+            moveTo( addMenu );
+            moveTo( checkMenu );
+            clickOn( "+ longOperation2() : double" );
+
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 39 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "- attribution : double" ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 41 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
 

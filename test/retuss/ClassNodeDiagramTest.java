@@ -1,11 +1,14 @@
 package retuss;
 
+import javafx.geometry.Point2D;
 import javafx.scene.text.Text;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -314,16 +317,137 @@ public class ClassNodeDiagramTest {
     }
 
     @Test
+    public void クラス属性が存在しない場合は属性1つ分の高さを返す() {
+        List< String > attributions = new ArrayList<>();
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        obj.calculateMaxAttributionHeight( attributions );
+
+        double actual = obj.calculateStartOperationHeight( attributions );
+
+        assertThat( actual, is( 20.0 ) );
+    }
+
+    @Test
+    public void クラス属性が1つ存在する場合は属性1つ分の高さを返す() {
+        List< String > attributions = Arrays.asList( "oneVisibilityAttribution" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        obj.calculateMaxAttributionHeight( attributions );
+
+        double actual = obj.calculateStartOperationHeight( attributions );
+
+        assertThat( actual, is( 20.0 ) );
+    }
+
+    @Test
+    public void クラス属性が2つ存在する場合は属性2つ分の高さを返す() {
+        List< String > attributions = Arrays.asList( "visibilityAttribution1", "visibilityAttribution2" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        obj.calculateMaxAttributionHeight( attributions );
+
+        double actual = obj.calculateStartOperationHeight( attributions );
+
+        assertThat( actual, is( 40.0 ) );
+    }
+
+    @Test
+    public void 非表示のクラス属性が1つ存在する場合は属性1つ分の高さを返す() {
+        List< String > attributions = Arrays.asList( "notVisibilityAttribution" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+        obj.calculateMaxAttributionHeight( attributions );
+
+        double actual = obj.calculateStartOperationHeight( attributions );
+
+        assertThat( actual, is( 20.0 ) );
+    }
+
+    @Test
+    public void クラス属性が2つ存在し1つ目が非表示の場合は属性2つ分の高さを返す() {
+        List< String > attributions = Arrays.asList( "notVisibilityAttribution", "visibilityAttribution" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+        obj.calculateMaxAttributionHeight( attributions );
+
+        double actual = obj.calculateStartOperationHeight( attributions );
+
+        assertThat( actual, is( 40.0 ) );
+    }
+
+    @Test
+    public void 非表示のクラス属性が2つ存在する場合は属性1つ分の高さを返す() {
+        List< String > attributions = Arrays.asList( "notVisibilityAttribution1", "notVisibilityAttribution2" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 1, false );
+        obj.calculateMaxAttributionHeight( attributions );
+
+        double actual = obj.calculateStartOperationHeight( attributions );
+
+        assertThat( actual, is( 20.0 ) );
+    }
+
+    @Test
+    public void 非表示のクラス属性が3つ存在する場合は属性1つ分の高さを返す() {
+        List< String > attributions = Arrays.asList( "notVisibilityAttribution1", "notVisibilityAttribution2", "notVisibilityAttribution3" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 0, false );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 1, false );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Visibility, 2, false );
+        obj.calculateMaxAttributionHeight( attributions );
+
+        double actual = obj.calculateStartOperationHeight( attributions );
+
+        assertThat( actual, is( 20.0 ) );
+    }
+
+    @Test
     public void クラスの位置に存在するかどうかを判定する() {
         double clickedX = 100;
         double clickedY = 200;
         obj.createNodeText( ContentType.Title, "ClassName" );
         obj.setMouseCoordinates( clickedX, clickedY );
-        obj.calculateWidthAndHeight( 100 );
+        obj.calculateWidthAndHeight( 100, 80.0 );
 
         boolean actual = obj.isAlreadyDrawnNode( clickedX, clickedY );
 
         assertThat( actual, is( true ) );
+    }
+
+    @Test
+    public void クラスが大きくなった場合の位置に存在するかどうかを判定する() {
+        double clickedX = 100;
+        double clickedY = 200;
+        obj.createNodeText( ContentType.Title, "ClassName" );
+        List< String > attributions = Arrays.asList( "attribution1", "attribution2", "attribution3" );
+        List< String > operations = Arrays.asList( "operation1", "operation2", "operation3" );
+        for( String attribution : attributions ) {
+            obj.createNodeText( ContentType.Attribution, attribution );
+        }
+        for( String operation : operations ) {
+            obj.createNodeText( ContentType.Operation, operation );
+        }
+
+        obj.setMouseCoordinates( clickedX, clickedY );
+        obj.calculateWidthAndHeight( 100, 40.0 + 60.0 + 60.0 );
+
+        List< Point2D > inClassPoint = Arrays.asList( new Point2D( 100, 200 ), new Point2D( 51, 161 ), new Point2D( 149, 239 ), new Point2D( 149, 319 ) );
+        for( Point2D point : inClassPoint ) {
+            assertThat( obj.isAlreadyDrawnNode( point.getX(), point.getY() ), is( true ) );
+        }
     }
 
     @Test
