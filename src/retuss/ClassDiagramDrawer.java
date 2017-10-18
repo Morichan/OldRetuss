@@ -2,7 +2,9 @@ package retuss;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class ClassDiagramDrawer {
 
     public void setGraphicsContext( GraphicsContext gc ) {
         this.gc = gc;
+        drawDiagramCanvasEdge();
     }
 
     public void setMouseCoordinates( double x, double y ) {
@@ -46,6 +49,7 @@ public class ClassDiagramDrawer {
         for( int i = 0; i < nodes.size(); i++ ) {
             drawNode( i );
         }
+        drawDiagramCanvasEdge();
     }
 
     public void createDrawnNode( int number ) {
@@ -153,5 +157,13 @@ public class ClassDiagramDrawer {
         }
 
         return act;
+    }
+
+    private void drawDiagramCanvasEdge() {
+        double space = 5.0;
+        double width = gc.getCanvas().getWidth();
+        double height = gc.getCanvas().getHeight();
+        gc.setStroke( Color.BLACK );
+        gc.strokeRect( space, space, width - space * 2, height - space * 2 );
     }
 }

@@ -913,6 +913,7 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 39 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
@@ -939,12 +940,24 @@ public class ControllerTest {
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
+        @Ignore
+        @Test
+        public void コンポジションアイコンを選択している際にキャンバスに描かれているClassNameクラスをクリックするとClassNameクラスの縁の色を変更する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+
+            clickOn( firstClickedClassDiagramCanvas );
+        }
+
 
         /**
          * クラス図キャンバス直下に存在するスクロールパネルを取得する。
          *
          * 具体的には、ステージ上のボーダーパネル上のアンカーパネル上のスプリットパネル上の2つ目のアンカーパネル上の
-         * タブパネル上のアンカーパネル上のVボックス上の2つ目のアンカーパネル上のスクロールパネルを取得する。
+         * タブパネル上のアンカーパネル上のボーダーパネル上のセンターのアンカーパネル上のスクロールパネルを取得する。
          *
          * 右クリックメニューを表示する大元のパネルがこのスクロールパネルであるため、主に右クリックメニューのテストに利用する。
          *
@@ -957,8 +970,8 @@ public class ControllerTest {
             AnchorPane anchorPaneOnSplitPane = ( AnchorPane ) splitPaneOnAnchorPaneOnBorderPane.getItems().get( 1 );
             TabPane tabPaneOnAnchorPaneOnSplitPane = ( TabPane ) anchorPaneOnSplitPane.getChildren().get( 0 );
             AnchorPane anchorPaneOnTabPane = ( AnchorPane ) tabPaneOnAnchorPaneOnSplitPane.getTabs().get( 0 ).getContent();
-            VBox vBoxOnAnchorPaneOnTabPane = ( VBox ) anchorPaneOnTabPane.getChildren().get( 0 );
-            AnchorPane anchorPaneOnVBox = ( AnchorPane ) vBoxOnAnchorPaneOnTabPane.getChildren().get( 1 );
+            BorderPane borderPaneOnAnchorPaneOnTabPane = ( BorderPane ) anchorPaneOnTabPane.getChildren().get( 0 );
+            AnchorPane anchorPaneOnVBox = ( AnchorPane ) borderPaneOnAnchorPaneOnTabPane.getCenter();
             return ( ScrollPane ) anchorPaneOnVBox.getChildren().get( 0 );
         }
 
