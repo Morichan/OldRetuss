@@ -940,7 +940,6 @@ public class ControllerTest {
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
-        @Ignore
         @Test
         public void コンポジションアイコンを選択している際にキャンバスに描かれているClassNameクラスをクリックするとClassNameクラスの縁の色を変更する() {
             clickOn( "#classButtonInCD" );
@@ -950,6 +949,14 @@ public class ControllerTest {
             clickOn( "#compositionButtonInCD" );
 
             clickOn( firstClickedClassDiagramCanvas );
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.PINK ) );
+            assertThat( textAlignment, is( TextAlignment.LEFT ) );
         }
 
 

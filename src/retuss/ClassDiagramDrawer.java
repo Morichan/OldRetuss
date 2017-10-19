@@ -16,6 +16,7 @@ public class ClassDiagramDrawer {
     private double mouseX = 0.0;
     private double mouseY = 0.0;
     private String nodeText;
+    private ContentType nowStateType;
 
     /**
      * 生成したクラス図のノードのリストを返す。
@@ -75,6 +76,15 @@ public class ClassDiagramDrawer {
         }
     }
 
+    public void addDrawnEdge( List< Button > buttons, String name, double toMouseX, double toMouseY ) {
+        for( Button button : buttons ) {
+            if( button.isDefaultButton() ) {
+                createDrawnEdge( button, name, toMouseX, toMouseY );
+                break;
+            }
+        }
+    }
+
     public List< String > getDrawnNodeTextList( int nodeNumber, ContentType type ) {
         return nodes.get( nodeNumber ).getNodeContents( type );
     }
@@ -118,7 +128,20 @@ public class ClassDiagramDrawer {
             nodes.add( noteNodeDiagram );
             currentNodeNumber = nodes.size() - 1;
             createDrawnNode( currentNodeNumber );
-        //} else if( button.getText().equals( "Normal" ) ) {
+        }
+    }
+
+    private void createDrawnEdge( Button button, String name, double toMouseX, double toMouseY ) {
+        if( nodeText.length() <= 0 ) return;
+
+        if( button.getText().equals( "Composition" ) ) {
+            int fromNodeId = getNodeDiagramId( mouseX, mouseY );
+            int toNodeId = getNodeDiagramId( toMouseX, toMouseY );
+            // nodes.get( fromNodeId )
+            // ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
+            // nodes.add( classNodeDiagram );
+            // currentNodeNumber = nodes.size() - 1;
+            // createDrawnNode( currentNodeNumber );
         }
     }
 
@@ -136,6 +159,21 @@ public class ClassDiagramDrawer {
             if( nodeDiagram.isAlreadyDrawnNode( mouseX, mouseY ) ) {
                 act = true;
                 break;
+            }
+        }
+
+        return act;
+    }
+
+    public boolean hasWaitedAnyDrawnDiagram( ContentType type, double mouseX, double mouseY ) {
+        boolean act = false;
+
+        if( isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) {
+            if( nowStateType == type ) {
+                act = true;
+            } else {
+                nowStateType = type;
+                nodes.get( getNodeDiagramId( mouseX, mouseY ) );
             }
         }
 

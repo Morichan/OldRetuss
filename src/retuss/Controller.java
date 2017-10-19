@@ -34,6 +34,8 @@ public class Controller {
     @FXML
     Button noteButtonInCD;
     @FXML
+    Button compositionButtonInCD;
+    @FXML
     ScrollPane classDiagramScrollPane;
     @FXML
     Canvas classDiagramCanvas;
@@ -54,7 +56,7 @@ public class Controller {
      */
     @FXML
     void initialize() {
-        buttonsInCD.addAll( Arrays.asList( normalButtonInCD, classButtonInCD, noteButtonInCD ) );
+        buttonsInCD.addAll( Arrays.asList( normalButtonInCD, classButtonInCD, noteButtonInCD, compositionButtonInCD ) );
         // buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, normalButtonInCD );
     }
 
@@ -69,6 +71,10 @@ public class Controller {
     @FXML
     public void selectNoteInCD() {
         buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, noteButtonInCD );
+    }
+    @FXML
+    public void selectCompositionInCD() {
+        buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, compositionButtonInCD );
     }
 
     @FXML
@@ -98,36 +104,50 @@ public class Controller {
      * @param mouseY 左クリック時のマウス位置のY軸
      */
     private void clickedCanvasByPrimaryButtonInCD( double mouseX, double mouseY ) {
-        if( classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) return;
-
-        if( util.getDefaultButtonIn( buttonsInCD ) == classButtonInCD ) {
+        classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
+        if( classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) {
+            if( util.getDefaultButtonIn( buttonsInCD ) == compositionButtonInCD ) {
+                if( ! classDiagramDrawer.hasWaitedAnyDrawnDiagram( ContentType.Composition, mouseX, mouseY ) ) {
+                    classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
+                    return;
+                }
+                String compositionName = showCreateCompositionNameInputDialog();
+                classDiagramDrawer.addDrawnEdge( buttonsInCD, compositionName, mouseX, mouseY );
+            }
+        } else {
             String className = showCreateClassNameInputDialog();
-            classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
             classDiagramDrawer.setNodeText( className );
             classDiagramDrawer.addDrawnNode( buttonsInCD );
         }
     }
 
     private String showCreateClassNameInputDialog() {
-        return showClassDiagramInputDialog( "クラス名", "クラス名を入力してください。" );
+        return showClassDiagramInputDialog( "クラス名", "クラス名を入力してください。", "" );
     }
 
-    private String showChangeClassNameInputDialog() {
-        return showClassDiagramInputDialog( "クラス名の変更", "変更後のクラス名を入力してください。" );
+    private String showChangeClassNameInputDialog( String title ) {
+        return showClassDiagramInputDialog( "クラス名の変更", "変更後のクラス名を入力してください。", title );
     }
 
     private String showAddClassAttributionInputDialog() {
-        return showClassDiagramInputDialog( "属性の追加", "追加する属性を入力してください" );
+        return showClassDiagramInputDialog( "属性の追加", "追加する属性を入力してください。", "" );
     }
 
     private String showChangeClassAttributionInputDialog( String attribution ) {
-        return showClassDiagramInputDialog( "属性の変更", attribution + "\n変更後の属性を入力してください" );
+        return showClassDiagramInputDialog( "属性の変更", "変更後の属性を入力してください。", attribution );
     }
 
     private String showAddClassOperationInputDialog() {
-        return showClassDiagramInputDialog( "操作の追加", "追加する操作を入力してください" );
+        return showClassDiagramInputDialog( "操作の追加", "追加する操作を入力してください。", "" );
     }
 
+    private String showChangeClassOperationInputDialog( String operation ) {
+        return showClassDiagramInputDialog( "操作の変更", "変更後の操作を入力してください。", operation );
+    }
+
+    private String showCreateCompositionNameInputDialog() {
+        return showClassDiagramInputDialog( "コンポジションの追加", "コンポジション先の関連端名を追加してください。", "" );
+    }
     /**
      * クラス図のテキスト入力ダイアログを表示する。
      * 表示中はダイアログ以外の本機能の他ウィンドウは入力を受け付けない。
@@ -137,8 +157,8 @@ public class Controller {
      * @param headerText テキスト入力ダイアログのヘッダーテキスト
      * @return 入力された文字列 入力せずにOKボタンを押した場合や×ボタンを押した場合は空文字を返す。
      */
-    private String showClassDiagramInputDialog( String title, String headerText ) {
-        classNameInputDialog = new TextInputDialog();
+    private String showClassDiagramInputDialog( String title, String headerText, String contentText ) {
+        classNameInputDialog = new TextInputDialog( contentText );
         classNameInputDialog.setTitle( title );
         classNameInputDialog.setHeaderText( headerText );
         Optional< String > result = classNameInputDialog.showAndWait();
@@ -190,7 +210,7 @@ public class Controller {
 
             // クラス名の変更
             contextMenu.getItems().get( 0 ).setOnAction( event -> {
-                String className = showChangeClassNameInputDialog();
+                String className = showChangeClassNameInputDialog( classDiagramDrawer.getNodes().get( classDiagramDrawer.getCurrentNodeNumber() ).getNodeText() );
                 classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Title, 0, className );
                 classDiagramDrawer.allReDrawNode();
             } );
@@ -243,7 +263,7 @@ public class Controller {
             for( int i = 0; i < operations.size(); i++ ) {
                 int contentNumber = i;
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
-                    String changedOperation = showAddClassOperationInputDialog();
+                    String changedOperation = showChangeClassOperationInputDialog( operations.get( contentNumber ) );
                     classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber, changedOperation );
                     classDiagramDrawer.allReDrawNode();
                 } );

@@ -54,7 +54,7 @@ public class ClassNodeDiagram extends NodeDiagram {
     }
 
     @Override
-    public void createNodeText(ContentType type, String text ) {
+    public void createNodeText( ContentType type, String text ) {
         if( type == ContentType.Title ) {
             nodeText = text;
         } else if( type == ContentType.Attribution ) {
@@ -95,7 +95,7 @@ public class ClassNodeDiagram extends NodeDiagram {
         if( type == ContentType.Attribution ) {
             content = attributions.get( number );
         } else if( type == ContentType.Operation ) {
-            content = operations.get( number );
+            content = operations.get(number);
         } else {
             content = "";
         }

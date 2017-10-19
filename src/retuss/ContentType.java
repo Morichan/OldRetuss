@@ -9,5 +9,7 @@ public enum ContentType {
     Visibility,
     Abstraction,
     Static,
-    Derived;
+    Derived,
+    Composition,
+    Generalization;
 }
