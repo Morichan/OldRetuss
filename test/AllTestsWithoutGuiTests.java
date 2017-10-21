@@ -8,6 +8,9 @@ import retuss.*;
         ControllerTest.WithoutGuiTest.class,
         ClassDiagramDrawerTest.class,
         UtilityJavaFXComponentTest.class,
+        AttributionTest.class,
+        OperationTest.class,
+        RelationshipAttributionTest.class,
         ClassNodeDiagramTest.class,
         CompositionEdgeDiagramTest.class,
 } )

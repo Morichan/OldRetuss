@@ -2,7 +2,6 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
-import javafx.scene.text.Text;
 import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Before;
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -410,16 +408,16 @@ public class ClassDiagramDrawerTest {
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Attribution, "- content2 : double" );
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
-            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility, 0, false );
+            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication, 0, false );
 
             assertThat( id, is( 0 ) );
             assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
             assertThat( cdd.getNodes().size(), is( 1 ) );
             assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
             assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Visibility ).size(), is( 2 ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Visibility ).get( 0 ), is( false ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Visibility ).get( 1 ), is( true ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Indication).size(), is( 2 ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Indication).get( 0 ), is( false ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Attribution, ContentType.Indication).get( 1 ), is( true ) );
         }
 
         @Test
@@ -540,16 +538,16 @@ public class ClassDiagramDrawerTest {
             cdd.getNodeDiagramId( 100.0, 200.0 );
             cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "- content2() : double" );
             int id = cdd.getNodeDiagramId( 100.0, 200.0 );
-            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Operation, ContentType.Visibility, 0, false );
+            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication, 0, false );
 
             assertThat( id, is( 0 ) );
             assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
             assertThat( cdd.getNodes().size(), is( 1 ) );
             assertThat( cdd.getNodes().get( 0 ).getNodeId(), is( 0 ) );
             assertThat( cdd.getNodes().get( 0 ).getNodeText(), is( "ClassName" ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Visibility ).size(), is( 2 ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Visibility ).get( 0 ), is( false ) );
-            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Visibility ).get( 1 ), is( true ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Indication).size(), is( 2 ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Indication).get( 0 ), is( false ) );
+            assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Indication).get( 1 ), is( true ) );
         }
     }
 
@@ -795,19 +793,18 @@ public class ClassDiagramDrawerTest {
             assertThat( actual, is( true ) );
         }
 
-        @Ignore
         @Test
         public void キャンバスに描画しているクラスを2つクリックするとコンポジション関係を描画する() {
+            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
 
-            cdd.getNodeDiagramId( 100.0, 200.0 );
-            cdd.addDrawnNodeText( cdd.getCurrentNodeNumber(), ContentType.Operation, "- content2() : double" );
-            int id = cdd.getNodeDiagramId( 100.0, 200.0 );
-            cdd.setDrawnNodeContentBoolean( cdd.getCurrentNodeNumber(), ContentType.Operation, ContentType.Visibility, 0, false );
+            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
 
-            cdd.setNodeText( "composition" );
-            cdd.addDrawnNode( buttons );
-
-            assertThat( cdd.getNodes().get( 0 ).getNodeContentText( ContentType.Generalization, 0 ), is( 0 ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 1 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition" ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
         }
     }
 }

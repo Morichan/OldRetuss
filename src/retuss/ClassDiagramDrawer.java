@@ -11,6 +11,7 @@ import java.util.List;
 public class ClassDiagramDrawer {
     GraphicsContext gc;
     private List< NodeDiagram > nodes = new ArrayList<>();
+    private CompositionEdgeDiagram compositions = new CompositionEdgeDiagram();
 
     private int currentNodeNumber = -1;
     private double mouseX = 0.0;
@@ -137,6 +138,9 @@ public class ClassDiagramDrawer {
         if( button.getText().equals( "Composition" ) ) {
             int fromNodeId = getNodeDiagramId( mouseX, mouseY );
             int toNodeId = getNodeDiagramId( toMouseX, toMouseY );
+            compositions.createEdgeText( ContentType.Composition, name );
+            compositions.setRelationSourceId( ContentType.Composition, compositions.getCompositionsCount() - 1, fromNodeId );
+            compositions.setRelationId( ContentType.Composition, compositions.getCompositionsCount() - 1, toNodeId );
             // nodes.get( fromNodeId )
             // ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
             // nodes.add( classNodeDiagram );
@@ -195,6 +199,10 @@ public class ClassDiagramDrawer {
         }
 
         return act;
+    }
+
+    public CompositionEdgeDiagram getCompositionEdgeDiagram() {
+        return compositions;
     }
 
     private void drawDiagramCanvasEdge() {

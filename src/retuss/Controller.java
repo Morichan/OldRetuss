@@ -1,20 +1,11 @@
 package retuss;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.stage.WindowEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -188,8 +179,8 @@ public class Controller {
         ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType(),
                 classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution ),
                 classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ),
-                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility ),
-                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Visibility ) );
+                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication),
+                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication) );
 
         classDiagramScrollPane.setContextMenu( formatClassContextMenuInCD( contextMenu, nodeDiagram.getNodeType(), mouseX, mouseY ) );
     }
@@ -254,7 +245,7 @@ public class Controller {
             for( int i = 0; i < attributions.size(); i++ ) {
                 int contentNumber = i;
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( i ).setOnAction( event -> {
-                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Visibility, contentNumber,
+                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication, contentNumber,
                             ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( contentNumber ) ).isSelected() );
                     classDiagramDrawer.allReDrawNode();
                 } );
@@ -280,7 +271,7 @@ public class Controller {
             for( int i = 0; i < operations.size(); i++ ) {
                 int contentNumber = i;
                 ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( i ).setOnAction( event -> {
-                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Visibility, contentNumber,
+                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication, contentNumber,
                             ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( contentNumber ) ).isSelected() );
                     classDiagramDrawer.allReDrawNode();
                 } );

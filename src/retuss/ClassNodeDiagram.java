@@ -1,12 +1,10 @@
 package retuss;
 
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.scene.text.Font;
 
-import javax.swing.text.AbstractDocument;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,13 +27,13 @@ public class ClassNodeDiagram extends NodeDiagram {
     private double width = 0.0;
     private double height = 0.0;
 
-    private List< String > attributions = new ArrayList<>();
-    private List< String > operations = new ArrayList<>();
+    private List< ClassData > attributions = new ArrayList<>();
+    private List< ClassData > operations = new ArrayList<>();
 
-    private List< Boolean > attributionIsVisibility = new ArrayList<>();
+    // private List< Boolean > attributionIsVisibility = new ArrayList<>();
     private int attributionNotVisibilityCount = 0;
 
-    private List< Boolean > operationIsVisibility = new ArrayList<>();
+    // private List< Boolean > operationIsVisibility = new ArrayList<>();
     private int operationNotVisibilityCount = 0;
 
     public double getClassNameSpace() {
@@ -58,11 +56,9 @@ public class ClassNodeDiagram extends NodeDiagram {
         if( type == ContentType.Title ) {
             nodeText = text;
         } else if( type == ContentType.Attribution ) {
-            attributions.add( text );
-            attributionIsVisibility.add( true );
+            attributions.add( new Attribution( text ) );
         } else if( type == ContentType.Operation ) {
-            operations.add( text );
-            operationIsVisibility.add( true );
+            operations.add( new Operation( text ) );
         }
     }
 
@@ -71,9 +67,9 @@ public class ClassNodeDiagram extends NodeDiagram {
         if( type == ContentType.Title ) {
             nodeText = text;
         } else if( type == ContentType.Attribution ) {
-            attributions.set( number, text );
+            attributions.get( number ).setName( text );
         } else if( type == ContentType.Operation ) {
-            operations.set( number, text );
+            operations.get( number ).setName( text );
         }
     }
 
@@ -81,10 +77,8 @@ public class ClassNodeDiagram extends NodeDiagram {
     public void deleteNodeText( ContentType type, int number ) {
         if( type == ContentType.Attribution ) {
             attributions.remove( number );
-            attributionIsVisibility.remove( number );
         } else if( type == ContentType.Operation ) {
             operations.remove( number );
-            operationIsVisibility.remove( number );
         }
     }
 
@@ -93,9 +87,9 @@ public class ClassNodeDiagram extends NodeDiagram {
         String content;
 
         if( type == ContentType.Attribution ) {
-            content = attributions.get( number );
+            content = attributions.get( number ).getName();
         } else if( type == ContentType.Operation ) {
-            content = operations.get(number);
+            content = operations.get( number ).getName();
         } else {
             content = "";
         }
@@ -104,11 +98,15 @@ public class ClassNodeDiagram extends NodeDiagram {
 
     @Override
     public List< String > getNodeContents( ContentType type ) {
-        List< String > list;
+        List< String > list = new ArrayList<>();
         if( type == ContentType.Attribution ) {
-            list = attributions;
+            for( ClassData attribution : attributions ) {
+                list.add( attribution.getName() );
+            }
         } else if( type == ContentType.Operation ) {
-            list = operations;
+            for( ClassData operation : operations ) {
+                list.add( operation.getName() );
+            }
         } else {
             list = null;
         }
@@ -118,21 +116,27 @@ public class ClassNodeDiagram extends NodeDiagram {
     @Override
     public void setNodeContentBoolean( ContentType parent, ContentType child, int contentNumber, boolean isChecked ) {
         if( parent == ContentType.Attribution ) {
-            if( child == ContentType.Visibility ) {
-                attributionIsVisibility.set( contentNumber, isChecked );
+            if( child == ContentType.Indication ) {
+                attributions.get( contentNumber ).setIndication( isChecked );
             }
         } else if( parent == ContentType.Operation ) {
-            operationIsVisibility.set( contentNumber, isChecked );
+            if( child == ContentType.Indication ) {
+                operations.get( contentNumber ).setIndication( isChecked );
+            }
         }
     }
 
     @Override
     public List< Boolean > getNodeContentsBoolean( ContentType parent, ContentType child ) {
-        List< Boolean > list;
+        List< Boolean > list = new ArrayList<>();
         if( parent == ContentType.Attribution ) {
-            list = attributionIsVisibility;
+            for( ClassData attribution : attributions ) {
+                list.add( attribution.isIndicate() );
+            }
         } else if( parent == ContentType.Operation ) {
-            list = operationIsVisibility;
+            for( ClassData operation : operations ) {
+                list.add( operation.isIndicate() );
+            }
         } else {
             list = null;
         }
@@ -147,13 +151,13 @@ public class ClassNodeDiagram extends NodeDiagram {
         classNameText.setFont( Font.font( diagramFont , FontWeight.BOLD, classNameFontSize ) );
         List< Text > attributionsText = new ArrayList<>();
         List< Text > operationsText = new ArrayList<>();
-        for( String attribution: attributions ) {
-            Text text = new Text( attribution );
+        for( ClassData attribution: attributions ) {
+            Text text = new Text( attribution.getName() );
             text.setFont( Font.font( diagramFont, FontWeight.LIGHT, classAttributionFontSize ) );
             attributionsText.add( text );
         }
-        for( String operation: operations ) {
-            Text text = new Text( operation );
+        for( ClassData operation: operations ) {
+            Text text = new Text( operation.getName() );
             text.setFont( Font.font( diagramFont, FontWeight.LIGHT, classOperationFontSize ) );
             operationsText.add( text );
         }
@@ -186,14 +190,16 @@ public class ClassNodeDiagram extends NodeDiagram {
             gc.setTextAlign( TextAlignment.LEFT );
             gc.setFont( attributionsText.get( 0 ).getFont() );
             int notDrawAttributionCount = 0;
+            boolean isExistedNoIndication = false;
             for( int i = 0; i < attributionsText.size(); i++ ) {
-                if( attributionIsVisibility.get( i ) ) {
+                if( attributions.get( i ).isIndicate() ) {
                     gc.fillText( attributionsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, mouse.getY() + 15.0 + ( defaultAttributionHeight * ( i - notDrawAttributionCount ) ) );
                 } else {
                     notDrawAttributionCount++;
+                    isExistedNoIndication = true;
                 }
             }
-            if( attributionIsVisibility.contains( false ) ) {
+            if( isExistedNoIndication ) {
                 gc.setTextAlign( TextAlignment.CENTER );
                 gc.fillText( "... " + attributionNotVisibilityCount + " more", mouse.getX(), mouse.getY() + 15.0 + ( defaultAttributionHeight * ( attributionsText.size() - attributionNotVisibilityCount ) ) );
             }
@@ -203,14 +209,16 @@ public class ClassNodeDiagram extends NodeDiagram {
             gc.setTextAlign( TextAlignment.LEFT );
             gc.setFont( operationsText.get( 0 ).getFont() );
             int notDrawOperationCount = 0;
+            boolean isExistedNoIndication = false;
             for( int i = 0; i < operationsText.size(); i++ ) {
-                if( operationIsVisibility.get( i ) ) {
+                if( operations.get( i ).isIndicate() ) {
                     gc.fillText( operationsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, mouse.getY() + 15.0 + ( defaultOperationHeight * ( i - notDrawOperationCount ) ) + operationStartHeight );
                 } else {
                     notDrawOperationCount++;
+                    isExistedNoIndication = true;
                 }
             }
-            if( operationIsVisibility.contains( false ) ) {
+            if( isExistedNoIndication ) {
                 gc.setTextAlign( TextAlignment.CENTER );
                 gc.fillText( "... " + operationNotVisibilityCount + " more", mouse.getX(), mouse.getY() + 15.0 + ( defaultOperationHeight * ( operationsText.size() - operationNotVisibilityCount ) ) + operationStartHeight );
             }
@@ -223,13 +231,13 @@ public class ClassNodeDiagram extends NodeDiagram {
         List< Double > classAttributions = new ArrayList<>();
         classAttributions.add( 0.0 );
         for( int i = 0; i < attributionsText.size(); i++ ) {
-            if( attributionIsVisibility.get( i ) )
+            if( attributions.get( i ).isIndicate() )
                 classAttributions.add( attributionsText.get( i ).getLayoutBounds().getWidth() );
         }
         List< Double > classOperations = new ArrayList<>();
         classOperations.add( 0.0 );
         for( int i = 0; i < operationsText.size(); i++ ) {
-            if( operationIsVisibility.get( i ) )
+            if( operations.get( i ).isIndicate() )
                 classOperations.add( operationsText.get( i ).getLayoutBounds().getWidth() );
         }
 
@@ -246,9 +254,9 @@ public class ClassNodeDiagram extends NodeDiagram {
         return width;
     }
 
-    public double calculateMaxAttributionHeight( List< String > attributions ) {
+    public double calculateMaxAttributionHeight( List< ClassData > attributions ) {
         double height = defaultAttributionHeight;
-        attributionNotVisibilityCount = countNotBooleanContents( attributionIsVisibility );
+        attributionNotVisibilityCount = countNotBooleanContents( attributions );
 
         if( attributions.size() > 0 ) {
             if( attributionNotVisibilityCount > 0 ) {
@@ -264,7 +272,7 @@ public class ClassNodeDiagram extends NodeDiagram {
         return height;
     }
 
-    public double calculateStartOperationHeight( List< String > attributions ) {
+    public double calculateStartOperationHeight( List< ClassData > attributions ) {
         double height = 20.0;
 
         if( attributions.size() > 0 ) {
@@ -280,9 +288,9 @@ public class ClassNodeDiagram extends NodeDiagram {
         return height;
     }
 
-    public double calculateMaxOperationHeight( List< String > operations ) {
+    public double calculateMaxOperationHeight( List< ClassData > operations ) {
         double height = defaultOperationHeight;
-        operationNotVisibilityCount = countNotBooleanContents( operationIsVisibility );
+        operationNotVisibilityCount = countNotBooleanContents( operations );
 
         if( operations.size() > 0 ) {
             if( operationNotVisibilityCount > 0 ) {
@@ -298,10 +306,10 @@ public class ClassNodeDiagram extends NodeDiagram {
         return height;
     }
 
-    public int countNotBooleanContents( List< Boolean > isNotBooleans ) {
+    public int countNotBooleanContents( List< ClassData > data ) {
         int count = 0;
-        for( Boolean isVisibility : isNotBooleans ) {
-            if( ! isVisibility ) count++;
+        for( ClassData datum : data ) {
+            if( ! datum.isIndicate() ) count++;
         }
         return count;
     }
