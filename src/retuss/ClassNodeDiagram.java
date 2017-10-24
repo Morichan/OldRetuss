@@ -172,11 +172,20 @@ public class ClassNodeDiagram extends NodeDiagram {
         drawGraphicsContext( classNameText, attributionsText, operationsText, maxWidth, classHeight, attributionHeight, operationHeight, operationStartHeight );
     }
 
+    @Override
+    public void setChosen( boolean isChosen ) {
+        this.isChosen = isChosen;
+    }
+
     public void drawGraphicsContext( Text classNameText, List< Text > attributionsText, List< Text > operationsText, double maxWidth, double classHeight, double attributionHeight, double operationHeight, double operationStartHeight ) {
         gc.setFill( Color.BEIGE );
         gc.fillRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributionHeight + operationHeight );
 
-        gc.setStroke( Color.BLACK );
+        if( isChosen ) {
+            gc.setStroke( Color.RED );
+        } else {
+            gc.setStroke( Color.BLACK );
+        }
         gc.strokeRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributionHeight + operationHeight );
         gc.strokeLine( upperLeftCorner.getX(), upperLeftCorner.getY() + classHeight, bottomRightCorner.getX(), upperLeftCorner.getY() + classHeight );
         gc.strokeLine( upperLeftCorner.getX(), upperLeftCorner.getY() + classHeight + attributionHeight, bottomRightCorner.getX(), upperLeftCorner.getY() + classHeight + attributionHeight );

@@ -15,12 +15,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import mockit.Expectations;
-import mockit.Mocked;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import mockit.*;
+import mockit.internal.mockups.MockupBridge;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.experimental.runners.Enclosed;
@@ -29,6 +26,7 @@ import org.testfx.framework.junit.ApplicationTest;
 
 import java.io.IOException;
 
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
@@ -93,6 +91,11 @@ public class ControllerTest {
             changeMenu = "変更";
             deleteMenu = "削除";
             checkMenu = "表示選択";
+        }
+
+        @After
+        public void reset() {
+            ClassNodeDiagram.resetNodeCount();
         }
 
         @Test
@@ -942,6 +945,10 @@ public class ControllerTest {
 
         @Test
         public void コンポジションアイコンを選択している際にキャンバスに描かれているClassNameクラスをクリックするとClassNameクラスの縁の色を変更する() {
+            new MockUp< ClassDiagramDrawer >() {
+                @Mock
+                public void drawDiagramCanvasEdge() {}
+            };
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
             write( "ClassName" );
@@ -955,8 +962,25 @@ public class ControllerTest {
             TextAlignment textAlignment = gc.getTextAlign();
 
             assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.PINK ) );
-            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+            assertThat( strokeColor, is( Color.RED ) );
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Test
+        public void コンポジションアイコンを選択している際にキャンバスに描かれている2つのClassNameクラスをクリックしDialogに関係属性を記述するとコンポジション関係を描画する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- composition" );
+            clickOn( okButtonOnDialogBox );
         }
 
 

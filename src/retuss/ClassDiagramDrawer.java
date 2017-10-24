@@ -1,10 +1,10 @@
 package retuss;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +34,7 @@ public class ClassDiagramDrawer {
 
     public void setGraphicsContext( GraphicsContext gc ) {
         this.gc = gc;
+        compositions.setGraphicsContext( this.gc );
         drawDiagramCanvasEdge();
     }
 
@@ -48,10 +49,22 @@ public class ClassDiagramDrawer {
 
     public void allReDrawNode() {
         gc.clearRect( 0.0, 0.0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight() );
+
+        drawDiagramCanvasEdge();
+        allReDrawEdge();
         for( int i = 0; i < nodes.size(); i++ ) {
             drawNode( i );
         }
-        drawDiagramCanvasEdge();
+    }
+
+    public void allReDrawEdge() {
+        for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
+            int relationId = nodes.get( compositions.getRelationId( ContentType.Composition, i ) ).getNodeId();
+            int relationSourceId = nodes.get( compositions.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
+            Point2D releasePoint = nodes.get( relationId ).getPoint();
+            Point2D releaseSourcePoint = nodes.get( relationSourceId ).getPoint();
+            compositions.draw( releasePoint, releaseSourcePoint );
+        }
     }
 
     public void createDrawnNode( int number ) {
@@ -60,11 +73,11 @@ public class ClassDiagramDrawer {
         nodes.get( number ).setGraphicsContext( gc );
         nodes.get( number ).setMouseCoordinates( mouseX, mouseY );
         nodes.get( number ).createNodeText( ContentType.Title, nodeText );
+        nodes.get( number ).setChosen( false );
         nodes.get( number ).draw();
     }
 
     public void drawNode( int number ) {
-        nodes.get( number ).setGraphicsContext( gc );
         nodes.get( number ).draw();
     }
 
@@ -136,11 +149,13 @@ public class ClassDiagramDrawer {
         if( nodeText.length() <= 0 ) return;
 
         if( button.getText().equals( "Composition" ) ) {
-            int fromNodeId = getNodeDiagramId( mouseX, mouseY );
-            int toNodeId = getNodeDiagramId( toMouseX, toMouseY );
+            getNodeDiagramId( mouseX, mouseY );
+            int fromNodeId = currentNodeNumber;
+            getNodeDiagramId( toMouseX, toMouseY );
+            int toNodeId = currentNodeNumber;
             compositions.createEdgeText( ContentType.Composition, name );
-            compositions.setRelationSourceId( ContentType.Composition, compositions.getCompositionsCount() - 1, fromNodeId );
             compositions.setRelationId( ContentType.Composition, compositions.getCompositionsCount() - 1, toNodeId );
+            compositions.setRelationSourceId( ContentType.Composition, compositions.getCompositionsCount() - 1, fromNodeId );
             // nodes.get( fromNodeId )
             // ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
             // nodes.add( classNodeDiagram );
@@ -175,9 +190,12 @@ public class ClassDiagramDrawer {
         if( isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) {
             if( nowStateType == type ) {
                 act = true;
+                // findNodeDiagram( mouseX, mouseY );
+                nodes.get( currentNodeNumber ).setChosen( false );
             } else {
                 nowStateType = type;
-                nodes.get( getNodeDiagramId( mouseX, mouseY ) );
+                findNodeDiagram( mouseX, mouseY );
+                nodes.get( currentNodeNumber ).setChosen( true );
             }
         }
 
@@ -205,7 +223,7 @@ public class ClassDiagramDrawer {
         return compositions;
     }
 
-    private void drawDiagramCanvasEdge() {
+    public void drawDiagramCanvasEdge() {
         double space = 5.0;
         double width = gc.getCanvas().getWidth();
         double height = gc.getCanvas().getHeight();

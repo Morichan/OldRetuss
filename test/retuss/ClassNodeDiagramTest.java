@@ -2,6 +2,7 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import javafx.scene.text.Text;
+import mockit.Expectations;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -531,5 +532,16 @@ public class ClassNodeDiagramTest {
         obj.setNodeContentBoolean( ContentType.Operation, ContentType.Indication, 0, expected );
 
         assertThat( obj.getNodeContentsBoolean( ContentType.Operation, ContentType.Indication).get( 0 ), is( expected ) );
+    }
+
+    @Test
+    public void クラス図の中央ポイントを取得する() {
+        Point2D expected = new Point2D( 100, 200 );
+        obj.setMouseCoordinates( expected.getX(), expected.getY() );
+        obj.createNodeText( ContentType.Title, "ClassName" );
+
+        Point2D actual = obj.getPoint();
+
+        assertThat( actual, is( expected ) );
     }
 }

@@ -13,9 +13,11 @@ abstract public class NodeDiagram {
     protected int nodeId;
     protected String nodeText = "";
     protected String diagramFont = "Consolas";
+    protected boolean isChosen = false;
 
     abstract public boolean isAlreadyDrawnNode( double x, double y );
     abstract public void draw();
+    abstract public void setChosen( boolean isChosen );
     abstract public void createNodeText( ContentType type, String text );
     abstract public void changeNodeText( ContentType type, int number, String text );
     abstract public void deleteNodeText( ContentType type, int number );
@@ -33,7 +35,7 @@ abstract public class NodeDiagram {
      * 静的カウント変数をリセットする。
      * テストコードで主に用いる。
      */
-    void resetNodeCount() {
+    static void resetNodeCount() {
         nodeCount = 0;
     }
 
@@ -55,5 +57,9 @@ abstract public class NodeDiagram {
 
     public int getNodeId() {
         return nodeId;
+    }
+
+    public Point2D getPoint() {
+        return mouse;
     }
 }

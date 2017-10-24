@@ -37,6 +37,9 @@ public class NoteNodeDiagram extends NodeDiagram {
     }
 
     @Override
+    public void setChosen( boolean isChosen ) {}
+
+    @Override
     public List< String > getNodeContents( ContentType type ) {
         return null;
     }

@@ -95,20 +95,24 @@ public class Controller {
      * @param mouseY 左クリック時のマウス位置のY軸
      */
     private void clickedCanvasByPrimaryButtonInCD( double mouseX, double mouseY ) {
-        classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
         if( classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) {
             if( util.getDefaultButtonIn( buttonsInCD ) == compositionButtonInCD ) {
                 if( ! classDiagramDrawer.hasWaitedAnyDrawnDiagram( ContentType.Composition, mouseX, mouseY ) ) {
                     classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
+                    classDiagramDrawer.allReDrawNode();
                     return;
                 }
                 String compositionName = showCreateCompositionNameInputDialog();
                 classDiagramDrawer.addDrawnEdge( buttonsInCD, compositionName, mouseX, mouseY );
+                classDiagramDrawer.allReDrawNode();
             }
         } else {
-            String className = showCreateClassNameInputDialog();
-            classDiagramDrawer.setNodeText( className );
-            classDiagramDrawer.addDrawnNode( buttonsInCD );
+            classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
+            if( util.getDefaultButtonIn( buttonsInCD ) == classButtonInCD ) {
+                String className = showCreateClassNameInputDialog();
+                classDiagramDrawer.setNodeText( className );
+                classDiagramDrawer.addDrawnNode( buttonsInCD );
+            }
         }
     }
 
@@ -116,8 +120,8 @@ public class Controller {
         return showClassDiagramInputDialog( "クラス名", "クラス名を入力してください。", "" );
     }
 
-    private String showChangeClassNameInputDialog( String title ) {
-        return showClassDiagramInputDialog( "クラス名の変更", "変更後のクラス名を入力してください。", title );
+    private String showChangeClassNameInputDialog( String className ) {
+        return showClassDiagramInputDialog( "クラス名の変更", "変更後のクラス名を入力してください。", className );
     }
 
     private String showAddClassAttributionInputDialog() {

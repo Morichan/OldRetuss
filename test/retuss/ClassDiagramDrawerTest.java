@@ -2,6 +2,7 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
+import javafx.scene.text.Text;
 import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Before;
@@ -744,6 +745,10 @@ public class ClassDiagramDrawerTest {
 
         @Test
         public void キャンバスに描画しているクラスの1つ目をクリックするとコンポジションの描画を待機する() {
+            new Expectations( ClassNodeDiagram.class ) {{
+                classNodeDiagram.setChosen( true );
+                times = 1;
+            }};
             boolean expected = false;
 
             boolean actual = cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
@@ -753,6 +758,10 @@ public class ClassDiagramDrawerTest {
 
         @Test
         public void キャンバスに描画しているクラスの1つ目をクリックした後に2つ目をクリックするとコンポジションの描画待機を解除する() {
+            new Expectations( ClassNodeDiagram.class ) {{
+                classNodeDiagram.setChosen( true );
+                times = 1;
+            }};
             boolean expected = true;
 
             cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );

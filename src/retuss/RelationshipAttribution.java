@@ -1,5 +1,7 @@
 package retuss;
 
+import javafx.scene.canvas.GraphicsContext;
+
 public class RelationshipAttribution extends Attribution {
     private int relationId;
     private int relationSourceId;
