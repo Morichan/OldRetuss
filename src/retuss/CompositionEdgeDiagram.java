@@ -9,7 +9,8 @@ import java.util.List;
 
 public class CompositionEdgeDiagram {
     GraphicsContext gc;
-    List< RelationshipAttribution > compositions = new ArrayList<>();
+    private List< RelationshipAttribution > compositions = new ArrayList<>();
+    private boolean hasRelationSourceNodeSelected = false;
 
     public void setGraphicsContext( GraphicsContext gc ) {
         this.gc = gc;
@@ -44,12 +45,58 @@ public class CompositionEdgeDiagram {
         return compositions.get( number ).getRelationSourceId();
     }
 
+    public void setRelationPoint( ContentType type, int number, Point2D point ) {
+        compositions.get( number ).setRelationPoint( point );
+    }
+
+    public Point2D getRelationPoint( ContentType type, int number ) {
+        return compositions.get( number ).getRelationPoint();
+    }
+
+    public void setRelationSourcePoint( ContentType type, int number, Point2D point ) {
+        compositions.get( number ).setRelationSourcePoint( point );
+    }
+
+    public Point2D getRelationSourcePoint( ContentType type, int number ) {
+        return compositions.get( number ).getRelationSourcePoint();
+    }
+
     public int getCompositionsCount() {
         return compositions.size();
+    }
+
+    boolean hasRelationSourceNodeSelected() {
+        return hasRelationSourceNodeSelected;
+    }
+
+    public void changeRelationSourceNodeSelectedState() {
+        hasRelationSourceNodeSelected = ! hasRelationSourceNodeSelected;
+    }
+
+    public void resetRelationSourceNodeSelectedState() {
+        hasRelationSourceNodeSelected = false;
+    }
+
+    public boolean isAlreadyDrawnAnyEdge( ContentType type, int number, Point2D mousePoint ) {
+        boolean isAlreadyDrawnAnyEdge = false;
+        Point2D relationPoint = compositions.get( number ).getRelationPoint();
+        Point2D relationSourcePoint = compositions.get( number ).getRelationSourcePoint();
+
+        if( relationPoint.getX() - getRelationMarginLength( ContentType.Composition ) < mousePoint.getX() &&
+                mousePoint.getX() < relationPoint.getX() + getRelationMarginLength( ContentType.Composition ) ) isAlreadyDrawnAnyEdge = true;
+
+        if( relationPoint.getY() - getRelationMarginLength( ContentType.Composition ) < mousePoint.getY() &&
+                mousePoint.getY() < relationPoint.getY() + getRelationMarginLength( ContentType.Composition ) ) isAlreadyDrawnAnyEdge = true;
+
+        return isAlreadyDrawnAnyEdge;
     }
 
     public void draw( Point2D releasePoint, Point2D releaseSourcePoint ) {
         gc.setStroke( Color.BLACK );
         gc.strokeLine( releaseSourcePoint.getX(), releaseSourcePoint.getY(), releasePoint.getX(), releasePoint.getY() );
+    }
+
+    private double getRelationMarginLength( ContentType type ) {
+        return 5.0;
     }
 }

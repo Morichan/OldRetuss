@@ -17,7 +17,7 @@ public class ClassDiagramDrawer {
     private double mouseX = 0.0;
     private double mouseY = 0.0;
     private String nodeText;
-    private ContentType nowStateType;
+    private ContentType nowStateType = ContentType.Undefined;
 
     /**
      * 生成したクラス図のノードのリストを返す。
@@ -59,10 +59,12 @@ public class ClassDiagramDrawer {
 
     public void allReDrawEdge() {
         for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
-            int relationId = nodes.get( compositions.getRelationId( ContentType.Composition, i ) ).getNodeId();
-            int relationSourceId = nodes.get( compositions.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
-            Point2D releasePoint = nodes.get( relationId ).getPoint();
-            Point2D releaseSourcePoint = nodes.get( relationSourceId ).getPoint();
+            // int relationId = nodes.get( compositions.getRelationId( ContentType.Composition, i ) ).getNodeId();
+            // int relationSourceId = nodes.get( compositions.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
+            // Point2D releasePoint = nodes.get( relationId ).getPoint();
+            // Point2D releaseSourcePoint = nodes.get( relationSourceId ).getPoint();
+            Point2D releasePoint = compositions.getRelationPoint( ContentType.Composition, i );
+            Point2D releaseSourcePoint = compositions.getRelationSourcePoint( ContentType.Composition, i );
             compositions.draw( releasePoint, releaseSourcePoint );
         }
     }
@@ -156,11 +158,8 @@ public class ClassDiagramDrawer {
             compositions.createEdgeText( ContentType.Composition, name );
             compositions.setRelationId( ContentType.Composition, compositions.getCompositionsCount() - 1, toNodeId );
             compositions.setRelationSourceId( ContentType.Composition, compositions.getCompositionsCount() - 1, fromNodeId );
-            // nodes.get( fromNodeId )
-            // ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
-            // nodes.add( classNodeDiagram );
-            // currentNodeNumber = nodes.size() - 1;
-            // createDrawnNode( currentNodeNumber );
+            compositions.setRelationPoint( ContentType.Composition, compositions.getCompositionsCount() - 1, nodes.get( toNodeId ).getPoint() );
+            compositions.setRelationSourcePoint( ContentType.Composition, compositions.getCompositionsCount() - 1, nodes.get( fromNodeId ).getPoint() );
         }
     }
 
@@ -184,22 +183,46 @@ public class ClassDiagramDrawer {
         return act;
     }
 
-    public boolean hasWaitedAnyDrawnDiagram( ContentType type, double mouseX, double mouseY ) {
+    public boolean hasWaitedCorrectDrawnDiagram( ContentType type, double mouseX, double mouseY ) {
         boolean act = false;
 
         if( isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) {
-            if( nowStateType == type ) {
+            if( compositions.hasRelationSourceNodeSelected() ) {
                 act = true;
-                // findNodeDiagram( mouseX, mouseY );
-                nodes.get( currentNodeNumber ).setChosen( false );
+                if( type == nowStateType ) {
+                    compositions.changeRelationSourceNodeSelectedState();
+                    setNodeChosen( currentNodeNumber, false );
+                    nowStateType = ContentType.Undefined;
+                } else {
+                    findNodeDiagram( mouseX, mouseY );
+                    setNodeChosen( currentNodeNumber, true );
+                    nowStateType = type;
+                }
             } else {
-                nowStateType = type;
+                compositions.changeRelationSourceNodeSelectedState();
                 findNodeDiagram( mouseX, mouseY );
-                nodes.get( currentNodeNumber ).setChosen( true );
+                setNodeChosen( currentNodeNumber, true );
+                nowStateType = type;
             }
+        } else {
+            nowStateType = ContentType.Undefined;
         }
 
         return act;
+    }
+
+    public void resetNodeChosen( int number ) {
+        nodes.get( number ).setChosen( false );
+        nowStateType = ContentType.Undefined;
+        compositions.resetRelationSourceNodeSelectedState();
+    }
+
+    public void setNodeChosen(int number, boolean isChosen ) {
+        nodes.get( number ).setChosen( isChosen );
+    }
+
+    public ContentType getNowStateType() {
+        return nowStateType;
     }
 
     public int getNodeDiagramId( double mouseX, double mouseY ) {
@@ -223,7 +246,7 @@ public class ClassDiagramDrawer {
         return compositions;
     }
 
-    public void drawDiagramCanvasEdge() {
+    private void drawDiagramCanvasEdge() {
         double space = 5.0;
         double width = gc.getCanvas().getWidth();
         double height = gc.getCanvas().getHeight();

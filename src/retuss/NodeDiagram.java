@@ -9,7 +9,7 @@ abstract public class NodeDiagram {
     private static int nodeCount = 0;
     protected static GraphicsContext gc = null;
 
-    protected Point2D mouse = Point2D.ZERO;
+    protected Point2D currentPoint = Point2D.ZERO;
     protected int nodeId;
     protected String nodeText = "";
     protected String diagramFont = "Consolas";
@@ -44,7 +44,7 @@ abstract public class NodeDiagram {
     }
 
     public void setMouseCoordinates( double x, double y ) {
-        mouse = new Point2D( x, y );
+        currentPoint = new Point2D( x, y );
     }
 
     public String getNodeText() {
@@ -60,6 +60,6 @@ abstract public class NodeDiagram {
     }
 
     public Point2D getPoint() {
-        return mouse;
+        return currentPoint;
     }
 }

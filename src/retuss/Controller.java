@@ -97,14 +97,14 @@ public class Controller {
     private void clickedCanvasByPrimaryButtonInCD( double mouseX, double mouseY ) {
         if( classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) {
             if( util.getDefaultButtonIn( buttonsInCD ) == compositionButtonInCD ) {
-                if( ! classDiagramDrawer.hasWaitedAnyDrawnDiagram( ContentType.Composition, mouseX, mouseY ) ) {
+                if( ! classDiagramDrawer.hasWaitedCorrectDrawnDiagram( ContentType.Composition, mouseX, mouseY ) ) {
                     classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
                     classDiagramDrawer.allReDrawNode();
-                    return;
+                } else {
+                    String compositionName = showCreateCompositionNameInputDialog();
+                    classDiagramDrawer.addDrawnEdge( buttonsInCD, compositionName, mouseX, mouseY );
+                    classDiagramDrawer.allReDrawNode();
                 }
-                String compositionName = showCreateCompositionNameInputDialog();
-                classDiagramDrawer.addDrawnEdge( buttonsInCD, compositionName, mouseX, mouseY );
-                classDiagramDrawer.allReDrawNode();
             }
         } else {
             classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
@@ -112,6 +112,10 @@ public class Controller {
                 String className = showCreateClassNameInputDialog();
                 classDiagramDrawer.setNodeText( className );
                 classDiagramDrawer.addDrawnNode( buttonsInCD );
+            } else if( util.getDefaultButtonIn( buttonsInCD ) == compositionButtonInCD ) {
+                classDiagramDrawer.resetNodeChosen( classDiagramDrawer.getCurrentNodeNumber() );
+                classDiagramDrawer.allReDrawEdge();
+                classDiagramDrawer.allReDrawNode();
             }
         }
     }

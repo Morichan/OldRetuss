@@ -1,6 +1,7 @@
 package retuss;
 
 import com.sun.org.apache.regexp.internal.RE;
+import javafx.geometry.Point2D;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -80,5 +81,25 @@ public class RelationshipAttributionTest {
         attribution.setRelationSourceId( expected );
 
         assertThat( attribution.getRelationSourceId(), is( expected ) );
+    }
+
+    @Test
+    public void 関係属性の関係先のポイントを設定するとそのポイントを返す() {
+        Point2D expected = new Point2D( 100.0, 200.0 );
+
+        attribution.setRelationPoint( expected );
+        Point2D actual = attribution.getRelationPoint();
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 関係属性の関係元のポイントを設定するとそのポイントを返す() {
+        Point2D expected = new Point2D( 300.0, 400.0 );
+
+        attribution.setRelationSourcePoint( expected );
+        Point2D actual = attribution.getRelationSourcePoint();
+
+        assertThat( actual, is( expected ) );
     }
 }

@@ -12,5 +12,6 @@ public enum ContentType {
     Static,
     Derived,
     Composition,
-    Generalization;
+    Generalization,
+    Undefined;
 }

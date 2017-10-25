@@ -58,6 +58,7 @@ public class ControllerTest {
         Point2D firstClickedClassDiagramCanvas;
         Point2D secondClickedClassDiagramCanvas;
         Point2D thirdClickedClassDiagramCanvas;
+        Point2D betweenFirstAndSecondClickedClassDiagramCanvas;
         String changeClassMenu;
         String deleteClassMenu;
         String classAttributionMenu;
@@ -83,6 +84,10 @@ public class ControllerTest {
             firstClickedClassDiagramCanvas = new Point2D( 900.0, 600.0 );
             secondClickedClassDiagramCanvas = new Point2D( 1050.0, 300.0 );
             thirdClickedClassDiagramCanvas = new Point2D( 800.0, 450.0 );
+            betweenFirstAndSecondClickedClassDiagramCanvas = new Point2D(
+                    firstClickedClassDiagramCanvas.getX() + ( secondClickedClassDiagramCanvas.getX() - firstClickedClassDiagramCanvas.getX() ) / 2,
+                    firstClickedClassDiagramCanvas.getY() - ( firstClickedClassDiagramCanvas.getY() - secondClickedClassDiagramCanvas.getY() ) / 2
+            );
             changeClassMenu = "クラスの名前の変更";
             deleteClassMenu = "クラスをモデルから削除";
             classAttributionMenu = "属性";
@@ -947,7 +952,7 @@ public class ControllerTest {
         public void コンポジションアイコンを選択している際にキャンバスに描かれているClassNameクラスをクリックするとClassNameクラスの縁の色を変更する() {
             new MockUp< ClassDiagramDrawer >() {
                 @Mock
-                public void drawDiagramCanvasEdge() {}
+                private void drawDiagramCanvasEdge() {}
             };
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
@@ -967,7 +972,32 @@ public class ControllerTest {
         }
 
         @Test
-        public void コンポジションアイコンを選択している際にキャンバスに描かれている2つのClassNameクラスをクリックしDialogに関係属性を記述するとコンポジション関係を描画する() {
+        public void コンポジションアイコンを選択している際にキャンバスに描かれているClassNameクラスをクリックした後にクラスを描画していない箇所をクリックするとClassNameクラスの縁の色を元に戻す() {
+            new MockUp< ClassDiagramDrawer >() {
+                @Mock
+                private void drawDiagramCanvasEdge() {}
+            };
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "ClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            GraphicsContext gc = getGraphicsContext();
+            Paint fillColor = gc.getFill();
+            Paint strokeColor = gc.getStroke();
+            TextAlignment textAlignment = gc.getTextAlign();
+
+            assertThat( fillColor, is( Color.BLACK ) );
+            assertThat( strokeColor, is( Color.BLACK ) );
+            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+        }
+
+        @Ignore( "コンポジションにおけるメニューの表示が未完成" )
+        @Test
+        public void コンポジションアイコンを選択している際にキャンバスに描かれている2つのクラスをクリックしDialogに関係属性を記述するとコンポジション関係を描画する() {
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
             write( "FirstClassName" );
@@ -981,6 +1011,34 @@ public class ControllerTest {
             clickOn( secondClickedClassDiagramCanvas );
             write( "- composition" );
             clickOn( okButtonOnDialogBox );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositions" ) ) );
+        }
+
+        @Test
+        public void コンポジションアイコンを選択している際にキャンバスに描かれているFirstClassNameクラスをクリックし描画されていない箇所をクリックした後でFirstClassNameクラスをクリックすると縁の色を変更するがDialogは表示しない() {
+            new MockUp< ClassDiagramDrawer >() {
+                @Mock
+                private void drawDiagramCanvasEdge() {}
+            };
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+
+            clickOn( "#compositionButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            clickOn( firstClickedClassDiagramCanvas );
+            GraphicsContext gc = getGraphicsContext();
+            Paint strokeColor = gc.getStroke();
+
+            assertThat( strokeColor, is( Color.RED ) );
+            fxRobotException.expect( FxRobotException.class );
+            clickOn( okButtonOnDialogBox );
         }
 
 
@@ -992,7 +1050,7 @@ public class ControllerTest {
          *
          * 右クリックメニューを表示する大元のパネルがこのスクロールパネルであるため、主に右クリックメニューのテストに利用する。
          *
-         * @return クラス図キャンバス直下のスクロールパネル
+         * @return クラス図キャンバス直下のスクロールパネル FXMLファイルを書き換えるか実行中にどこかのパネルを消さない限り{@code null}になる可能性はない
          */
         private ScrollPane getScrollPaneBelowClassDiagramCanvas() {
             BorderPane borderPaneOnStage = ( BorderPane ) stage.getScene().getRoot().getChildrenUnmodifiable().get( 0 );
@@ -1007,27 +1065,17 @@ public class ControllerTest {
         }
 
         /**
-         * クラス図キャンバスを取得する。
-         *
+         * クラス図キャンバスのグラフィックスコンテキストを取得する。
          * getScrollPaneBelowClassDiagramCanvasに依存する。
          *
-         * @return クラス図キャンバス
+         * クラス図のグラフィックをセットする際の色などを取得するために用いる。
+         *
+         * @return クラス図キャンバスのグラフィックスコンテキスト FXMLファイルを書き換えるか実行中にどこかのパネルを消さない限り{@code null}になる可能性はない
          */
-        private Canvas getCanvasOnScrollPane() {
+        private GraphicsContext getGraphicsContext() {
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
             AnchorPane anchorPane = ( AnchorPane ) scrollPane.getContent();
-            return ( Canvas ) anchorPane.getChildren().get( 0 );
-        }
-
-        /**
-         * クラス図キャンバスのグラフィックスコンテキストを取得する。
-         *
-         * getScrollPaneBelowClassDiagramCanvasとgetCanvasOnScrollPaneに依存する。
-         *
-         * @return クラス図キャンバス
-         */
-        public GraphicsContext getGraphicsContext() {
-            Canvas canvas = getCanvasOnScrollPane();
+            Canvas canvas = ( Canvas ) anchorPane.getChildren().get( 0 );
             return canvas.getGraphicsContext2D();
         }
     }

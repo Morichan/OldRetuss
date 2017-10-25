@@ -730,7 +730,7 @@ public class ClassDiagramDrawerTest {
                 classNodeDiagram.draw();
             }};
 
-            classNodeDiagram.resetNodeCount();
+            ClassNodeDiagram.resetNodeCount();
 
             cdd.setNodeText( "FirstClassName" );
             cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
@@ -744,70 +744,102 @@ public class ClassDiagramDrawerTest {
         }
 
         @Test
-        public void キャンバスに描画しているクラスの1つ目をクリックするとコンポジションの描画を待機する() {
-            new Expectations( ClassNodeDiagram.class ) {{
-                classNodeDiagram.setChosen( true );
-                times = 1;
-            }};
+        public void キャンバスに描画しているクラスの1つ目をクリックするとコンポジションの描画を待機し正規ノードを待機していなかったとする() {
             boolean expected = false;
 
-            boolean actual = cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            boolean actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
 
             assertThat( actual, is( expected ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Composition ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
         }
 
         @Test
-        public void キャンバスに描画しているクラスの1つ目をクリックした後に2つ目をクリックするとコンポジションの描画待機を解除する() {
-            new Expectations( ClassNodeDiagram.class ) {{
-                classNodeDiagram.setChosen( true );
-                times = 1;
-            }};
+        public void キャンバスに描画しているクラスの1つ目をクリックした後に2つ目をクリックするとコンポジションの描画待機を解除し正規ノードを待機していたとする() {
             boolean expected = true;
 
-            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
-            boolean actual = cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            boolean actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
 
             assertThat( actual, is( expected ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Undefined ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
         }
 
         @Test
-        public void キャンバスに描画しているクラスの1つ目をクリックした後に1つ目をクリックするとコンポジションの描画待機を解除する() {
-            boolean expected = true;
-
-            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
-            boolean actual = cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
-
-            assertThat( actual, is( expected ) );
-        }
-
-        @Test
-        public void キャンバスに描画しているクラスの1つ目をコンポジションとしてクリックした後に2つ目を汎化としてクリックすると偽を返す() {
+        public void キャンバスに描画しているクラスの1つ目をクリックした後にクラスを描画していない箇所をクリックするとコンポジションの描画待機を解除し正規ノードを待機していなかったとする() {
             boolean expected = false;
 
-            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
-            boolean actual = cdd.hasWaitedAnyDrawnDiagram( ContentType.Generalization, secondClass.getX(), secondClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            boolean actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX() + 100.0, secondClass.getY() + 100.0 );
 
             assertThat( actual, is( expected ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Undefined ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
         }
 
         @Test
-        public void キャンバスに描画しているクラスの1つ目をコンポジションとしてクリックして2つ目を汎化としてクリックした後に3回目と4回目をコンポジションとしてクリックすると真を返す() {
-            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
-            cdd.hasWaitedAnyDrawnDiagram( ContentType.Generalization, secondClass.getX(), secondClass.getY() );
+        public void キャンバスに描画しているクラスの1つ目をクリックした後に1つ目をクリックするとコンポジションの描画待機を解除し正規ノードを待機していたとする() {
+            boolean expected = true;
 
-            boolean actual = cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
-            assertThat( actual, is( false ) );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            boolean actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
 
-            actual = cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            assertThat( actual, is( expected ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Undefined ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+        }
+
+        @Test
+        public void キャンバスに描画しているクラスの1つ目をコンポジションとしてクリックした後に2つ目を汎化としてクリックすると汎化の描画を待機し正規ノードを待機していたとする() {
+            boolean expected = true;
+
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            boolean actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Generalization, secondClass.getX(), secondClass.getY() );
+
+            assertThat( actual, is( expected ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Generalization ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 1 ) );
+        }
+
+        @Test
+        public void キャンバスに描画しているクラスの1つ目をコンポジションとしてクリックして2つ目を汎化としてクリックした後に3回目と4回目をコンポジションとしてクリックするとコンポジションの描画待機を解除し正規ノードを待機していたとする() {
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Generalization, secondClass.getX(), secondClass.getY() );
+
+            boolean actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
             assertThat( actual, is( true ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Composition ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+
+            actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            assertThat( actual, is( true ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Undefined ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+        }
+
+        @Test
+        public void キャンバスに描画しているクラスの1つ目をコンポジションとしてクリックした後に2回目と3回目を汎化としてクリックすると汎化の描画を待機し正規ノードを待機していたとする() {
+            boolean expected = true;
+
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            boolean actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Generalization, firstClass.getX(), firstClass.getY() );
+            assertThat( actual, is( expected ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Generalization ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
+
+            actual = cdd.hasWaitedCorrectDrawnDiagram( ContentType.Generalization, secondClass.getX(), secondClass.getY() );
+            assertThat( actual, is( expected ) );
+            assertThat( cdd.getNowStateType(), is( ContentType.Undefined ) );
+            assertThat( cdd.getCurrentNodeNumber(), is( 0 ) );
         }
 
         @Test
         public void キャンバスに描画しているクラスを2つクリックするとコンポジション関係を描画する() {
-            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
             cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
 
-            cdd.hasWaitedAnyDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
             cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
 
             assertThat( cdd.getCurrentNodeNumber(), is( 1 ) );

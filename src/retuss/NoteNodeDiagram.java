@@ -33,7 +33,7 @@ public class NoteNodeDiagram extends NodeDiagram {
 
     @Override
     public void draw() {
-        gc.fillText( "noteOfCD", mouse.getX(), mouse.getY() );
+        gc.fillText( "noteOfCD", currentPoint.getX(), currentPoint.getY() );
     }
 
     @Override

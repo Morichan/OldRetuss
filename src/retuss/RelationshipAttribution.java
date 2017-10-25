@@ -1,21 +1,29 @@
 package retuss;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+
 
 public class RelationshipAttribution extends Attribution {
     private int relationId;
     private int relationSourceId;
+    private Point2D relationPoint;
+    private Point2D relationSourcePoint;
 
     RelationshipAttribution() {
         name = "";
         visibility = "";
         type = "";
         isIndicate = true;
+        relationPoint = new Point2D( 0.0, 0.0 );
+        relationSourcePoint = new Point2D( 0.0, 0.0 );
     }
 
     RelationshipAttribution( String name ) {
         this.name = name;
         isIndicate = true;
+        relationPoint = new Point2D( 0.0, 0.0 );
+        relationSourcePoint = new Point2D( 0.0, 0.0 );
     }
 
     public void setRelationId( int id ) {
@@ -32,5 +40,21 @@ public class RelationshipAttribution extends Attribution {
 
     public int getRelationSourceId() {
         return relationSourceId;
+    }
+
+    public void setRelationPoint( Point2D point ) {
+        relationPoint = point;
+    }
+
+    public Point2D getRelationPoint() {
+        return relationPoint;
+    }
+
+    public void setRelationSourcePoint( Point2D point ) {
+        relationSourcePoint = point;
+    }
+
+    public Point2D getRelationSourcePoint() {
+        return relationSourcePoint;
     }
 }
