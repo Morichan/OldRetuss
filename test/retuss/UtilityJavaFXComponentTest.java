@@ -1,5 +1,6 @@
 package retuss;
 
+import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -270,5 +271,54 @@ public class UtilityJavaFXComponentTest {
             assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).getText(), is( expectedMenuText ) );
             assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).isDisable(), is( true ) );
         }
+    }
+
+    @Test
+    public void 角が複数存在する多角形の内側に点が存在するか否かを確認する() {
+        List< Point2D > quadrangle1 = Arrays.asList(
+                new Point2D( 100.0, 100.0 ), new Point2D( 100.0, 500.0 ),
+                new Point2D( 200.0, 500.0 ), new Point2D( 200.0, 100.0 ) );
+        Point2D insidePoint1 = new Point2D( 150.0, 300.0 );
+        Point2D outsidePoint1 = new Point2D( 250.0, 300.0 );
+        Point2D onLinePoint1 = new Point2D( 100.0, 300.0 );
+        Point2D onEdgePoint1 = new Point2D( 100.0, 100.0 );
+        List< Point2D > quadrangle2 = Arrays.asList(
+                new Point2D( 200.0, 100.0 ), new Point2D( 400.0, 300.0 ),
+                new Point2D( 300.0, 400.0 ), new Point2D( 100.0, 200.0 ) );
+        Point2D insidePoint2 = new Point2D( 200.0, 200.0 );
+        Point2D outsidePoint2 = new Point2D( 120.0, 120.0 );
+        Point2D onLinePoint2 = new Point2D( 200.0, 300.0 );
+        Point2D onEdgePoint2 = new Point2D( 400.0, 300.0 );
+        List< Point2D > polygonWithSelfCross = Arrays.asList(
+                new Point2D( 200.0, 100.0 ), new Point2D( 300.0, 100.0 ),
+                new Point2D( 300.0, 400.0 ), new Point2D( 400.0, 400.0 ),
+                new Point2D( 400.0, 300.0 ), new Point2D( 100.0, 300.0 ),
+                new Point2D( 100.0, 200.0 ), new Point2D( 500.0, 200.0 ),
+                new Point2D( 200.0, 100.0 ), new Point2D( 300.0, 100.0 ),
+                new Point2D( 500.0, 500.0 ), new Point2D( 200.0, 500.0 ) );
+        Point2D holePoint = new Point2D( 350.0, 350.0 );
+        Point2D selfCrossPoint = new Point2D( 250.0, 250.0 );
+
+        boolean actual1 = util.isInsidePointFromPolygonUsingWNA( quadrangle1, insidePoint1 );
+        boolean actual2 = util.isInsidePointFromPolygonUsingWNA( quadrangle1, outsidePoint1 );
+        boolean actual3 = util.isInsidePointFromPolygonUsingWNA( quadrangle1, onLinePoint1 );
+        boolean actual4 = util.isInsidePointFromPolygonUsingWNA( quadrangle1, onEdgePoint1 );
+        boolean actual5 = util.isInsidePointFromPolygonUsingWNA( quadrangle2, insidePoint2 );
+        boolean actual6 = util.isInsidePointFromPolygonUsingWNA( quadrangle2, outsidePoint2 );
+        boolean actual7 = util.isInsidePointFromPolygonUsingWNA( quadrangle2, onLinePoint2 );
+        boolean actual8 = util.isInsidePointFromPolygonUsingWNA( quadrangle2, onEdgePoint2 );
+        boolean actual9 = util.isInsidePointFromPolygonUsingWNA( polygonWithSelfCross, holePoint );
+        boolean actual10 = util.isInsidePointFromPolygonUsingWNA( polygonWithSelfCross, selfCrossPoint );
+
+        assertThat( actual1, is( true ) );
+        assertThat( actual2, is( false ) );
+        assertThat( actual3, is( true ) );
+        assertThat( actual4, is( true ) );
+        assertThat( actual5, is( true ) );
+        assertThat( actual6, is( false ) );
+        assertThat( actual7, is( true ) );
+        assertThat( actual8, is( true ) );
+        assertThat( actual9, is( false ) );
+        assertThat( actual10, is( true ) );
     }
 }

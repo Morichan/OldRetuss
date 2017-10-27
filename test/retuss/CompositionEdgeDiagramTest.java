@@ -7,6 +7,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.Inflater;
+
+import static jdk.nashorn.internal.objects.Global.Infinity;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -193,5 +200,100 @@ public class CompositionEdgeDiagramTest {
         boolean actual = obj.isAlreadyDrawnAnyEdge( ContentType.Composition, 0, checkPoint );
 
         assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 関係先と関係元のポイントを入れると余地を含んだ右回りで4隅のポイントを持つ範囲を返す() {
+        Point2D centerPoint = new Point2D( 100.0, 100.0 );
+        Point2D upperPoint = new Point2D( 100.0, 0.0 );
+        Point2D righterPoint = new Point2D( 200.0, 100.0 );
+        Point2D bottomPoint = new Point2D( 100.0, 200.0 );
+        Point2D lefterPoint = new Point2D( 0.0, 100.0 );
+        Point2D upperRightPoint = new Point2D( 200.0, 0.0 );
+        Point2D bottomRightPoint = new Point2D( 200.0, 200.0 );
+        Point2D bottomLeftPoint = new Point2D( 0.0, 200.0 );
+        Point2D upperLeftPoint = new Point2D( 0.0, 0.0 );
+        double root2 = Math.sqrt( 2.0 );
+        List< Point2D > expected1 = Arrays.asList(
+                new Point2D( 98.0, 100.0 ), new Point2D( 98.0, 0.0 ),
+                new Point2D( 102.0, 0.0 ), new Point2D( 102.0, 100.0 )
+        );
+        List< Point2D > expected2 = Arrays.asList(
+                new Point2D( 100.0, 98.0 ), new Point2D( 200.0, 98.0 ),
+                new Point2D( 200.0, 102.0 ), new Point2D( 100.0, 102.0 )
+        );
+        List< Point2D > expected3 = Arrays.asList(
+                new Point2D( 102.0, 100.0 ), new Point2D( 102.0, 200.0 ),
+                new Point2D( 98.0, 200.0 ), new Point2D( 98.0, 100.0 )
+        );
+        List< Point2D > expected4 = Arrays.asList(
+                new Point2D( 100.0, 102.0 ), new Point2D( 0.0, 102.0 ),
+                new Point2D( 0.0, 98.0 ), new Point2D( 100.0, 98.0 )
+        );
+        List< Point2D > expected5 = Arrays.asList(
+                new Point2D( 100.0 - root2, 100.0 - root2 ), new Point2D( 200.0 - root2, -root2 ),
+                new Point2D( 200.0 + root2, root2 ), new Point2D( 100.0 + root2, 100.0 + root2 )
+        );
+        List< Point2D > expected6 = Arrays.asList(
+                new Point2D( 100.0 + root2, 100.0 - root2 ), new Point2D( 200.0 + root2, 200.0 - root2 ),
+                new Point2D( 200.0 - root2, 200.0 + root2 ), new Point2D( 100.0 - root2, 100.0 + root2 )
+        );
+        List< Point2D > expected7 = Arrays.asList(
+                new Point2D( 100.0 + root2, 100.0 + root2 ), new Point2D( root2, 200.0 + root2 ),
+                new Point2D( -root2, 200.0 - root2 ), new Point2D( 100.0 - root2, 100.0 - root2 )
+        );
+        List< Point2D > expected8 = Arrays.asList(
+                new Point2D( 100.0 - root2, 100.0 + root2 ), new Point2D( -root2, root2 ),
+                new Point2D( root2, -root2 ), new Point2D( 100.0 + root2, 100.0 - root2 )
+        );
+
+        List< Point2D > actual1 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, upperPoint );
+        List< Point2D > actual2 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, righterPoint );
+        List< Point2D > actual3 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, bottomPoint );
+        List< Point2D > actual4 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, lefterPoint );
+        List< Point2D > actual5 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, upperRightPoint );
+        List< Point2D > actual6 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, bottomRightPoint );
+        List< Point2D > actual7 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, bottomLeftPoint );
+        List< Point2D > actual8 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, upperLeftPoint );
+
+        assertThat( actual1, is( expected1 ) );
+        assertThat( actual2, is( expected2 ) );
+        assertThat( actual3, is( expected3 ) );
+        assertThat( actual4, is( expected4 ) );
+        // assertThat( actual5, is( expected5 ) );
+        // assertThat( actual6, is( expected6 ) );
+        // assertThat( actual7, is( expected7 ) );
+        // assertThat( actual8, is( expected8 ) );
+    }
+
+    @Test
+    public void 関係先と関係元のポイントを入れると法線の傾きを計算する() {
+        Point2D centerPoint = new Point2D( 100.0, 100.0 );
+        Point2D upperPoint = new Point2D( 100.0, 0.0 );
+        Point2D righterPoint = new Point2D( 200.0, 100.0 );
+        Point2D bottomPoint = new Point2D( 100.0, 200.0 );
+        Point2D lefterPoint = new Point2D( 0.0, 100.0 );
+        Point2D upperRightPoint = new Point2D( 200.0, 0.0 );
+        Point2D bottomRightPoint = new Point2D( 200.0, 200.0 );
+        Point2D bottomLeftPoint = new Point2D( 0.0, 200.0 );
+        Point2D upperLeftPoint = new Point2D( 0.0, 0.0 );
+
+        double actual1 = obj.calculateNormalLineInclination( centerPoint, upperPoint ); // 北
+        double actual2 = obj.calculateNormalLineInclination( centerPoint, righterPoint ); // 東
+        double actual3 = obj.calculateNormalLineInclination( centerPoint, bottomPoint ); // 南
+        double actual4 = obj.calculateNormalLineInclination( centerPoint, lefterPoint ); // 西
+        double actual5 = obj.calculateNormalLineInclination( centerPoint, upperRightPoint ); // 北東
+        double actual6 = obj.calculateNormalLineInclination( centerPoint, bottomRightPoint ); // 南東
+        double actual7 = obj.calculateNormalLineInclination( centerPoint, bottomLeftPoint ); // 南西
+        double actual8 = obj.calculateNormalLineInclination( centerPoint, upperLeftPoint ); // 北西
+
+        assertThat( actual1, is( 0.0 ) );
+        assertThat( actual2, is( Infinity ) );
+        assertThat( actual3, is( 0.0 ) );
+        assertThat( actual4, is( Infinity ) );
+        assertThat( actual5, is( -1.0 ) );
+        assertThat( actual6, is( 1.0 ) );
+        assertThat( actual7, is( -1.0 ) );
+        assertThat( actual8, is( 1.0 ) );
     }
 }
