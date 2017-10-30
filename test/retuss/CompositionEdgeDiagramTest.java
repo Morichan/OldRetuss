@@ -165,7 +165,6 @@ public class CompositionEdgeDiagramTest {
         assertThat( actual, is( expected ) );
     }
 
-    @Ignore( "関係を描画している箇所か否かを確認できていない" )
     @Test
     public void コンポジションの関係先と関係元の中間点は関係を描画している() {
         firstClassPoint = new Point2D( 100.0, 200.0 );
@@ -183,7 +182,6 @@ public class CompositionEdgeDiagramTest {
         assertThat( actual, is( expected ) );
     }
 
-    @Ignore( "関係を描画している箇所か否かを確認できていない" )
     @Test
     public void コンポジションの関係先と関係元の中間点から余地の長さ以上離れた点は関係を描画していない() {
         firstClassPoint = new Point2D( 100.0, 200.0 );
@@ -191,7 +189,7 @@ public class CompositionEdgeDiagramTest {
         double beyondMarginLength = 10.0;
         Point2D checkPoint = new Point2D(
                 firstClassPoint.getX() + ( secondClassPoint.getX() - firstClassPoint.getX() ) / 2 + beyondMarginLength,
-                firstClassPoint.getY() + ( secondClassPoint.getY() - firstClassPoint.getY() ) / 2 + beyondMarginLength );
+                firstClassPoint.getY() + ( secondClassPoint.getY() - firstClassPoint.getY() ) / 2 - beyondMarginLength );
         boolean expected = false;
 
         obj.createEdgeText( ContentType.Composition, "- composition" );
@@ -260,10 +258,10 @@ public class CompositionEdgeDiagramTest {
         assertThat( actual2, is( expected2 ) );
         assertThat( actual3, is( expected3 ) );
         assertThat( actual4, is( expected4 ) );
-        // assertThat( actual5, is( expected5 ) );
-        // assertThat( actual6, is( expected6 ) );
-        // assertThat( actual7, is( expected7 ) );
-        // assertThat( actual8, is( expected8 ) );
+        assertThat( actual5, is( expected5 ) );
+        assertThat( actual6, is( expected6 ) );
+        assertThat( actual7, is( expected7 ) );
+        assertThat( actual8, is( expected8 ) );
     }
 
     @Test
@@ -295,5 +293,29 @@ public class CompositionEdgeDiagramTest {
         assertThat( actual6, is( 1.0 ) );
         assertThat( actual7, is( -1.0 ) );
         assertThat( actual8, is( 1.0 ) );
+    }
+
+    @Test
+    public void 関係のタイプを返す() {
+        ContentType expected = ContentType.Composition;
+
+        obj.createEdgeText( expected, "- composition" );
+        ContentType actual = obj.getContentType( 0 );
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 関係の内容を返す() {
+        RelationshipAttribution expected = new RelationshipAttribution( "- composition" );
+        firstClassPoint = new Point2D( 100.0, 200.0 );
+        secondClassPoint = new Point2D( 300.0, 400.0 );
+
+        obj.createEdgeText( ContentType.Composition, "- composition" );
+        obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
+        obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
+        RelationshipAttribution actual = obj.searchCurrentRelationName( firstClassPoint );
+
+        assertThat( actual.getName(), is( expected.getName() ) );
     }
 }

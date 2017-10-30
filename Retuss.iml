@@ -16,7 +16,7 @@
     <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
     <orderEntry type="library" name="jacocoagent" level="project" />
     <orderEntry type="library" name="jmockit" level="project" />
-    <orderEntry type="library" name="junit-4.12" level="project" />
     <orderEntry type="library" name="guava-21.0" level="project" />
+    <orderEntry type="library" name="junit-4.12" level="project" />
   </component>
 </module>

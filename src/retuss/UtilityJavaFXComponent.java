@@ -49,6 +49,17 @@ public class UtilityJavaFXComponent {
         return buttons.get( count );
     }
 
+    public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType ) {
+        ContextMenu popup = new ContextMenu();
+
+        if( nodeType == ContentType.Composition ) {
+            popup.getItems().add( new MenuItem( ( nodeName ) + " の変更" ) );
+            popup.getItems().add( new MenuItem( ( nodeName ) + " の削除" ) );
+        }
+
+        return popup;
+    }
+
     public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType, List< String > nodeContents1, List< String > nodeContents2, List< Boolean > nodeContents3, List< Boolean > nodeContents4 ) {
         ContextMenu popup = new ContextMenu();
 
@@ -177,15 +188,23 @@ public class UtilityJavaFXComponent {
         int wn = 0;
         List< Point2D > polygon = new ArrayList<>();
 
+        // 多角形でない場合
         if( targetPolygon.size() < 3 ) return false;
 
         for( Point2D point : targetPolygon ) {
             polygon.add( point );
-            if( point.equals( targetPoint ) ) return true;
+            if( point.equals( targetPoint ) ) return true; // ターゲット点が多角形の点と等しい場合
         }
 
+        // 多角形における最後の点と最初の点が異なる場合（例えば四角形ABCDの点配列は ABCDA でなければならないため）
         if( ! targetPolygon.get( 0 ).equals( targetPolygon.get( targetPolygon.size() - 1 ) ) ) polygon.add( targetPolygon.get( 0 ) );
 
+        /*
+         * ルール1.　上向きの辺は、開始点を含み終点を含まない。
+         * ルール2.　下向きの辺は、開始点を含まず終点を含む。
+         * ルール3.　水平線Rと辺Snが水平でない (SnがRと重ならない) 。
+         * ルール4.　水平線Rと辺Snの交点は厳密に点Pの右側になくてはならない。
+         */
         for( int i = 1; i < polygon.size(); i++ ) {
             // 上向きの辺、下向きの辺によって処理が分かれる。
             // 上向きの辺。点Pがy軸方向について、始点と終点の間にある。ただし、終点は含まない。(ルール1)
@@ -193,10 +212,9 @@ public class UtilityJavaFXComponent {
                 // 辺は点pよりも右側にある。ただし、重ならない。(ルール4)
                 // 辺が点pと同じ高さになる位置を特定し、その時のxの値と点pのxの値を比較する。
                 double vt = ( targetPoint.getY() - polygon.get( i - 1 ).getY() ) / ( polygon.get( i ).getY() - polygon.get( i - 1 ).getY());
+
                 if( targetPoint.getX() < ( polygon.get( i - 1 ).getX() + ( vt * ( polygon.get( i ).getX() - polygon.get( i - 1 ).getX() ) ) ) ) {
-
-                    ++wn;  //ここが重要。上向きの辺と交差した場合は+1
-
+                    ++wn;  // ここが重要。上向きの辺と交差した場合は +1
                 }
             }
             // 下向きの辺。点Pがy軸方向について、始点と終点の間にある。ただし、始点は含まない。(ルール2)
@@ -204,10 +222,9 @@ public class UtilityJavaFXComponent {
                 // 辺は点pよりも右側にある。ただし、重ならない。(ルール4)
                 // 辺が点pと同じ高さになる位置を特定し、その時のxの値と点pのxの値を比較する。
                 double vt = ( targetPoint.getY() - polygon.get( i - 1 ).getY() ) / ( polygon.get( i ).getY() - polygon.get( i - 1 ).getY() );
+
                 if( targetPoint.getX() < ( polygon.get( i - 1 ).getX() + ( vt * ( polygon.get( i ).getX() - polygon.get( i - 1 ).getX() ) ) ) ) {
-
-                    --wn;  //ここが重要。下向きの辺と交差した場合は-1
-
+                    --wn;  // ここが重要。下向きの辺と交差した場合は -1
                 }
             }
             // ルール1,ルール2を確認することで、ルール3も確認できている。
@@ -236,7 +253,7 @@ public class UtilityJavaFXComponent {
      *     <ui>
      *         <li> {@link Polygon} クラスのcontainsメソッドのアルゴリズムが不明瞭である点（特に {@link java.awt.Shape} に記述している判定計算の負荷が非常に大きい場合はfalseを返す恐れがあるとの解釈が不安材料） </li>
      *         <li> {@link Polygon#contains(int, int)} の引数が {@code int} である点（ {@link javafx.geometry.Point2D} のXY軸のポイントはどちらも {@code double} 型） </li>
-     *         <li> {@link javafx.scene.shape.Polygon} クラスではなく {@link java.awt.Polygon} を使っており名称被りを起こす可能性がある点（もしこのクラス内で {@link javafx.scene.shape.Polygon} を用いることがあれば削除してよい） </li>
+     *         <li> {@link javafx.scene.shape.Polygon} クラスではなく {@link java.awt.Polygon} を使っており名称被りを起こす可能性がある点（もしこのクラス内で {@link javafx.scene.shape.Polygon} を用いることがあればこのメソッドを削除してよい） </li>
      *         <li> 多角形の自己交差内のポイントを多角形外に存在すると判定する点（Crossing Number Algorithmを用いていると予測するが正確なアルゴリズムは不明） </li>
      *     </ui>
      *     今後は {@link #isInsidePointFromPolygonUsingWNA(List, Point2D)} の利用を推奨する。
@@ -248,6 +265,7 @@ public class UtilityJavaFXComponent {
         boolean isOnLine = false;
         boolean isOnEdge = false;
 
+        // 多角形でない場合
         if( polygonPoints.size() < 3 ) return false;
 
         Polygon polygon = new Polygon();
@@ -263,7 +281,7 @@ public class UtilityJavaFXComponent {
                 startPoint = endPoint;
                 endPoint = tmp;
             }
-            if( startPoint.equals( targetPoint ) || endPoint.equals( targetPoint ) ) isOnEdge = true;
+            if( startPoint.equals( targetPoint ) || endPoint.equals( targetPoint ) ) isOnEdge = true; // ターゲット点が多角形の点と等しい場合
 
             isOnLine = startPoint.getX() <= targetPoint.getX() && targetPoint.getX() <= endPoint.getX() &&
                     ( ( startPoint.getY() <= endPoint.getY() && startPoint.getY() <= targetPoint.getY() && targetPoint.getY() <= endPoint.getY() ) ||

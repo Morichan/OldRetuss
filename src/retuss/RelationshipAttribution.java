@@ -13,7 +13,7 @@ public class RelationshipAttribution extends Attribution {
     RelationshipAttribution() {
         name = "";
         visibility = "";
-        type = "";
+        type = ContentType.Undefined;
         isIndicate = true;
         relationPoint = new Point2D( 0.0, 0.0 );
         relationSourcePoint = new Point2D( 0.0, 0.0 );

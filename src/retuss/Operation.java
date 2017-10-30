@@ -5,7 +5,7 @@ public class Operation extends ClassData {
     Operation() {
         name = "";
         visibility = "";
-        type = "";
+        type = ContentType.Undefined;
         isIndicate = true;
     }
 

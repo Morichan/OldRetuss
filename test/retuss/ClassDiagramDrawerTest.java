@@ -847,5 +847,33 @@ public class ClassDiagramDrawerTest {
             assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
             assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
         }
+
+        @Test
+        public void キャンバスに関係を描画している2つのクラス間をクリックすると真を返すがそれ以外の箇所では偽を返す() {
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
+
+            boolean actualTrue = cdd.isAlreadyDrawnAnyDiagram( 300.0, 400.0 );
+            boolean actualFalse = cdd.isAlreadyDrawnAnyDiagram( 300.0, 500.0 );
+
+            assertThat( actualTrue, is( true ) );
+            assertThat( actualFalse, is( false ) );
+        }
+
+        @Test
+        public void キャンバスに描画している一番上の関係の内容を返す() {
+            RelationshipAttribution expected = new RelationshipAttribution( "- composition" );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
+            cdd.searchDrawnAnyDiagramType( secondClass.getX(), secondClass.getY() );
+
+            RelationshipAttribution actual = cdd.searchDrawnEdge( 300.0, 400.0 );
+
+            assertThat( actual.getName(), is( expected.getName() ) );
+        }
     }
 }

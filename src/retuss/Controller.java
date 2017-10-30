@@ -180,17 +180,25 @@ public class Controller {
     private void clickedCanvasBySecondaryButtonInCD( double mouseX, double mouseY ) {
         classDiagramScrollPane.setContextMenu( null );
 
-        if( ! classDiagramDrawer.isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) return;
+        ContentType currentType = classDiagramDrawer.searchDrawnAnyDiagramType( mouseX, mouseY );
+
+        if( currentType == ContentType.Undefined ) return;
         if( util.getDefaultButtonIn( buttonsInCD ) != normalButtonInCD ) return;
 
-        NodeDiagram nodeDiagram = classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
-        ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType(),
-                classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution ),
-                classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ),
-                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication),
-                classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication) );
+        if( currentType == ContentType.Class ) {
+            NodeDiagram nodeDiagram = classDiagramDrawer.findNodeDiagram( mouseX, mouseY );
+            ContextMenu contextMenu = util.getClassContextMenuInCD( nodeDiagram.getNodeText(), nodeDiagram.getNodeType(),
+                    classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution ),
+                    classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation ),
+                    classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication ),
+                    classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication ) );
 
-        classDiagramScrollPane.setContextMenu( formatClassContextMenuInCD( contextMenu, nodeDiagram.getNodeType(), mouseX, mouseY ) );
+            classDiagramScrollPane.setContextMenu( formatContextMenuInCD( contextMenu, nodeDiagram.getNodeType() ) );
+        } else if( currentType == ContentType.Composition ) {
+            RelationshipAttribution relation = classDiagramDrawer.searchDrawnEdge( mouseX, mouseY );
+            ContextMenu contextMenu = util.getClassContextMenuInCD( relation.getName(), relation.getType() );
+            classDiagramScrollPane.setContextMenu( formatContextMenuInCD( contextMenu, relation.getType() ) );
+        }
     }
 
     /**
@@ -199,93 +207,100 @@ public class Controller {
      *
      * @param contextMenu 右クリックメニューの見た目が整形済みの右クリックメニュー UtilityJavaFXComponentクラスのgetClassContextMenuInCDメソッドで取得したインスタンスを入れる必要がある。
      * @param type 右クリックした要素の種類
-     * @param mouseX 右クリック時のマウス位置のX軸
-     * @param mouseY 右クリック時のマウス位置のY軸
      * @return 動作整形済みの右クリックメニュー UtilityJavaFXComponentクラスで整形していないメニューや未分類の要素の種類を{@code contextMenu}や{@code type}に入れた場合は{@code null}を返す。
      */
-    private ContextMenu formatClassContextMenuInCD( ContextMenu contextMenu, ContentType type, double mouseX, double mouseY ) {
+    private ContextMenu formatContextMenuInCD( ContextMenu contextMenu, ContentType type ) {
         if( type == ContentType.Class ) {
-            if( contextMenu.getItems().size() != 5 ) return null;
+            if (contextMenu.getItems().size() != 5) return null;
+            contextMenu = formatClassContextMenuInCD( contextMenu );
 
-            // クラス名の変更
-            contextMenu.getItems().get( 0 ).setOnAction( event -> {
-                String className = showChangeClassNameInputDialog( classDiagramDrawer.getNodes().get( classDiagramDrawer.getCurrentNodeNumber() ).getNodeText() );
-                classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Title, 0, className );
-                classDiagramDrawer.allReDrawNode();
-            } );
-            // クラスの削除
-            contextMenu.getItems().get( 1 ).setOnAction( event -> {
-                classDiagramDrawer.deleteDrawnNode( classDiagramDrawer.getCurrentNodeNumber() );
-                classDiagramDrawer.allReDrawNode();
-            } );
-            // クラスの属性の追加
-            ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 0 ).setOnAction( event -> {
-                String addAttribution = showAddClassAttributionInputDialog();
-                classDiagramDrawer.addDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, addAttribution );
-                classDiagramDrawer.allReDrawNode();
-            } );
-            // クラスの操作の追加
-            ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 0 ).setOnAction( event -> {
-                String addOperation = showAddClassOperationInputDialog();
-                classDiagramDrawer.addDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, addOperation );
-                classDiagramDrawer.allReDrawNode();
-            } );
-            List< String > attributions = classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution );
-            List< String > operations = classDiagramDrawer.getDrawnNodeTextList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation );
-            // クラスの各属性の変更
-            for( int i = 0; i < attributions.size(); i++ ) {
-                int contentNumber = i;
-                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
-                    String changedAttribution = showChangeClassAttributionInputDialog( attributions.get( contentNumber ) );
-                    classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber, changedAttribution );
-                    classDiagramDrawer.allReDrawNode();
-                } );
-            }
-            // クラスの各属性の削除
-            for( int i = 0; i < attributions.size(); i++ ) {
-                int contentNumber = i;
-                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 2 ) ).getItems().get( i ).setOnAction( event -> {
-                    classDiagramDrawer.deleteDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber );
-                    classDiagramDrawer.allReDrawNode();
-                } );
-            }
-            // クラスの各属性の表示選択
-            for( int i = 0; i < attributions.size(); i++ ) {
-                int contentNumber = i;
-                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( i ).setOnAction( event -> {
-                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication, contentNumber,
-                            ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( contentNumber ) ).isSelected() );
-                    classDiagramDrawer.allReDrawNode();
-                } );
-            }
-            // クラスの各操作の変更
-            for( int i = 0; i < operations.size(); i++ ) {
-                int contentNumber = i;
-                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( i ).setOnAction( event -> {
-                    String changedOperation = showChangeClassOperationInputDialog( operations.get( contentNumber ) );
-                    classDiagramDrawer.changeDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber, changedOperation );
-                    classDiagramDrawer.allReDrawNode();
-                } );
-            }
-            // クラスの各操作の削除
-            for( int i = 0; i < operations.size(); i++ ) {
-                int contentNumber = i;
-                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 2 ) ).getItems().get( i ).setOnAction( event -> {
-                    classDiagramDrawer.deleteDrawnNodeText( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber );
-                    classDiagramDrawer.allReDrawNode();
-                } );
-            }
-            // クラスの各操作の表示選択
-            for( int i = 0; i < operations.size(); i++ ) {
-                int contentNumber = i;
-                ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( i ).setOnAction( event -> {
-                    classDiagramDrawer.setDrawnNodeContentBoolean( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication, contentNumber,
-                            ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) contextMenu.getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( contentNumber ) ).isSelected() );
-                    classDiagramDrawer.allReDrawNode();
-                } );
-            }
+        } else if( type == ContentType.Composition ) {
+            if (contextMenu.getItems().size() != 2) return null;
+
         } else {
             return null;
+        }
+
+        return contextMenu;
+    }
+
+    private ContextMenu formatClassContextMenuInCD( ContextMenu contextMenu ) {
+        // クラス名の変更
+        contextMenu.getItems().get(0).setOnAction(event -> {
+            String className = showChangeClassNameInputDialog(classDiagramDrawer.getNodes().get(classDiagramDrawer.getCurrentNodeNumber()).getNodeText());
+            classDiagramDrawer.changeDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Title, 0, className);
+            classDiagramDrawer.allReDrawNode();
+        });
+        // クラスの削除
+        contextMenu.getItems().get(1).setOnAction(event -> {
+            classDiagramDrawer.deleteDrawnNode(classDiagramDrawer.getCurrentNodeNumber());
+            classDiagramDrawer.allReDrawNode();
+        });
+        // クラスの属性の追加
+        ((Menu) contextMenu.getItems().get(3)).getItems().get(0).setOnAction(event -> {
+            String addAttribution = showAddClassAttributionInputDialog();
+            classDiagramDrawer.addDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, addAttribution);
+            classDiagramDrawer.allReDrawNode();
+        });
+        // クラスの操作の追加
+        ((Menu) contextMenu.getItems().get(4)).getItems().get(0).setOnAction(event -> {
+            String addOperation = showAddClassOperationInputDialog();
+            classDiagramDrawer.addDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, addOperation);
+            classDiagramDrawer.allReDrawNode();
+        });
+        List<String> attributions = classDiagramDrawer.getDrawnNodeTextList(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution);
+        List<String> operations = classDiagramDrawer.getDrawnNodeTextList(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation);
+        // クラスの各属性の変更
+        for (int i = 0; i < attributions.size(); i++) {
+            int contentNumber = i;
+            ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(1)).getItems().get(i).setOnAction(event -> {
+                String changedAttribution = showChangeClassAttributionInputDialog(attributions.get(contentNumber));
+                classDiagramDrawer.changeDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber, changedAttribution);
+                classDiagramDrawer.allReDrawNode();
+            });
+        }
+        // クラスの各属性の削除
+        for (int i = 0; i < attributions.size(); i++) {
+            int contentNumber = i;
+            ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(2)).getItems().get(i).setOnAction(event -> {
+                classDiagramDrawer.deleteDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber);
+                classDiagramDrawer.allReDrawNode();
+            });
+        }
+        // クラスの各属性の表示選択
+        for (int i = 0; i < attributions.size(); i++) {
+            int contentNumber = i;
+            ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(3)).getItems().get(i).setOnAction(event -> {
+                classDiagramDrawer.setDrawnNodeContentBoolean(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication, contentNumber,
+                        ((CheckMenuItem) ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(3)).getItems().get(contentNumber)).isSelected());
+                classDiagramDrawer.allReDrawNode();
+            });
+        }
+        // クラスの各操作の変更
+        for (int i = 0; i < operations.size(); i++) {
+            int contentNumber = i;
+            ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(1)).getItems().get(i).setOnAction(event -> {
+                String changedOperation = showChangeClassOperationInputDialog(operations.get(contentNumber));
+                classDiagramDrawer.changeDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber, changedOperation);
+                classDiagramDrawer.allReDrawNode();
+            });
+        }
+        // クラスの各操作の削除
+        for (int i = 0; i < operations.size(); i++) {
+            int contentNumber = i;
+            ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(2)).getItems().get(i).setOnAction(event -> {
+                classDiagramDrawer.deleteDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber);
+                classDiagramDrawer.allReDrawNode();
+            });
+        }
+        // クラスの各操作の表示選択
+        for (int i = 0; i < operations.size(); i++) {
+            int contentNumber = i;
+            ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(3)).getItems().get(i).setOnAction(event -> {
+                classDiagramDrawer.setDrawnNodeContentBoolean(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication, contentNumber,
+                        ((CheckMenuItem) ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(3)).getItems().get(contentNumber)).isSelected());
+                classDiagramDrawer.allReDrawNode();
+            });
         }
 
         return contextMenu;

@@ -5,7 +5,7 @@ public class Attribution extends ClassData {
     Attribution() {
         name = "";
         visibility = "";
-        type = "";
+        type = ContentType.Undefined;
         isIndicate = true;
     }
 

@@ -3,6 +3,7 @@ package retuss;
 import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -271,6 +272,60 @@ public class UtilityJavaFXComponentTest {
             assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).getText(), is( expectedMenuText ) );
             assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).isDisable(), is( true ) );
         }
+    }
+
+    @Test
+    public void コンポジション関係の右クリックする際に表示するコンテキストメニューを整形する() {
+        String composition = "- composition";
+
+        ContextMenu expected = new ContextMenu();
+
+        expected.getItems().add( new MenuItem( composition + " の変更" ) );
+        expected.getItems().add( new MenuItem( composition + " の削除" ) );
+
+        ContextMenu actual = util.getClassContextMenuInCD( composition, ContentType.Composition );
+
+        assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
+        assertThat( actual.getItems().size(), is( 2 ) );
+        for( int i = 0; i < actual.getItems().size(); i++ ) {
+            assertThat( actual.getItems().get( i ).getText(), is( expected.getItems().get( i ).getText() ) );
+        }
+    }
+
+    @Test
+    public void 旧版_角が複数存在する多角形の内側に点が存在するか否かを確認する() {
+        List< Point2D > quadrangle1 = Arrays.asList(
+                new Point2D( 100.0, 100.0 ), new Point2D( 100.0, 500.0 ),
+                new Point2D( 200.0, 500.0 ), new Point2D( 200.0, 100.0 ) );
+        Point2D insidePoint1 = new Point2D( 150.0, 300.0 );
+        Point2D outsidePoint1 = new Point2D( 250.0, 300.0 );
+        Point2D onLinePoint1 = new Point2D( 100.0, 300.0 );
+        Point2D onEdgePoint1 = new Point2D( 100.0, 100.0 );
+        List< Point2D > quadrangle2 = Arrays.asList(
+                new Point2D( 200.0, 100.0 ), new Point2D( 400.0, 300.0 ),
+                new Point2D( 300.0, 400.0 ), new Point2D( 100.0, 200.0 ) );
+        Point2D insidePoint2 = new Point2D( 200.0, 200.0 );
+        Point2D outsidePoint2 = new Point2D( 120.0, 120.0 );
+        Point2D onLinePoint2 = new Point2D( 200.0, 300.0 );
+        Point2D onEdgePoint2 = new Point2D( 400.0, 300.0 );
+
+        boolean actual1 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle1, insidePoint1 );
+        boolean actual2 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle1, outsidePoint1 );
+        boolean actual3 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle1, onLinePoint1 );
+        boolean actual4 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle1, onEdgePoint1 );
+        boolean actual5 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle2, insidePoint2 );
+        boolean actual6 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle2, outsidePoint2 );
+        boolean actual7 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle2, onLinePoint2 );
+        boolean actual8 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle2, onEdgePoint2 );
+
+        assertThat( actual1, is( true ) );
+        assertThat( actual2, is( false ) );
+        assertThat( actual3, is( true ) );
+        assertThat( actual4, is( true ) );
+        assertThat( actual5, is( true ) );
+        assertThat( actual6, is( false ) );
+        assertThat( actual7, is( true ) );
+        assertThat( actual8, is( true ) );
     }
 
     @Test

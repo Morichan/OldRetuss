@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static jdk.nashorn.internal.objects.Global.Infinity;
+import static jdk.nashorn.internal.objects.Global.exit;
 
 public class CompositionEdgeDiagram {
     GraphicsContext gc;
     private List< RelationshipAttribution > compositions = new ArrayList<>();
     private boolean hasRelationSourceNodeSelected = false;
+    private UtilityJavaFXComponent util = new UtilityJavaFXComponent();
 
     public void setGraphicsContext( GraphicsContext gc ) {
         this.gc = gc;
@@ -20,6 +22,7 @@ public class CompositionEdgeDiagram {
 
     public void createEdgeText( ContentType type, String text ) {
         compositions.add( new RelationshipAttribution( text ) );
+        compositions.get( compositions.size() - 1 ).setType( ContentType.Composition );
     }
     public void changeEdgeText( ContentType type, int number, String text ) {
         compositions.get( number ).setName( text );
@@ -63,6 +66,10 @@ public class CompositionEdgeDiagram {
         return compositions.get( number ).getRelationSourcePoint();
     }
 
+    public ContentType getContentType( int number ) {
+        return compositions.get( number ).getType();
+    }
+
     public int getCompositionsCount() {
         return compositions.size();
     }
@@ -79,16 +86,26 @@ public class CompositionEdgeDiagram {
         hasRelationSourceNodeSelected = false;
     }
 
+    public RelationshipAttribution searchCurrentRelationName( Point2D mousePoint ) {
+        RelationshipAttribution content = null;
+
+        // 重なっているエッジの内1番上に描画しているエッジはcompositionsリストの1番後半に存在するため、1番上に描画しているエッジを取るためには尻尾から見なければならない。
+        for( int i = compositions.size() - 1; i >= 0; i++ ) {
+            if( isAlreadyDrawnAnyEdge( compositions.get( i ).getType(), i, mousePoint ) ) {
+                content = compositions.get( i );
+                break;
+            }
+        }
+        return content;
+    }
+
     public boolean isAlreadyDrawnAnyEdge( ContentType type, int number, Point2D mousePoint ) {
         boolean isAlreadyDrawnAnyEdge = false;
         Point2D relationPoint = compositions.get( number ).getRelationPoint();
         Point2D relationSourcePoint = compositions.get( number ).getRelationSourcePoint();
 
-        if( relationPoint.getX() - getRelationMarginLength( ContentType.Composition ) < mousePoint.getX() &&
-                mousePoint.getX() < relationPoint.getX() + getRelationMarginLength( ContentType.Composition ) ) isAlreadyDrawnAnyEdge = true;
-
-        if( relationPoint.getY() - getRelationMarginLength( ContentType.Composition ) < mousePoint.getY() &&
-                mousePoint.getY() < relationPoint.getY() + getRelationMarginLength( ContentType.Composition ) ) isAlreadyDrawnAnyEdge = true;
+        List< Point2D > edgePolygon = createOneEdgeQuadrangleWithMargin( getRelationMarginLength( ContentType.Composition ), relationPoint, relationSourcePoint );
+        if( util.isInsidePointFromPolygonUsingWNA( edgePolygon, mousePoint ) ) isAlreadyDrawnAnyEdge = true;
 
         return isAlreadyDrawnAnyEdge;
     }
@@ -96,6 +113,7 @@ public class CompositionEdgeDiagram {
     public List< Point2D > createOneEdgeQuadrangleWithMargin( double margin, Point2D startEdge, Point2D endEdge ) {
         List< Point2D > edgePolygon = new ArrayList<>();
 
+        // 傾き
         double inclination = calculateNormalLineInclination( startEdge, endEdge );
         int sign = 1;
 
@@ -112,7 +130,20 @@ public class CompositionEdgeDiagram {
             edgePolygon.add( new Point2D( endEdge.getX() + margin * sign, endEdge.getY() ) );
             edgePolygon.add( new Point2D( startEdge.getX() + margin * sign, startEdge.getY() ) );
         } else {
+            // 切片
+            double intercept = startEdge.getY() / ( inclination * startEdge.getX() );
+            double radian = Math.atan( inclination );
+            double xAxisLength = margin * Math.cos( radian );
+            double yAxisLength = inclination * xAxisLength;
 
+            // ( 切片が0超 && 終点が始点より大きい ) の排他的論理和
+            if( ( intercept < 0 && startEdge.getX() < endEdge.getX() ) ||
+                    ( ! (intercept < 0) && ! (startEdge.getX() < endEdge.getX() ) ) ) sign = -1;
+
+            edgePolygon.add( new Point2D( startEdge.getX() + xAxisLength * sign, startEdge.getY() - yAxisLength * sign ) );
+            edgePolygon.add( new Point2D( endEdge.getX() + xAxisLength * sign, endEdge.getY() - yAxisLength * sign ) );
+            edgePolygon.add( new Point2D( endEdge.getX() - xAxisLength * sign, endEdge.getY() + yAxisLength * sign ) );
+            edgePolygon.add( new Point2D( startEdge.getX() - xAxisLength * sign, startEdge.getY() + yAxisLength * sign ) );
         }
 
         return edgePolygon;
@@ -124,7 +155,7 @@ public class CompositionEdgeDiagram {
     }
 
     private double getRelationMarginLength( ContentType type ) {
-        return 2.0;
+        return 10.0;
     }
 
     /**
@@ -155,62 +186,5 @@ public class CompositionEdgeDiagram {
         }
 
         return normalLineInclination;
-    }
-
-    public List< Double > getActualEdgeAndAngle( double fromX, double fromY, double toX, double toY, double startX, double startY, double width, double height ) {
-        List< Double > actual = new ArrayList<>();
-
-        double angle = Math.acos( ( fromX - toX ) / Math.sqrt( ( fromX - toX ) * ( fromX - toX ) + ( fromY - toY ) * ( fromY - toY ) ) );
-        double actualEdgeX = ( height/2 * ( toX - fromX ) ) / ( toY - fromY );
-        double actualEdgeY = ( width/2 * ( toY - fromY ) ) / ( toX - fromX );
-        if( Double.isInfinite( actualEdgeX ) ) {
-            if( fromX > toX ) {
-                actualEdgeX = fromX - width/2;
-                actualEdgeY = fromY;
-            } else {
-                actualEdgeX = fromX + width/2;
-                actualEdgeY = fromY;
-            }
-        }
-
-        // 最初のノードが次のノードより上に位置している場合
-        if( fromY < toY ) {
-            if( actualEdgeX > width/2 || -actualEdgeX > width/2 ) {
-                if( actualEdgeX > 0 ) {
-                    actualEdgeX = startX + width;
-                    actualEdgeY += fromY;
-                } else {
-                    actualEdgeX = startX;
-                    actualEdgeY = fromY - actualEdgeY;
-                }
-            } else {
-                actualEdgeX += startX + width/2;
-                actualEdgeY = startY + height;
-            }
-            angle = 180 - Math.toDegrees( angle );
-
-        } else if( fromY > toY ) {
-            if( actualEdgeX > width/2 || -actualEdgeX > width/2 ) {
-                if( actualEdgeX > 0 ) {
-                    actualEdgeX = startX;
-                    actualEdgeY = fromY - actualEdgeY;
-                } else {
-                    actualEdgeX = startX + width;
-                    actualEdgeY += fromY;
-                }
-            } else {
-                actualEdgeX = startX + width/2 - actualEdgeX;
-                actualEdgeY = startY;
-            }
-            angle = 180 + Math.toDegrees( angle );
-
-        } else {
-            angle = 180 - Math.toDegrees( angle ); // 2つのノードが真横に存在している場合 angle = 180 or 360;
-        }
-
-        actual.add( actualEdgeX );
-        actual.add( actualEdgeY );
-        actual.add( angle );
-        return actual;
     }
 }

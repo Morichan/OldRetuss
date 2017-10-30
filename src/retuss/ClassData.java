@@ -3,7 +3,7 @@ package retuss;
 public class ClassData {
     protected String name;
     protected String visibility;
-    protected String type;
+    protected ContentType type;
 
     protected boolean isIndicate;
 
@@ -21,5 +21,13 @@ public class ClassData {
 
     public boolean isIndicate() {
         return isIndicate;
+    }
+
+    public void setType( ContentType type ) {
+        this.type = type;
+    }
+
+    public ContentType getType() {
+        return type;
     }
 }

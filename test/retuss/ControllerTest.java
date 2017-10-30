@@ -995,7 +995,6 @@ public class ControllerTest {
             assertThat( textAlignment, is( TextAlignment.CENTER ) );
         }
 
-        @Ignore( "コンポジションにおけるメニューの表示が未完成" )
         @Test
         public void コンポジションアイコンを選択している際にキャンバスに描かれている2つのクラスをクリックしDialogに関係属性を記述するとコンポジション関係を描画する() {
             clickOn( "#classButtonInCD" );
@@ -1015,7 +1014,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositions" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition" ) ) );
         }
 
         @Test
@@ -1039,6 +1038,41 @@ public class ControllerTest {
             assertThat( strokeColor, is( Color.RED ) );
             fxRobotException.expect( FxRobotException.class );
             clickOn( okButtonOnDialogBox );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている関係属性の範囲外を右クリックしても右クリックメニューは表示しない() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- composition" );
+            clickOn( okButtonOnDialogBox );
+
+            Point2D noDrawnPoint1 = new Point2D( secondClickedClassDiagramCanvas.getX() + 10.0, firstClickedClassDiagramCanvas.getY() + 10.0 );
+            Point2D noDrawnPoint2 = new Point2D( secondClickedClassDiagramCanvas.getX() - 50.0, firstClickedClassDiagramCanvas.getY() - 100.0 );
+            Point2D noDrawnPoint3 = new Point2D( firstClickedClassDiagramCanvas.getX() + 50.0, secondClickedClassDiagramCanvas.getY() + 100.0 );
+            Point2D noDrawnPoint4 = new Point2D( firstClickedClassDiagramCanvas.getX() - 10.0, secondClickedClassDiagramCanvas.getY() - 10.0 );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( noDrawnPoint1 );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( noDrawnPoint2 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( noDrawnPoint3 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            rightClickOn( noDrawnPoint4 );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }
 
 

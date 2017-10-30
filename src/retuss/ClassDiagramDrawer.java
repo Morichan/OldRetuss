@@ -1,5 +1,6 @@
 package retuss;
 
+import com.sun.prism.image.CompoundTexture;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -179,8 +180,38 @@ public class ClassDiagramDrawer {
                 break;
             }
         }
+        for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
+            if( compositions.isAlreadyDrawnAnyEdge( ContentType.Composition, i, new Point2D( mouseX, mouseY ) ) ) {
+                act = true;
+                break;
+            }
+        }
 
         return act;
+    }
+
+    public RelationshipAttribution searchDrawnEdge( double mouseX, double mouseY ) {
+        RelationshipAttribution relation = compositions.searchCurrentRelationName( new Point2D( mouseX, mouseY ) );
+        return relation;
+    }
+
+    public ContentType searchDrawnAnyDiagramType( double mouseX, double mouseY ) {
+        ContentType type = ContentType.Undefined;
+
+        for( NodeDiagram nodeDiagram: nodes ) {
+            if( nodeDiagram.isAlreadyDrawnNode( mouseX, mouseY ) ) {
+                type = nodeDiagram.getNodeType();
+                break;
+            }
+        }
+        for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
+            if( compositions.isAlreadyDrawnAnyEdge( ContentType.Composition, i, new Point2D( mouseX, mouseY ) ) ) {
+                type = compositions.getContentType( i );
+                break;
+            }
+        }
+
+        return type;
     }
 
     public boolean hasWaitedCorrectDrawnDiagram( ContentType type, double mouseX, double mouseY ) {
