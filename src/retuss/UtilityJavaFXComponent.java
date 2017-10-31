@@ -149,26 +149,28 @@ public class UtilityJavaFXComponent {
      * <p>
      *     Winding Number Algorithmは、Crossing Number Algorithmの欠点である多角形の自己交差内における内外判定を克服したアルゴリズムである。
      *     多角形の自己交差とは、次のような多角形の点Aが存在する領域を示す。
+     * </p>
      *
-     *     <p>
-     *         凡例<br>
-     *         <ui>
-     *             <li> - : 多角形の領域外（多角形が作る穴 == Holeは除く） </li>
-     *             <li> O : 多角形の領域内（自己交差内は除く） </li>
-     *             <li> X : 多角形が作る穴 == Hole（多角形の領域外） </li>
-     *             <li> A : 多角形の自己交差内の領域（多角形の領域内） </li>
-     *         </ui>
-     *     </p>
-     *     <p>
-     *         多角形の自己交差の図形 <br>
-     *         --- --- --- --- --- ---<br>
-     *         --- --- OOO --- --- ---<br>
-     *         --- OOO AAA OOO OOO ---<br>
-     *         --- --- OOO XXX OOO ---<br>
-     *         --- --- OOO OOO OOO ---<br>
-     *         --- --- --- --- --- ---<br>
-     *     </p>
+     * <p>
+     *     凡例<br>
+     *     <ui>
+     *         <li> - : 多角形の領域外（多角形が作る穴 == Holeは除く） </li>
+     *         <li> O : 多角形の領域内（自己交差内は除く） </li>
+     *         <li> X : 多角形が作る穴 == Hole（多角形の領域外） </li>
+     *         <li> A : 多角形の自己交差内の領域（多角形の領域内） </li>
+     *     </ui>
+     * </p>
+     * <p>
+     *     多角形の自己交差の図形 <br>
+     *     --- --- --- --- --- ---<br>
+     *     --- --- OOO --- --- ---<br>
+     *     --- OOO AAA OOO OOO ---<br>
+     *     --- --- OOO XXX OOO ---<br>
+     *     --- --- OOO OOO OOO ---<br>
+     *     --- --- --- --- --- ---<br>
+     * </p>
      *
+     * <p>
      *     この時、XXXは範囲外であるがAAAは範囲内であるという判定が一般的である。
      *     しかし、Crossing Number AlgorithmではAAAを範囲外として判定してしまう。
      *     Winding Number AlgorithmではAAAを範囲内として判定する。

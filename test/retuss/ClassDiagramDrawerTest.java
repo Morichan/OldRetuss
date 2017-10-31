@@ -12,6 +12,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
@@ -693,7 +694,7 @@ public class ClassDiagramDrawerTest {
     }
 
     @RunWith( JMockit.class )
-    public static class クラスを2つ記述後にコンポジションアイコンを選択している場合 {
+    public static class クラスを3つ記述後にコンポジションアイコンを選択している場合 {
         @Mocked
         NoteNodeDiagram noteNodeDiagram;
         @Mocked
@@ -709,6 +710,9 @@ public class ClassDiagramDrawerTest {
         Button compositionButton;
         Point2D firstClass;
         Point2D secondClass;
+        Point2D thirdClass;
+        Point2D betweenFirstAndSecondClass;
+        Point2D betweenFirstAndThirdClass;
 
         UtilityJavaFXComponent util;
 
@@ -722,6 +726,9 @@ public class ClassDiagramDrawerTest {
             buttons = Arrays.asList( normalButton, classButton, noteButton, compositionButton );
             firstClass = new Point2D(100.0, 200.0);
             secondClass = new Point2D( 500.0, 600.0 );
+            thirdClass = new Point2D( 100.0, 600.0 );
+            betweenFirstAndSecondClass = new Point2D( 300.0, 400.0 );
+            betweenFirstAndThirdClass = new Point2D( 100.0, 400.0 );
 
             util = new UtilityJavaFXComponent();
             buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
@@ -740,6 +747,10 @@ public class ClassDiagramDrawerTest {
             cdd.setMouseCoordinates( secondClass.getX(), secondClass.getY() );
             cdd.addDrawnNode( buttons );
             ( ( ClassNodeDiagram ) cdd.getNodes().get( 1 ) ).calculateWidthAndHeight( 100.0, 80.0 );
+            cdd.setNodeText( "ThirdClassName" );
+            cdd.setMouseCoordinates( thirdClass.getX(), thirdClass.getY() );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 2 ) ).calculateWidthAndHeight( 100.0, 80.0 );
             buttons = util.setAllDefaultButtonIsFalseWithout( buttons, compositionButton );
         }
 
@@ -855,8 +866,8 @@ public class ClassDiagramDrawerTest {
             cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
             cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
 
-            boolean actualTrue = cdd.isAlreadyDrawnAnyDiagram( 300.0, 400.0 );
-            boolean actualFalse = cdd.isAlreadyDrawnAnyDiagram( 300.0, 500.0 );
+            boolean actualTrue = cdd.isAlreadyDrawnAnyDiagram( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() );
+            boolean actualFalse = cdd.isAlreadyDrawnAnyDiagram( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() + 100.0 );
 
             assertThat( actualTrue, is( true ) );
             assertThat( actualFalse, is( false ) );
@@ -871,9 +882,97 @@ public class ClassDiagramDrawerTest {
             cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
             cdd.searchDrawnAnyDiagramType( secondClass.getX(), secondClass.getY() );
 
-            RelationshipAttribution actual = cdd.searchDrawnEdge( 300.0, 400.0 );
+            RelationshipAttribution actual = cdd.searchDrawnEdge( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() );
 
             assertThat( actual.getName(), is( expected.getName() ) );
+        }
+
+        @Test
+        public void キャンバスに描画している一番上の関係の内容を変更する() {
+            RelationshipAttribution expected = new RelationshipAttribution( "- changedComposition" );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
+            cdd.searchDrawnAnyDiagramType( secondClass.getX(), secondClass.getY() );
+
+            cdd.changeDrawnEdge( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY(), expected.getName() );
+            RelationshipAttribution actual = cdd.searchDrawnEdge( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() );
+
+            assertThat( actual.getName(), is( expected.getName() ) );
+        }
+
+        @Test
+        public void キャンバスに描画している一番上の関係の内容を削除する() {
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
+            cdd.searchDrawnAnyDiagramType( secondClass.getX(), secondClass.getY() );
+
+            cdd.deleteDrawnEdge( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() );
+            RelationshipAttribution actual = cdd.searchDrawnEdge( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() );
+
+            assertThat( actual, is( nullValue() ) );
+        }
+
+        @Test
+        public void キャンバスに描画しているクラス2つのコンポジション関係を複数描画する() {
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition1", secondClass.getX(), secondClass.getY() );
+
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition2", secondClass.getX(), secondClass.getY() );
+
+            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition1" ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 1 ), is( "- composition2" ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 1 ), is( 1 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 1 ), is( 0 ) );
+        }
+
+        @Test
+        public void キャンバスに描画しているクラス2つのコンポジション関係を描画する途中で一度描画していない箇所を選択してから描画する() {
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() );
+            cdd.setMouseCoordinates( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() );
+
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
+
+            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition" ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
+        }
+
+        @Test
+        public void キャンバスに描画しているクラス3つのコンポジション関係を2つ描画する() {
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition1", secondClass.getX(), secondClass.getY() );
+
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, firstClass.getX(), firstClass.getY() );
+            cdd.setMouseCoordinates( firstClass.getX(), firstClass.getY() );
+            cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, thirdClass.getX(), thirdClass.getY() );
+            cdd.addDrawnEdge( buttons, "- composition2", thirdClass.getX(), thirdClass.getY() );
+
+            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition1" ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 1 ), is( "- composition2" ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 1 ), is( 2 ) );
+            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 1 ), is( 0 ) );
+            assertThat( cdd.searchDrawnEdge( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() ).getName(), is( "- composition1" ) );
+            assertThat( cdd.searchDrawnEdge( betweenFirstAndThirdClass.getX(), betweenFirstAndThirdClass.getY() ).getName(), is( "- composition2" ) );
         }
     }
 }

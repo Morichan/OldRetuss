@@ -314,8 +314,59 @@ public class CompositionEdgeDiagramTest {
         obj.createEdgeText( ContentType.Composition, "- composition" );
         obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
         obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
-        RelationshipAttribution actual = obj.searchCurrentRelationName( firstClassPoint );
+        RelationshipAttribution actual = obj.searchCurrentRelation( firstClassPoint );
 
         assertThat( actual.getName(), is( expected.getName() ) );
+    }
+
+    @Test
+    public void 関係の内容名を変更する() {
+        RelationshipAttribution expected = new RelationshipAttribution( "+ changedComposition" );
+        firstClassPoint = new Point2D( 100.0, 200.0 );
+        secondClassPoint = new Point2D( 300.0, 400.0 );
+        Point2D betweenFirstAndSecondClassPoint = new Point2D( 200.0, 300.0 );
+
+        obj.createEdgeText( ContentType.Composition, "- composition" );
+        obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
+        obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
+        obj.changeCurrentRelation( betweenFirstAndSecondClassPoint, "+ changedComposition" );
+        RelationshipAttribution actual = obj.searchCurrentRelation( betweenFirstAndSecondClassPoint );
+
+        assertThat( actual.getName(), is( expected.getName() ) );
+    }
+
+    @Test
+    public void 関係の内容を削除する() {
+        RelationshipAttribution expected = null;
+        firstClassPoint = new Point2D( 100.0, 200.0 );
+        secondClassPoint = new Point2D( 300.0, 400.0 );
+        Point2D betweenFirstAndSecondClassPoint = new Point2D( 200.0, 300.0 );
+
+        obj.createEdgeText( ContentType.Composition, "- composition" );
+        obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
+        obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
+        obj.deleteCurrentRelation( betweenFirstAndSecondClassPoint );
+        RelationshipAttribution actual = obj.searchCurrentRelation( betweenFirstAndSecondClassPoint );
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void コンポジションを複数追加する() {
+        String expected1 = "- composition1";
+        String expected2 = "- composition2";
+        String expected3 = "- composition3";
+
+        obj.createEdgeText( ContentType.Composition, expected1 );
+        obj.createEdgeText( ContentType.Composition, expected2 );
+        obj.createEdgeText( ContentType.Composition, expected3 );
+        String actual1 = obj.getEdgeContentText( ContentType.Composition, 0 );
+        String actual2 = obj.getEdgeContentText( ContentType.Composition, 1 );
+        String actual3 = obj.getEdgeContentText( ContentType.Composition, 2 );
+
+        assertThat( actual1, is( expected1 ) );
+        assertThat( actual2, is( expected2 ) );
+        assertThat( actual3, is( expected3 ) );
+        assertThat( obj.getCompositionsCount(), is( 3 ));
     }
 }

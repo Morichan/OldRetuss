@@ -48,7 +48,6 @@ public class Controller {
     @FXML
     void initialize() {
         buttonsInCD.addAll( Arrays.asList( normalButtonInCD, classButtonInCD, noteButtonInCD, compositionButtonInCD ) );
-        // buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, normalButtonInCD );
     }
 
     @FXML
@@ -121,32 +120,30 @@ public class Controller {
     }
 
     private String showCreateClassNameInputDialog() {
-        return showClassDiagramInputDialog( "クラス名", "クラス名を入力してください。", "" );
+        return showClassDiagramInputDialog( "クラスの追加", "追加するクラスのクラス名を入力してください。", "" );
     }
-
     private String showChangeClassNameInputDialog( String className ) {
         return showClassDiagramInputDialog( "クラス名の変更", "変更後のクラス名を入力してください。", className );
     }
-
     private String showAddClassAttributionInputDialog() {
         return showClassDiagramInputDialog( "属性の追加", "追加する属性を入力してください。", "" );
     }
-
     private String showChangeClassAttributionInputDialog( String attribution ) {
         return showClassDiagramInputDialog( "属性の変更", "変更後の属性を入力してください。", attribution );
     }
-
     private String showAddClassOperationInputDialog() {
         return showClassDiagramInputDialog( "操作の追加", "追加する操作を入力してください。", "" );
     }
-
     private String showChangeClassOperationInputDialog( String operation ) {
         return showClassDiagramInputDialog( "操作の変更", "変更後の操作を入力してください。", operation );
     }
-
     private String showCreateCompositionNameInputDialog() {
-        return showClassDiagramInputDialog( "コンポジションの追加", "コンポジション先の関連端名を追加してください。", "" );
+        return showClassDiagramInputDialog( "コンポジションの追加", "コンポジション先の関連端名を入力してください。", "" );
     }
+    private String showChangeCompositionNameInputDialog( String composition ) {
+        return showClassDiagramInputDialog( "コンポジションの変更", "変更後のコンポジション先の関連端名を入力してください。", composition );
+    }
+
     /**
      * クラス図のテキスト入力ダイアログを表示する。
      * 表示中はダイアログ以外の本機能の他ウィンドウは入力を受け付けない。
@@ -193,11 +190,11 @@ public class Controller {
                     classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication ),
                     classDiagramDrawer.getDrawnNodeContentsBooleanList( classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication ) );
 
-            classDiagramScrollPane.setContextMenu( formatContextMenuInCD( contextMenu, nodeDiagram.getNodeType() ) );
+            classDiagramScrollPane.setContextMenu( formatContextMenuInCD( contextMenu, nodeDiagram.getNodeType(), mouseX, mouseY ) );
         } else if( currentType == ContentType.Composition ) {
             RelationshipAttribution relation = classDiagramDrawer.searchDrawnEdge( mouseX, mouseY );
             ContextMenu contextMenu = util.getClassContextMenuInCD( relation.getName(), relation.getType() );
-            classDiagramScrollPane.setContextMenu( formatContextMenuInCD( contextMenu, relation.getType() ) );
+            classDiagramScrollPane.setContextMenu( formatContextMenuInCD( contextMenu, relation.getType(), mouseX, mouseY ) );
         }
     }
 
@@ -209,13 +206,14 @@ public class Controller {
      * @param type 右クリックした要素の種類
      * @return 動作整形済みの右クリックメニュー UtilityJavaFXComponentクラスで整形していないメニューや未分類の要素の種類を{@code contextMenu}や{@code type}に入れた場合は{@code null}を返す。
      */
-    private ContextMenu formatContextMenuInCD( ContextMenu contextMenu, ContentType type ) {
+    private ContextMenu formatContextMenuInCD( ContextMenu contextMenu, ContentType type, double mouseX, double mouseY ) {
         if( type == ContentType.Class ) {
             if (contextMenu.getItems().size() != 5) return null;
             contextMenu = formatClassContextMenuInCD( contextMenu );
 
         } else if( type == ContentType.Composition ) {
             if (contextMenu.getItems().size() != 2) return null;
+            contextMenu = formatCompositionContextMenuInCD( contextMenu, mouseX, mouseY );
 
         } else {
             return null;
@@ -302,6 +300,25 @@ public class Controller {
                 classDiagramDrawer.allReDrawNode();
             });
         }
+
+        return contextMenu;
+    }
+
+    private ContextMenu formatCompositionContextMenuInCD( ContextMenu contextMenu, double mouseX, double mouseY ) {
+        // コンポジション関係の変更
+        contextMenu.getItems().get(0).setOnAction( event -> {
+            RelationshipAttribution composition = classDiagramDrawer.searchDrawnEdge( mouseX, mouseY );
+            String compositionName = showChangeCompositionNameInputDialog( composition.getName() );
+            classDiagramDrawer.changeDrawnEdge( mouseX, mouseY, compositionName );
+            classDiagramDrawer.allReDrawEdge();
+            classDiagramDrawer.allReDrawNode();
+        } );
+        // コンポジション関係の削除
+        contextMenu.getItems().get(1).setOnAction( event -> {
+            classDiagramDrawer.deleteDrawnEdge( mouseX, mouseY );
+            classDiagramDrawer.allReDrawEdge();
+            classDiagramDrawer.allReDrawNode();
+        } );
 
         return contextMenu;
     }

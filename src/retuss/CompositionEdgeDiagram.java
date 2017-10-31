@@ -86,17 +86,35 @@ public class CompositionEdgeDiagram {
         hasRelationSourceNodeSelected = false;
     }
 
-    public RelationshipAttribution searchCurrentRelationName( Point2D mousePoint ) {
+    public RelationshipAttribution searchCurrentRelation( Point2D mousePoint ) {
         RelationshipAttribution content = null;
+        int number = searchCurrentRelationNumber( mousePoint );
+        if( number > -1 ) content = compositions.get( number );
+        return content;
+    }
+
+    public void changeCurrentRelation( Point2D mousePoint, String content ) {
+        int number = searchCurrentRelationNumber( mousePoint );
+        if( number > -1 ) changeEdgeText( compositions.get( number ).getType(), number, content );
+    }
+
+    public void deleteCurrentRelation( Point2D mousePoint ) {
+        int number = searchCurrentRelationNumber( mousePoint );
+        if( number > -1 ) deleteEdgeText( compositions.get( number ).getType(), number );
+    }
+
+    public int searchCurrentRelationNumber( Point2D mousePoint ) {
+        int number = -1;
 
         // 重なっているエッジの内1番上に描画しているエッジはcompositionsリストの1番後半に存在するため、1番上に描画しているエッジを取るためには尻尾から見なければならない。
-        for( int i = compositions.size() - 1; i >= 0; i++ ) {
+        for( int i = compositions.size() - 1; i >= 0; i-- ) {
             if( isAlreadyDrawnAnyEdge( compositions.get( i ).getType(), i, mousePoint ) ) {
-                content = compositions.get( i );
+                number = i;
                 break;
             }
         }
-        return content;
+
+        return number;
     }
 
     public boolean isAlreadyDrawnAnyEdge( ContentType type, int number, Point2D mousePoint ) {

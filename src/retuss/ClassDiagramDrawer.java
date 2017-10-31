@@ -191,8 +191,16 @@ public class ClassDiagramDrawer {
     }
 
     public RelationshipAttribution searchDrawnEdge( double mouseX, double mouseY ) {
-        RelationshipAttribution relation = compositions.searchCurrentRelationName( new Point2D( mouseX, mouseY ) );
+        RelationshipAttribution relation = compositions.searchCurrentRelation( new Point2D( mouseX, mouseY ) );
         return relation;
+    }
+
+    public void changeDrawnEdge( double mouseX, double mouseY, String content ) {
+        compositions.changeCurrentRelation( new Point2D( mouseX, mouseY ), content );
+    }
+
+    public void deleteDrawnEdge( double mouseX, double mouseY ) {
+        compositions.deleteCurrentRelation( new Point2D( mouseX, mouseY ) );
     }
 
     public ContentType searchDrawnAnyDiagramType( double mouseX, double mouseY ) {

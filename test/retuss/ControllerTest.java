@@ -59,6 +59,8 @@ public class ControllerTest {
         Point2D secondClickedClassDiagramCanvas;
         Point2D thirdClickedClassDiagramCanvas;
         Point2D betweenFirstAndSecondClickedClassDiagramCanvas;
+        Point2D betweenFirstAndThirdClickedClassDiagramCanvas;
+        Point2D betweenSecondAndThirdClickedClassDiagramCanvas;
         String changeClassMenu;
         String deleteClassMenu;
         String classAttributionMenu;
@@ -87,6 +89,14 @@ public class ControllerTest {
             betweenFirstAndSecondClickedClassDiagramCanvas = new Point2D(
                     firstClickedClassDiagramCanvas.getX() + ( secondClickedClassDiagramCanvas.getX() - firstClickedClassDiagramCanvas.getX() ) / 2,
                     firstClickedClassDiagramCanvas.getY() - ( firstClickedClassDiagramCanvas.getY() - secondClickedClassDiagramCanvas.getY() ) / 2
+            );
+            betweenFirstAndThirdClickedClassDiagramCanvas = new Point2D(
+                    firstClickedClassDiagramCanvas.getX() + ( thirdClickedClassDiagramCanvas.getX() - firstClickedClassDiagramCanvas.getX() ) / 2,
+                    firstClickedClassDiagramCanvas.getY() - ( firstClickedClassDiagramCanvas.getY() - thirdClickedClassDiagramCanvas.getY() ) / 2
+            );
+            betweenSecondAndThirdClickedClassDiagramCanvas = new Point2D(
+                    thirdClickedClassDiagramCanvas.getX() + ( secondClickedClassDiagramCanvas.getX() - thirdClickedClassDiagramCanvas.getX() ) / 2,
+                    thirdClickedClassDiagramCanvas.getY() - ( thirdClickedClassDiagramCanvas.getY() - secondClickedClassDiagramCanvas.getY() ) / 2
             );
             changeClassMenu = "クラスの名前の変更";
             deleteClassMenu = "クラスをモデルから削除";
@@ -1073,6 +1083,158 @@ public class ControllerTest {
             rightClickOn( noDrawnPoint4 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている関係属性を右クリックし変更を選択すると変更したコンポジション関係を描画する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- composition" );
+            clickOn( okButtonOnDialogBox );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+            clickOn( "- composition の変更" );
+
+            write( "+ changedComposition");
+            clickOn( okButtonOnDialogBox );
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "+ changedComposition" ) ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている関係属性を右クリックし削除を選択するとコンポジション関係を削除する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- composition" );
+            clickOn( okButtonOnDialogBox );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+            clickOn( "- composition の削除" );
+
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている2つのクラス間に関係属性を2つ描画すると右クリックメニュー上では最後に描画したメニュー内容を返す() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- composition1" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- composition2" );
+            clickOn( okButtonOnDialogBox );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition2" ) ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている3つのクラス間に関係属性を2つ描画する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( thirdClickedClassDiagramCanvas );
+            write( "ThirdClassName" );
+            clickOn( okButtonOnDialogBox );
+
+            clickOn( "#compositionButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- composition1" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( thirdClickedClassDiagramCanvas );
+            write( "- composition2" );
+            clickOn( okButtonOnDialogBox );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition1" ) ) );
+
+            rightClickOn( betweenFirstAndThirdClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition2" ) ) );
+        }
+
+        @Test
+        public void ノーマルアイコンを選択している際にキャンバスに描かれている3つのクラス間に関係属性を3つ描画する() {
+            clickOn( "#classButtonInCD" );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "FirstClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "SecondClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( thirdClickedClassDiagramCanvas );
+            write( "ThirdClassName" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( "#compositionButtonInCD" );
+
+            clickOn( firstClickedClassDiagramCanvas );
+            clickOn( secondClickedClassDiagramCanvas );
+            write( "- compositionFromFirstToSecond" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( secondClickedClassDiagramCanvas );
+            clickOn( thirdClickedClassDiagramCanvas );
+            write( "- compositionFromSecondToThird" );
+            clickOn( okButtonOnDialogBox );
+            clickOn( thirdClickedClassDiagramCanvas );
+            clickOn( firstClickedClassDiagramCanvas );
+            write( "- compositionFromThirdToFirst" );
+            clickOn( okButtonOnDialogBox );
+
+            clickOn( "#normalButtonInCD" );
+            rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
+            ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositionFromFirstToSecond" ) ) );
+
+            rightClickOn( betweenSecondAndThirdClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositionFromSecondToThird" ) ) );
+
+            rightClickOn( betweenFirstAndThirdClickedClassDiagramCanvas );
+            scrollPane = getScrollPaneBelowClassDiagramCanvas();
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositionFromThirdToFirst" ) ) );
         }
 
 
