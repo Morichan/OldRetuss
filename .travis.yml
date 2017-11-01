@@ -4,9 +4,8 @@ sudo: required
 dist: trusty
 
 jdk:
-  - oraclejdk8
   - oraclejdk9
 
 before_install: export MAVEN_SKIP_RC=true && chmod +x gradlew
 
-script: ./gradlew build
+script: ./gradlew testClasses
