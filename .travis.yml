@@ -6,6 +6,6 @@ dist: trusty
 jdk:
   - oraclejdk9
 
-before_install: export MAVEN_SKIP_RC=true && chmod +x gradlew
+before_install: chmod +x gradlew
 
-script: ./gradlew testClasses
+script: java --version && java -Dfile.encoding=UTF-8 retuss.MainTest
