@@ -15,7 +15,7 @@ public class Main extends Application {
     @Override
     public void start( Stage mainStage ) throws Exception {
         Parent root = FXMLLoader.load( getClass().getResource( "..\\..\\resources\\retussMain.fxml" ) );
-        //mainStage.setTitle("hoge");
+        // mainStage.setTitle( "hoge" );
         mainStage.setScene( new Scene( root ) );
         mainStage.show();
     }

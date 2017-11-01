@@ -1,0 +1,12 @@
+language: java
+
+sudo: required
+dist: trusty
+
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+
+before_install: export MAVEN_SKIP_RC=true
+
+install: mvn install
