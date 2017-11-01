@@ -7,6 +7,6 @@ jdk:
   - oraclejdk8
   - oraclejdk9
 
-before: gradle assemble
+before_install: export MAVEN_SKIP_RC=true && chmod +x gradlew
 
-script: gradle testClasses
+script: ./gradlew build
