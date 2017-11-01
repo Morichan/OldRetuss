@@ -7,6 +7,6 @@ jdk:
   - oraclejdk8
   - oraclejdk9
 
-before: ./gradlew assemble
+before: chmod +x gradlew && ./gradlew assemble
 
 script: ./gradlew testClasses
