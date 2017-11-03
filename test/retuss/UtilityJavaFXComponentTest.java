@@ -3,7 +3,6 @@ package retuss;
 import javafx.geometry.Point2D;
 import javafx.scene.control.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,9 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.hamcrest.core.IsSame.sameInstance;
 import static org.junit.Assert.*;
 
 public class UtilityJavaFXComponentTest {
@@ -375,5 +372,99 @@ public class UtilityJavaFXComponentTest {
         assertThat( actual8, is( true ) );
         assertThat( actual9, is( false ) );
         assertThat( actual10, is( true ) );
+    }
+
+    @Test
+    public void ノードの中央のポイントと幅と高さを入力するとその頂点のリストを返す() {
+        List< Point2D > expected = Arrays.asList(
+                new Point2D( 150.0, 60.0 ), new Point2D( 150.0, 140.0 ),
+                new Point2D( 50.0, 140.0 ), new Point2D( 50.0, 60.0 )
+        );
+        Point2D center = new Point2D( 100.0, 100.0 );
+        double width = 100.0;
+        double height = 80.0;
+
+        List< Point2D > actual = util.calculateTopListFromNode( center, width, height );
+
+        assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void 線分の始点と終点を2つ入力すると線分の交点が存在するか否かを確認する() {
+        Point2D line1S = new Point2D( 100.0, 100.0 );
+        Point2D line1E = new Point2D( 200.0, 200.0 );
+        Point2D line2S = new Point2D( 200.0, 100.0 );
+        Point2D line2E = new Point2D( 100.0, 200.0 );
+        Point2D line3S = new Point2D( 300.0, 100.0 );
+        Point2D line3E = new Point2D( 300.0, 300.0 );
+        Point2D line4S = new Point2D( 300.0, 100.0 );
+        Point2D line4E = new Point2D( 100.0, 300.0 );
+        Point2D line5S = new Point2D( 200.0, 100.0 );
+        Point2D line5E = new Point2D( 200.0, 200.0 );
+        Point2D line6S = new Point2D( 200.0, 200.0 );
+        Point2D line6E = new Point2D( 300.0, 300.0 );
+        Point2D line7S = new Point2D( 200.0, 100.0 );
+        Point2D line7E = new Point2D( 300.0, 200.0 );
+        Point2D line8S = new Point2D( 100.0, 0.0 );
+        Point2D line8E = new Point2D( 0.0, 100.0 );
+
+        boolean actual1And2 = util.isIntersected( line1S, line1E, line2S, line2E );
+        boolean actual1And3 = util.isIntersected( line1S, line1E, line3S, line3E );
+        boolean actual1And4 = util.isIntersected( line1S, line1E, line4S, line4E );
+        boolean actual1And5 = util.isIntersected( line1S, line1E, line5S, line5E );
+        boolean actual1And6 = util.isIntersected( line1S, line1E, line6S, line6E );
+        boolean actual1And7 = util.isIntersected( line1S, line1E, line7S, line7E );
+        boolean actual1And8 = util.isIntersected( line1S, line1E, line8S, line8E );
+
+        assertThat( actual1And2, is( true ) );
+        assertThat( actual1And3, is( false ) );
+        assertThat( actual1And4, is( true ) );
+        assertThat( actual1And5, is( true ) );
+        assertThat( actual1And6, is( true ) );
+        assertThat( actual1And7, is( false ) );
+        assertThat( actual1And8, is( false ) );
+    }
+
+    @Test
+    public void 線分の始点と終点を2つ入力すると交点が存在する場合は線分の交点を返し存在しない場合はnullを返す() {
+        Point2D line1S = new Point2D( 100.0, 100.0 );
+        Point2D line1E = new Point2D( 200.0, 200.0 );
+        Point2D line2S = new Point2D( 200.0, 100.0 );
+        Point2D line2E = new Point2D( 100.0, 200.0 );
+        Point2D line3S = new Point2D( 300.0, 100.0 );
+        Point2D line3E = new Point2D( 300.0, 300.0 );
+        Point2D line4S = new Point2D( 300.0, 100.0 );
+        Point2D line4E = new Point2D( 100.0, 300.0 );
+        Point2D line5S = new Point2D( 200.0, 100.0 );
+        Point2D line5E = new Point2D( 200.0, 200.0 );
+        Point2D line6S = new Point2D( 200.0, 200.0 );
+        Point2D line6E = new Point2D( 300.0, 300.0 );
+        Point2D line7S = new Point2D( 200.0, 100.0 );
+        Point2D line7E = new Point2D( 300.0, 200.0 );
+        Point2D line8S = new Point2D( 100.0, 0.0 );
+        Point2D line8E = new Point2D( 0.0, 100.0 );
+        Point2D expected1And2 = new Point2D( 150.0, 150.0 );
+        Point2D expected1And3 = null;
+        Point2D expected1And4 = new Point2D( 200.0, 200.0 );
+        Point2D expected1And5 = new Point2D( 200.0, 200.0 );
+        Point2D expected1And6 = new Point2D( 200.0, 200.0 );
+        Point2D expected1And7 = null;
+        Point2D expected1And8 = null;
+
+        Point2D actual1And2 = util.calculateCrossPoint( line1S, line1E, line2S, line2E );
+        Point2D actual1And3 = util.calculateCrossPoint( line1S, line1E, line3S, line3E );
+        Point2D actual1And4 = util.calculateCrossPoint( line1S, line1E, line4S, line4E );
+        Point2D actual1And5 = util.calculateCrossPoint( line1S, line1E, line5S, line5E );
+        Point2D actual1And6 = util.calculateCrossPoint( line1S, line1E, line6S, line6E );
+        Point2D actual1And7 = util.calculateCrossPoint( line1S, line1E, line7S, line7E );
+        Point2D actual1And8 = util.calculateCrossPoint( line1S, line1E, line8S, line8E );
+
+        assertThat( actual1And2, is( expected1And2 ) );
+        assertThat( actual1And3, is( expected1And3 ) );
+        assertThat( actual1And4, is( expected1And4 ) );
+        assertThat( actual1And5, is( expected1And5 ) );
+        assertThat( actual1And6, is( expected1And6 ) );
+        assertThat( actual1And7, is( expected1And7 ) );
+        assertThat( actual1And8, is( expected1And8 ) );
     }
 }

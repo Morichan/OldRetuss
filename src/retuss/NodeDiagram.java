@@ -15,6 +15,9 @@ abstract public class NodeDiagram {
     protected String diagramFont = "Consolas";
     protected boolean isChosen = false;
 
+    protected double width = 0.0;
+    protected double height = 0.0;
+
     abstract public boolean isAlreadyDrawnNode( double x, double y );
     abstract public void draw();
     abstract public void setChosen( boolean isChosen );
@@ -61,5 +64,12 @@ abstract public class NodeDiagram {
 
     public Point2D getPoint() {
         return currentPoint;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+    public double getHeight() {
+        return height;
     }
 }

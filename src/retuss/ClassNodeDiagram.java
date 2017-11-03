@@ -24,9 +24,6 @@ public class ClassNodeDiagram extends NodeDiagram {
     private final double classNameSpace = 20.0;
     private final double leftSpace = 5.0;
 
-    private double width = 0.0;
-    private double height = 0.0;
-
     private List< ClassData > attributions = new ArrayList<>();
     private List< ClassData > operations = new ArrayList<>();
 
@@ -178,8 +175,8 @@ public class ClassNodeDiagram extends NodeDiagram {
     }
 
     public void drawGraphicsContext( Text classNameText, List< Text > attributionsText, List< Text > operationsText, double maxWidth, double classHeight, double attributionHeight, double operationHeight, double operationStartHeight ) {
-        gc.setFill( Color.BEIGE );
-        gc.fillRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributionHeight + operationHeight );
+        //gc.setFill( Color.BEIGE );
+        //gc.fillRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributionHeight + operationHeight );
 
         if( isChosen ) {
             gc.setStroke( Color.RED );
@@ -193,7 +190,7 @@ public class ClassNodeDiagram extends NodeDiagram {
         gc.setFill( Color.BLACK );
         gc.setTextAlign( TextAlignment.CENTER );
         gc.setFont( classNameText.getFont() );
-        gc.fillText( classNameText.getText(), currentPoint.getX(), currentPoint.getY() - classHeight/2 );
+        gc.fillText( classNameText.getText(), currentPoint.getX(), upperLeftCorner.getY() + classHeight/2 );
 
         if( attributionsText.size() > 0 ) {
             gc.setTextAlign( TextAlignment.LEFT );
@@ -202,7 +199,8 @@ public class ClassNodeDiagram extends NodeDiagram {
             boolean isExistedNoIndication = false;
             for( int i = 0; i < attributionsText.size(); i++ ) {
                 if( attributions.get( i ).isIndicate() ) {
-                    gc.fillText( attributionsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, currentPoint.getY() + 15.0 + ( defaultAttributionHeight * ( i - notDrawAttributionCount ) ) );
+                    gc.fillText( attributionsText.get(i).getText(),
+                            upperLeftCorner.getX() + leftSpace, upperLeftCorner.getY() + classHeight + 15.0 + ( defaultAttributionHeight * ( i - notDrawAttributionCount ) ) );
                 } else {
                     notDrawAttributionCount++;
                     isExistedNoIndication = true;
@@ -210,7 +208,8 @@ public class ClassNodeDiagram extends NodeDiagram {
             }
             if( isExistedNoIndication ) {
                 gc.setTextAlign( TextAlignment.CENTER );
-                gc.fillText( "... " + attributionNotVisibilityCount + " more", currentPoint.getX(), currentPoint.getY() + 15.0 + ( defaultAttributionHeight * ( attributionsText.size() - attributionNotVisibilityCount ) ) );
+                gc.fillText( "... " + attributionNotVisibilityCount + " more",
+                        currentPoint.getX(), upperLeftCorner.getY() + classHeight + 15.0 + ( defaultAttributionHeight * ( attributionsText.size() - attributionNotVisibilityCount ) ) );
             }
         }
 
@@ -221,7 +220,8 @@ public class ClassNodeDiagram extends NodeDiagram {
             boolean isExistedNoIndication = false;
             for( int i = 0; i < operationsText.size(); i++ ) {
                 if( operations.get( i ).isIndicate() ) {
-                    gc.fillText( operationsText.get(i).getText(), upperLeftCorner.getX() + leftSpace, currentPoint.getY() + 15.0 + ( defaultOperationHeight * ( i - notDrawOperationCount ) ) + operationStartHeight );
+                    gc.fillText( operationsText.get(i).getText(),
+                            upperLeftCorner.getX() + leftSpace, upperLeftCorner.getY() + classHeight + 15.0 + ( defaultOperationHeight * ( i - notDrawOperationCount ) ) + operationStartHeight );
                 } else {
                     notDrawOperationCount++;
                     isExistedNoIndication = true;
@@ -229,7 +229,8 @@ public class ClassNodeDiagram extends NodeDiagram {
             }
             if( isExistedNoIndication ) {
                 gc.setTextAlign( TextAlignment.CENTER );
-                gc.fillText( "... " + operationNotVisibilityCount + " more", currentPoint.getX(), currentPoint.getY() + 15.0 + ( defaultOperationHeight * ( operationsText.size() - operationNotVisibilityCount ) ) + operationStartHeight );
+                gc.fillText( "... " + operationNotVisibilityCount + " more",
+                        currentPoint.getX(), upperLeftCorner.getY() + classHeight + 15.0 + ( defaultOperationHeight * ( operationsText.size() - operationNotVisibilityCount ) ) + operationStartHeight );
             }
         }
     }
@@ -324,17 +325,17 @@ public class ClassNodeDiagram extends NodeDiagram {
     }
 
     public void calculateWidthAndHeight( double maxWidth, double maxHeight ) {
-        calculateUpperLeftCorner( currentPoint, maxWidth );
+        calculateUpperLeftCorner( currentPoint, maxWidth, maxHeight );
         calculateBottomRightCorner( currentPoint, maxWidth, maxHeight );
         width = bottomRightCorner.subtract( upperLeftCorner ).getX();
         height = bottomRightCorner.subtract( upperLeftCorner ).getY();
     }
 
-    private void calculateUpperLeftCorner( Point2D point, double width ) {
-        upperLeftCorner = new Point2D( point.getX() - width/2, point.getY() - 40.0 );
+    private void calculateUpperLeftCorner( Point2D point, double width, double height ) {
+        upperLeftCorner = new Point2D( point.getX() - width/2, point.getY() - height/2 );
     }
 
     private void calculateBottomRightCorner( Point2D point, double width, double height ) {
-        bottomRightCorner = new Point2D( point.getX() + width/2, point.getY() + height - defaultClassHeight );
+        bottomRightCorner = new Point2D( point.getX() + width/2, point.getY() + height/2 );
     }
 }

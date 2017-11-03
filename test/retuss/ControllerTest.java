@@ -35,11 +35,8 @@ public class ControllerTest {
 
     public static class WithoutGuiTest extends ApplicationTest {
         @Override
-        public void start( Stage stage ) throws IOException {
-            String fxmlFileName = "retussMain.fxml";
-            Scene scene = new Scene( FXMLLoader.load( getClass().getResource( fxmlFileName ) ) );
-            stage.setScene( scene );
-            stage.show();
+        public void start( Stage stage ) {
+            // そもそも何もしないため何も記述しない
         }
 
         @Test
@@ -802,16 +799,16 @@ public class ControllerTest {
             write( "+ w() : T" );
             clickOn( okButtonOnDialogBox );
 
-            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 79 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 59 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 79 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 59 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 59 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 39 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 59 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
         }
@@ -844,13 +841,13 @@ public class ControllerTest {
             write( "+ w() : T" );
             clickOn( okButtonOnDialogBox );
 
-            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 81 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 61 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 81 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 81 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() );
@@ -859,13 +856,13 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 41 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
-            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 41 );
+            rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
             assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
         }

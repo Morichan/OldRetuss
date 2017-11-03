@@ -551,6 +551,22 @@ public class ClassDiagramDrawerTest {
             assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Indication).get( 0 ), is( false ) );
             assertThat( cdd.getDrawnNodeContentsBooleanList( 0, ContentType.Operation, ContentType.Indication).get( 1 ), is( true ) );
         }
+
+        @Test
+        public void 描画しているクラスの幅と高さを返す() {
+            double expectedWidth = 100.0;
+            double expectedHeight = 80.0;
+            cdd.setNodeText( "ClassName" );
+            cdd.setMouseCoordinates( 100.0, 200.0 );
+            cdd.addDrawnNode( buttons );
+            ( ( ClassNodeDiagram ) cdd.getNodes().get( 0 ) ).calculateWidthAndHeight( expectedWidth, expectedHeight );
+
+            double actualWidth = cdd.getNodeWidth( 0 );
+            double actualHeight = cdd.getNodeHeight( 0 );
+
+            assertThat( actualWidth, is( expectedWidth ) );
+            assertThat( actualHeight, is( expectedHeight ) );
+        }
     }
 
     @RunWith( JMockit.class )

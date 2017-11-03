@@ -412,11 +412,18 @@ public class ClassNodeDiagramTest {
         }
 
         obj.setMouseCoordinates( clickedX, clickedY );
-        obj.calculateWidthAndHeight( 100, 40.0 + 60.0 + 60.0 );
+        obj.calculateWidthAndHeight( 140, 40.0 + 60.0 + 60.0 );
 
-        List< Point2D > inClassPoint = Arrays.asList( new Point2D( 100, 200 ), new Point2D( 51, 161 ), new Point2D( 149, 239 ), new Point2D( 149, 319 ) );
+        List< Point2D > inClassPoint = Arrays.asList(
+                new Point2D( 100, 200 ), new Point2D( 31, 121 ), new Point2D( 169, 121 ), new Point2D( 169, 279 ), new Point2D( 31, 279 ) );
+        List< Point2D > outClassPoint = Arrays.asList(
+                new Point2D( 30, 120 ), new Point2D( 170, 120 ), new Point2D( 170, 280 ), new Point2D( 30, 280 ),
+                new Point2D( 100, 120 ), new Point2D( 170, 200 ), new Point2D( 100, 280 ), new Point2D( 30, 200 ) );
         for( Point2D point : inClassPoint ) {
             assertThat( obj.isAlreadyDrawnNode( point.getX(), point.getY() ), is( true ) );
+        }
+        for( Point2D point : outClassPoint ) {
+            assertThat( obj.isAlreadyDrawnNode( point.getX(), point.getY() ), is( false ) );
         }
     }
 
@@ -543,5 +550,20 @@ public class ClassNodeDiagramTest {
         Point2D actual = obj.getPoint();
 
         assertThat( actual, is( expected ) );
+    }
+
+    @Test
+    public void クラス図の幅と高さを取得する() {
+        double expectedWidth = 100.0;
+        double expectedHeight = 80.0;
+        obj.setMouseCoordinates( 100.0, 200.0 );
+        obj.createNodeText( ContentType.Title, "Test" );
+        obj.calculateWidthAndHeight( 100.0, 80.0 );
+
+        double actualWidth = obj.getWidth();
+        double actualHeight = obj.getHeight();
+
+        assertThat( actualWidth, is( expectedWidth ) );
+        assertThat( actualHeight, is( expectedHeight ) );
     }
 }

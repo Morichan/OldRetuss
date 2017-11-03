@@ -60,13 +60,14 @@ public class ClassDiagramDrawer {
 
     public void allReDrawEdge() {
         for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
-            // int relationId = nodes.get( compositions.getRelationId( ContentType.Composition, i ) ).getNodeId();
-            // int relationSourceId = nodes.get( compositions.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
-            // Point2D releasePoint = nodes.get( relationId ).getPoint();
-            // Point2D releaseSourcePoint = nodes.get( relationSourceId ).getPoint();
-            Point2D releasePoint = compositions.getRelationPoint( ContentType.Composition, i );
-            Point2D releaseSourcePoint = compositions.getRelationSourcePoint( ContentType.Composition, i );
-            compositions.draw( releasePoint, releaseSourcePoint );
+            int relationId = nodes.get( compositions.getRelationId( ContentType.Composition, i ) ).getNodeId();
+            int relationSourceId = nodes.get( compositions.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
+            double relationWidth = nodes.get( relationId ).getWidth();
+            double relationHeight = nodes.get( relationId ).getHeight();
+            double relationSourceWidth = nodes.get( relationSourceId ).getWidth();
+            double relationSourceHeight = nodes.get( relationSourceId ).getHeight();
+
+            compositions.draw( relationWidth, relationHeight, relationSourceWidth, relationSourceHeight, i );
         }
     }
 
@@ -82,6 +83,13 @@ public class ClassDiagramDrawer {
 
     public void drawNode( int number ) {
         nodes.get( number ).draw();
+    }
+
+    public double getNodeWidth( int number ) {
+        return nodes.get( number ).getWidth();
+    }
+    public double getNodeHeight( int number ) {
+        return nodes.get( number ).getHeight();
     }
 
     public void addDrawnNode( List< Button > buttons ) {

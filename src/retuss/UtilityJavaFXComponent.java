@@ -302,4 +302,182 @@ public class UtilityJavaFXComponent {
 
         return isInside;
     }
+
+    /**
+     * ノードの頂点のリストを計算する。
+     * リストは右上から時計回り4隅である。
+     *
+     * @param center ノードの中心のポイント
+     * @param width ノードの幅
+     * @param height ノードの高さ
+     * @return ノードの頂点のリスト sizeは4
+     */
+    public List< Point2D > calculateTopListFromNode( Point2D center, double width, double height ) {
+        List< Point2D > tops = new ArrayList<>();
+        double halfWidth = width / 2;
+        double halfHeight = height / 2;
+
+        tops.add( new Point2D( center.getX() + halfWidth, center.getY() - halfHeight ) ); // 右上
+        tops.add( new Point2D( center.getX() + halfWidth, center.getY() + halfHeight ) ); // 右下
+        tops.add( new Point2D( center.getX() - halfWidth, center.getY() + halfHeight ) ); // 左下
+        tops.add( new Point2D( center.getX() - halfWidth, center.getY() - halfHeight ) ); // 左上
+
+        return tops;
+    }
+
+    /**
+     * 2つの線分の交点を計算する。
+     * 一部のアルゴリズムは <a href="https://www.sist.ac.jp/~suganuma/index.html"> 静岡理工科大学の菅沼研究室のサイト </a> の
+     * <a href="https://www.sist.ac.jp/~suganuma/cpp/2-bu/7-sho/Java/basic_j.htm#point_line_re"> 基本アルゴリズム（その1） </a> を採用している。
+     * 一部出典元より変数名などの変更がある。
+     *
+     * @param firstLineStartPoint 1つ目の線分の始点
+     * @param firstLineEndPoint 1つ目の線分の終点
+     * @param secondLineStartPoint 2つ目の線分の始点
+     * @param secondLineEndPoint 2つ目の線分の終点
+     * @return
+     * <p>
+     *     2つの線分の交点のポイント<br>
+     *     片方の線分の始点または終点が、もう片方の線上あるいは始点または終点に存在する場合は、そのポイントを返す。
+     *     交点が存在しない場合は {@code null} を返す。
+     * </p>
+     */
+    public Point2D calculateCrossPoint( Point2D firstLineStartPoint, Point2D firstLineEndPoint, Point2D secondLineStartPoint, Point2D secondLineEndPoint ) {
+        Point2D cross = null;
+
+        // 線分の始点または終点が同じ位置にある場合
+        if( firstLineStartPoint.equals( secondLineStartPoint ) ) {
+            cross = new Point2D( firstLineStartPoint.getX(), firstLineStartPoint.getY() );
+        } else if( firstLineStartPoint.equals( secondLineEndPoint ) ) {
+            cross = new Point2D( firstLineStartPoint.getX(), firstLineStartPoint.getY() );
+        } else if( firstLineEndPoint.equals( secondLineStartPoint ) ) {
+            cross = new Point2D( firstLineEndPoint.getX(), firstLineEndPoint.getY() );
+        } else if( firstLineEndPoint.equals( secondLineEndPoint ) ) {
+            cross = new Point2D( firstLineEndPoint.getX(), firstLineEndPoint.getY() );
+
+        } else {
+            // 基本アルゴリズム（その1）より採用した箇所
+            double EPS = 1.0e-10;
+            Point2D subtractPointFirstFromSecondPoint = new Point2D( secondLineStartPoint.getX() - firstLineStartPoint.getX(), secondLineStartPoint.getY() - firstLineStartPoint.getY() );
+            double denominator = ( firstLineEndPoint.getX() - firstLineStartPoint.getX() ) * ( secondLineEndPoint.getY() - secondLineStartPoint.getY() )
+                    - ( firstLineEndPoint.getY() - firstLineStartPoint.getY() ) * ( secondLineEndPoint.getX() - secondLineStartPoint.getX() );
+            if( Math.abs( denominator ) > EPS ) {
+                double r = ( ( secondLineEndPoint.getY() - secondLineStartPoint.getY() ) * subtractPointFirstFromSecondPoint.getX() - ( secondLineEndPoint.getX() - secondLineStartPoint.getX() ) * subtractPointFirstFromSecondPoint.getY() ) / denominator;
+                double s = ( ( firstLineEndPoint.getY() - firstLineStartPoint.getY() ) * subtractPointFirstFromSecondPoint.getX() - ( firstLineEndPoint.getX() - firstLineStartPoint.getX() ) * subtractPointFirstFromSecondPoint.getY() ) / denominator;
+                if( r > -EPS && r < 1.0 + EPS && s > -EPS && s < 1.0 + EPS )
+                    cross = new Point2D( firstLineStartPoint.getX() + r * ( firstLineEndPoint.getX() - firstLineStartPoint.getX() ), firstLineStartPoint.getY() + r * ( firstLineEndPoint.getY() - firstLineStartPoint.getY() ) );
+            }
+        }
+
+        return cross;
+    }
+
+    /**
+     * <p>
+     *     2つの線分に交点が存在するか否かを確認する。
+     *     2つの線分が交わっている場合は真を返す。
+     *     2つの線分のうち、あるいは両方とも線分の端が接している場合は真を返す。
+     * </p>
+     *
+     * <p>
+     *     アルゴリズムは <a href="https://www.sist.ac.jp/~suganuma/index.html"> 静岡理工科大学の菅沼研究室のサイト </a> の
+     *     <a href="https://www.sist.ac.jp/~suganuma/cpp/2-bu/7-sho/Java/basic_j.htm#point_line_re"> 基本アルゴリズム（その1） </a> を採用している。
+     * </p>
+     *
+     * @param firstLineStartPoint 1つ目の線分の始点
+     * @param firstLineEndPoint 1つ目の線分の終点
+     * @param secondLineStartPoint 2つ目の線分の始点
+     * @param secondLineEndPoint 2つ目の線分の終点
+     * @return 真偽値 交点の存在の有無の定義は説明文の通り。
+     */
+    public boolean isIntersected( Point2D firstLineStartPoint, Point2D firstLineEndPoint, Point2D secondLineStartPoint, Point2D secondLineEndPoint ) {
+        boolean isIntersected = false;
+
+        if ( ccw( firstLineStartPoint, firstLineEndPoint, secondLineStartPoint ) * ccw( firstLineStartPoint, firstLineEndPoint, secondLineEndPoint ) <= 0
+                && ccw( secondLineStartPoint, secondLineEndPoint, firstLineStartPoint ) * ccw( secondLineStartPoint, secondLineEndPoint, firstLineEndPoint ) <= 0 )
+            isIntersected = true;
+
+        return isIntersected;
+    }
+
+    /**
+     * 点と線分の関係を算出する。
+     * アルゴリズムは <a href="https://www.sist.ac.jp/~suganuma/index.html"> 静岡理工科大学の菅沼研究室のサイト </a> の
+     * <a href="https://www.sist.ac.jp/~suganuma/cpp/2-bu/7-sho/Java/basic_j.htm#point_line_re"> 基本アルゴリズム（その1） </a> を採用している。
+     * 一部出典元より変数名などの変更がある。
+     *
+     * @param lineStartPoint 線分の始点
+     * @param lineEndPoint 線分の終点
+     * @param anyPoint 線分との関係を算出する任意のポイント
+     * @return
+     * <p>
+     *     点と線分の関係
+     *     <ui>
+     *         <li> 1 == 任意のポイントは線分の反時計方向に存在 </li>
+     *         <li> -1 == 任意のポイントは線分の時計方向に存在 </li>
+     *         <li> 2 == 任意のポイントは線分の手前に存在 </li>
+     *         <li> -2 == 任意のポイントは線分の先に存在 </li>
+     *         <li> 0 == 任意のポイントは線分上に存在 </li>
+     *     </ui>
+     * </p>
+     */
+    private int ccw( Point2D lineStartPoint, Point2D lineEndPoint, Point2D anyPoint ) {
+        int sw = 0;   // 点p2は線分p0-p1の上
+        double EPS = 1.0e-10;
+
+        Point2D a = new Point2D( lineEndPoint.getX() - lineStartPoint.getX(), lineEndPoint.getY() - lineStartPoint.getY() );
+        Point2D b = new Point2D( anyPoint.getX() - lineStartPoint.getX(), anyPoint.getY() - lineStartPoint.getY() );
+
+        if ( cross(a, b) > EPS )   // 点p2は線分p0-p1の反時計方向
+            sw = 1;
+        else if ( cross(a, b) < -EPS )   // 点p2は線分p0-p1の時計方向
+            sw = -1;
+        else if ( dot(a, b) < -EPS )   // 点p2は線分p0-p1の手前
+            sw = 2;
+        else if ( norm(a) < norm(b) )   // 点p2は線分p0-p1の先
+            sw = -2;
+
+        return sw;
+    }
+
+    /**
+     * 2つのベクトルの外積（z成分）を計算する。
+     * アルゴリズムは <a href="https://www.sist.ac.jp/~suganuma/index.html"> 静岡理工科大学の菅沼研究室のサイト </a> の
+     * <a href="https://www.sist.ac.jp/~suganuma/cpp/2-bu/7-sho/Java/basic_j.htm#point_line_re"> 基本アルゴリズム（その1） </a> を採用している。
+     * 一部出典元より変数名などの変更がある。
+     *
+     * @param a 1つ目のベクトル
+     * @param b 2つ目のベクトル
+     * @return ベクトルの外積（z成分）
+     */
+    private double cross( Point2D a, Point2D b ) {
+        return a.getX() * b.getY() - a.getY() * b.getX();
+    }
+
+    /**
+     * 2つのベクトルの内積を計算する。
+     * アルゴリズムは <a href="https://www.sist.ac.jp/~suganuma/index.html"> 静岡理工科大学の菅沼研究室のサイト </a> の
+     * <a href="https://www.sist.ac.jp/~suganuma/cpp/2-bu/7-sho/Java/basic_j.htm#point_line_re"> 基本アルゴリズム（その1） </a> を採用している。
+     * 一部出典元より変数名などの変更がある。
+     *
+     * @param a 1つ目のベクトル
+     * @param b 2つ目のベクトル
+     * @return ベクトルの内積
+     */
+    private double dot( Point2D a, Point2D b ) {
+        return a.getX() * b.getX() + a.getY() * b.getY();
+    }
+
+    /**
+     * ベクトルの大きさの二乗を計算する。
+     * アルゴリズムは <a href="https://www.sist.ac.jp/~suganuma/index.html"> 静岡理工科大学の菅沼研究室のサイト </a> の
+     * <a href="https://www.sist.ac.jp/~suganuma/cpp/2-bu/7-sho/Java/basic_j.htm#point_line_re"> 基本アルゴリズム（その1） </a> を採用している。
+     * 一部出典元より変数名などの変更がある。
+     *
+     * @param x 任意のベクトル
+     * @return 任意のベクトルの大きさの二乗
+     */
+    private double norm( Point2D x ) {
+        return x.getX() * x.getX() + x.getY() * x.getY();
+    }
 }

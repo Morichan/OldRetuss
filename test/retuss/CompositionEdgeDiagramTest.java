@@ -2,15 +2,12 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import static jdk.nashorn.internal.objects.Global.Infinity;
 
@@ -368,5 +365,167 @@ public class CompositionEdgeDiagramTest {
         assertThat( actual2, is( expected2 ) );
         assertThat( actual3, is( expected3 ) );
         assertThat( obj.getCompositionsCount(), is( 3 ));
+    }
+
+    @Test
+    public void 関係先のポイントと関係元のポイントと関係先の幅を入力すると関係と関係先の側面との接点のポイントを返す() {
+        Point2D centerPoint = new Point2D( 100.0, 100.0 );
+        Point2D upperPoint = new Point2D( 100.0, 0.0 );
+        Point2D righterPoint = new Point2D( 200.0, 100.0 );
+        Point2D bottomPoint = new Point2D( 100.0, 200.0 );
+        Point2D lefterPoint = new Point2D( 0.0, 100.0 );
+        Point2D upperRightPoint = new Point2D( 200.0, 0.0 );
+        Point2D bottomRightPoint = new Point2D( 200.0, 200.0 );
+        Point2D bottomLeftPoint = new Point2D( 0.0, 200.0 );
+        Point2D upperLeftPoint = new Point2D( 0.0, 0.0 );
+
+        Point2D actual1 = obj.calculateIntersectionPointLineAndEndNodeSide( upperPoint, centerPoint, 100.0, 80.0 );
+        Point2D actual2 = obj.calculateIntersectionPointLineAndEndNodeSide( righterPoint, centerPoint, 100.0, 80.0 );
+        Point2D actual3 = obj.calculateIntersectionPointLineAndEndNodeSide( bottomPoint, centerPoint, 100.0, 80.0 );
+        Point2D actual4 = obj.calculateIntersectionPointLineAndEndNodeSide( lefterPoint, centerPoint, 100.0, 80.0 );
+        Point2D actual5 = obj.calculateIntersectionPointLineAndEndNodeSide( upperRightPoint, centerPoint, 100.0, 80.0 );
+        Point2D actual6 = obj.calculateIntersectionPointLineAndEndNodeSide( bottomRightPoint, centerPoint, 100.0, 80.0 );
+        Point2D actual7 = obj.calculateIntersectionPointLineAndEndNodeSide( bottomLeftPoint, centerPoint, 100.0, 80.0 );
+        Point2D actual8 = obj.calculateIntersectionPointLineAndEndNodeSide( upperLeftPoint, centerPoint, 100.0, 80.0 );
+
+        Point2D actual9 = obj.calculateIntersectionPointLineAndEndNodeSide( upperRightPoint, centerPoint, 100.0, 100.0 );
+        Point2D actual10 = obj.calculateIntersectionPointLineAndEndNodeSide( bottomRightPoint, centerPoint, 100.0, 100.0 );
+        Point2D actual11 = obj.calculateIntersectionPointLineAndEndNodeSide( bottomLeftPoint, centerPoint, 100.0, 100.0 );
+        Point2D actual12 = obj.calculateIntersectionPointLineAndEndNodeSide( upperLeftPoint, centerPoint, 100.0, 100.0 );
+        Point2D actual13 = obj.calculateIntersectionPointLineAndEndNodeSide( upperRightPoint, centerPoint, 100.0, 150.0 );
+        Point2D actual14 = obj.calculateIntersectionPointLineAndEndNodeSide( upperLeftPoint, centerPoint, 100.0, 150.0 );
+
+        assertThat( actual1, is( new Point2D( 100.0, 60.0 ) ) );
+        assertThat( actual2, is( new Point2D( 150.0, 100.0 ) ) );
+        assertThat( actual3, is( new Point2D( 100.0, 140.0 ) ) );
+        assertThat( actual4, is( new Point2D( 50.0, 100.0 ) ) );
+        assertThat( actual5, is( new Point2D( 140.0, 60.0 ) ) );
+        assertThat( actual6, is( new Point2D( 140.0, 140.0 ) ) );
+        assertThat( actual7, is( new Point2D( 60.0, 140.0 ) ) );
+        assertThat( actual8, is( new Point2D( 60.0, 60.0 ) ) );
+
+        assertThat( actual9, is( new Point2D( 150.0, 50.0 ) ) );
+        assertThat( actual10, is( new Point2D( 150.0, 150.0 ) ) );
+        assertThat( actual11, is( new Point2D( 50.0, 150.0 ) ) );
+        assertThat( actual12, is( new Point2D( 50.0, 50.0 ) ) );
+        assertThat( actual13, is( new Point2D( 150.0, 50.0 ) ) );
+        assertThat( actual14, is( new Point2D( 50.0, 50.0 ) ) );
+    }
+
+    @Test
+    public void 関係先のポイントと関係元のポイントを入力すると最初のポイントが高い場合は真を返す() {
+        Point2D centerPoint = new Point2D( 100.0, 100.0 );
+        Point2D upperPoint = new Point2D( 100.0, 0.0 );
+        Point2D righterPoint = new Point2D( 200.0, 100.0 );
+        Point2D bottomPoint = new Point2D( 100.0, 200.0 );
+        Point2D lefterPoint = new Point2D( 0.0, 100.0 );
+        Point2D upperRightPoint = new Point2D( 200.0, 0.0 );
+        Point2D bottomRightPoint = new Point2D( 200.0, 200.0 );
+        Point2D bottomLeftPoint = new Point2D( 0.0, 200.0 );
+        Point2D upperLeftPoint = new Point2D( 0.0, 0.0 );
+
+        boolean actual1 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, upperPoint );
+        boolean actual2 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, righterPoint );
+        boolean actual3 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, bottomPoint );
+        boolean actual4 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, lefterPoint );
+        boolean actual5 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, upperRightPoint );
+        boolean actual6 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, bottomRightPoint );
+        boolean actual7 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, bottomLeftPoint );
+        boolean actual8 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, upperLeftPoint );
+
+        assertThat( actual1, is( false ) );
+        assertThat( actual2, is( false ) );
+        assertThat( actual3, is( true ) );
+        assertThat( actual4, is( false ) );
+        assertThat( actual5, is( false ) );
+        assertThat( actual6, is( true ) );
+        assertThat( actual7, is( true ) );
+        assertThat( actual8, is( false ) );
+    }
+
+    @Test
+    public void 関係先のポイントと関係元のポイントを入力すると最初のポイントが左側にある場合は真を返す() {
+        Point2D centerPoint = new Point2D( 100.0, 100.0 );
+        Point2D upperPoint = new Point2D( 100.0, 0.0 );
+        Point2D righterPoint = new Point2D( 200.0, 100.0 );
+        Point2D bottomPoint = new Point2D( 100.0, 200.0 );
+        Point2D lefterPoint = new Point2D( 0.0, 100.0 );
+        Point2D upperRightPoint = new Point2D( 200.0, 0.0 );
+        Point2D bottomRightPoint = new Point2D( 200.0, 200.0 );
+        Point2D bottomLeftPoint = new Point2D( 0.0, 200.0 );
+        Point2D upperLeftPoint = new Point2D( 0.0, 0.0 );
+
+        boolean actual1 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, upperPoint );
+        boolean actual2 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, righterPoint );
+        boolean actual3 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, bottomPoint );
+        boolean actual4 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, lefterPoint );
+        boolean actual5 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, upperRightPoint );
+        boolean actual6 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, bottomRightPoint );
+        boolean actual7 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, bottomLeftPoint );
+        boolean actual8 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, upperLeftPoint );
+
+        assertThat( actual1, is( false ) );
+        assertThat( actual2, is( true ) );
+        assertThat( actual3, is( false ) );
+        assertThat( actual4, is( false ) );
+        assertThat( actual5, is( true ) );
+        assertThat( actual6, is( true ) );
+        assertThat( actual7, is( false ) );
+        assertThat( actual8, is( false ) );
+    }
+
+    @Test
+    public void 関係先のポイントと関係元のポイントと関係先の幅と関係先の高さを入力すると関係先の上下の側辺と関係の線が交差している場合は真を返す() {
+        Point2D centerPoint = new Point2D( 100.0, 100.0 );
+        Point2D upperPoint = new Point2D( 100.0, 0.0 );
+        Point2D righterPoint = new Point2D( 200.0, 100.0 );
+        Point2D bottomPoint = new Point2D( 100.0, 200.0 );
+        Point2D lefterPoint = new Point2D( 0.0, 100.0 );
+        Point2D upperRightPoint = new Point2D( 200.0, 0.0 );
+        Point2D bottomRightPoint = new Point2D( 200.0, 200.0 );
+        Point2D bottomLeftPoint = new Point2D( 0.0, 200.0 );
+        Point2D upperLeftPoint = new Point2D( 0.0, 0.0 );
+        double wideWidth = 100.0;
+        double narrowWidth = 10.0;
+        double highHeight = 100.0;
+        double lowHeight = 10.0;
+
+        // 幅が広く高さが低い場合
+        boolean actual1 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, upperPoint, wideWidth, lowHeight );
+        boolean actual2 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, righterPoint, wideWidth, lowHeight );
+        boolean actual3 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, bottomPoint, wideWidth, lowHeight );
+        boolean actual4 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, lefterPoint, wideWidth, lowHeight );
+        boolean actual5 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, upperRightPoint, wideWidth, lowHeight );
+        boolean actual6 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, bottomRightPoint, wideWidth, lowHeight );
+        boolean actual7 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, bottomLeftPoint, wideWidth, lowHeight );
+        boolean actual8 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, upperLeftPoint, wideWidth, lowHeight );
+
+        // 幅が狭く高さが高い場合
+        boolean actual9 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, upperPoint, narrowWidth, highHeight );;
+        boolean actual10 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, righterPoint, narrowWidth, highHeight );
+        boolean actual11 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, bottomPoint, narrowWidth, highHeight );
+        boolean actual12 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, lefterPoint, narrowWidth, highHeight );
+        boolean actual13 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, upperRightPoint, narrowWidth, highHeight );
+        boolean actual14 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, bottomRightPoint, narrowWidth, highHeight );
+        boolean actual15 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, bottomLeftPoint, narrowWidth, highHeight );
+        boolean actual16 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, upperLeftPoint, narrowWidth, highHeight );
+
+        assertThat( actual1, is( true ) );
+        assertThat( actual2, is( false ) );
+        assertThat( actual3, is( true ) );
+        assertThat( actual4, is( false ) );
+        assertThat( actual5, is( true ) );
+        assertThat( actual6, is( true ) );
+        assertThat( actual7, is( true ) );
+        assertThat( actual8, is( true ) );
+
+        assertThat( actual9, is( true ) );
+        assertThat( actual10, is( false ) );
+        assertThat( actual11, is( true ) );
+        assertThat( actual12, is( false ) );
+        assertThat( actual13, is( false ) );
+        assertThat( actual14, is( false ) );
+        assertThat( actual15, is( false ) );
+        assertThat( actual16, is( false ) );
     }
 }

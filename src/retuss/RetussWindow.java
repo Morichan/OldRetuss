@@ -77,7 +77,8 @@ public class RetussWindow extends Application {
      * @throws IOException FXMLファイルの入力エラーの場合
      */
     private Stage decorateStage( Stage stage, String fxmlFileName, String title ) throws IOException {
-        Parent root = FXMLLoader.load( getClass().getResource( fxmlFileName ) );
+        String resourcesPath = "";
+        Parent root = FXMLLoader.load( getClass().getResource( resourcesPath + fxmlFileName ) );
         stage.setTitle( title );
         stage.setScene( new Scene( root ) );
 

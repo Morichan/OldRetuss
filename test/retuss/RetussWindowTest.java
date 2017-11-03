@@ -9,14 +9,10 @@ import javafx.stage.Stage;
 
 import javafx.application.Application;
 import mockit.integration.junit4.JMockit;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
 
 @RunWith(JMockit.class)
 public class RetussWindowTest {
