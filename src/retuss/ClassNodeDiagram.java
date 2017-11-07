@@ -175,8 +175,8 @@ public class ClassNodeDiagram extends NodeDiagram {
     }
 
     public void drawGraphicsContext( Text classNameText, List< Text > attributionsText, List< Text > operationsText, double maxWidth, double classHeight, double attributionHeight, double operationHeight, double operationStartHeight ) {
-        //gc.setFill( Color.BEIGE );
-        //gc.fillRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributionHeight + operationHeight );
+        gc.setFill( Color.BEIGE );
+        gc.fillRect( upperLeftCorner.getX(), upperLeftCorner.getY(), maxWidth, classHeight + attributionHeight + operationHeight );
 
         if( isChosen ) {
             gc.setStroke( Color.RED );

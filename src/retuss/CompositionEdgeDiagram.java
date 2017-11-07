@@ -173,45 +173,85 @@ public class CompositionEdgeDiagram {
         Point2D relationSourcePoint = getRelationSourcePoint( ContentType.Composition, number );
         Point2D relationIntersectPoint = calculateIntersectionPointLineAndEndNodeSide( relationSourcePoint, relationPoint, relationWidth, relationHeight );
         Point2D relationSourceIntersectPoint = calculateIntersectionPointLineAndEndNodeSide( relationPoint, relationSourcePoint, relationSourceWidth, relationSourceHeight );
-        double inclination = calculateInclination( relationPoint, relationSourcePoint );
-        Point2D point = calculateUmbrellaPoint( relationIntersectPoint, inclination, 50.0 );
-        //gc.strokeLine( relationIntersectPoint.getX(), relationIntersectPoint.getY(), point.getX(), point.getY() );
 
-        //gc.setFill( Color.GREEN );
-        //gc.fillOval( relationIntersectPoint.getX() - 5, relationIntersectPoint.getY() - 5, 10, 10 );
-        //gc.setFill( Color.POWDERBLUE );
-        //gc.strokeOval( relationSourceIntersectPoint.getX() - 5, relationSourceIntersectPoint.getY() - 5, 10, 10 );
-
-        draw( number );
+        drawEdge( relationIntersectPoint, relationSourceIntersectPoint, number );
     }
 
-    public void draw( int number ) {
-        Point2D relationPoint = getRelationPoint( ContentType.Composition, number );
-        Point2D relationSourcePoint = getRelationSourcePoint( ContentType.Composition, number );
-        drawLine( relationPoint, relationSourcePoint );
+    private void drawEdge( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint, int number ) {
+        drawLine( relationIntersectPoint, relationSourceIntersectPoint );
+        drawEdgeUmbrella( relationIntersectPoint, relationSourceIntersectPoint, number );
     }
 
-    public void drawLine( Point2D relationPoint, Point2D relationSourcePoint ) {
+    private void drawLine( Point2D relationPoint, Point2D relationSourcePoint ) {
         gc.setStroke( Color.BLACK );
         gc.strokeLine( relationSourcePoint.getX(), relationSourcePoint.getY(), relationPoint.getX(), relationPoint.getY() );
     }
 
-    private double getRelationMarginLength( ContentType type ) {
-        return 10.0;
+    private void drawEdgeUmbrella( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint, int number ) {
+        ContentType type = getContentType( number );
+
+        if( type == ContentType.Composition ) {
+            drawEdgeNavigation( relationIntersectPoint, relationSourceIntersectPoint );
+            drawEdgeComposition( relationIntersectPoint, relationSourceIntersectPoint );
+        }
     }
 
-    public Point2D calculateUmbrellaPoint( Point2D intersectionPoint, double angle, double length ) {
+    private void drawEdgeNavigation( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint ) {
+        double angle = calculateDegreeFromStart( relationIntersectPoint, relationSourceIntersectPoint );
+        double length = 20.0;
+        Point2D firstNavigationPoint = calculateUmbrellaPoint( relationIntersectPoint, angle - 20.0, length );
+        Point2D secondNavigationPoint = calculateUmbrellaPoint( relationIntersectPoint, angle + 20.0, length );
+
+        gc.strokeLine( relationIntersectPoint.getX(), relationIntersectPoint.getY(), firstNavigationPoint.getX(), firstNavigationPoint.getY() );
+        gc.strokeLine( relationIntersectPoint.getX(), relationIntersectPoint.getY(), secondNavigationPoint.getX(), secondNavigationPoint.getY() );
+    }
+
+    private void drawEdgeComposition( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint ) {
+        List< Point2D > compositionPoints = calculateEdgeCompositionPoints( relationIntersectPoint, relationSourceIntersectPoint );
+        double[] xPoints = new double[ 5 ];
+        double[] yPoints = new double[ 5 ];
+
+        for( int i = 0; i < compositionPoints.size(); i++ ) {
+            xPoints[ i ] = compositionPoints.get( i ).getX();
+            yPoints[ i ] = compositionPoints.get( i ).getY();
+        }
+
+        gc.setFill( Color.BLACK );
+        gc.fillPolygon( xPoints, yPoints, 5 );
+        gc.setStroke( Color.BLACK );
+        gc.strokePolygon( xPoints, yPoints, 5 );
+    }
+
+    private List< Point2D > calculateEdgeCompositionPoints( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint ) {
+        double angle = calculateDegreeFromStart( relationSourceIntersectPoint, relationIntersectPoint ); // 関係の始点における角度
+        double length = 15.0;
+        List< Point2D > compositionPoints = new ArrayList<>();
+
+        compositionPoints.add( new Point2D( relationSourceIntersectPoint.getX(), relationSourceIntersectPoint.getY() ) );
+        compositionPoints.add( calculateUmbrellaPoint( compositionPoints.get( 0 ), angle + 20.0, length ) );
+        compositionPoints.add( calculateUmbrellaPoint( compositionPoints.get( 1 ), angle - 20.0, length ) );
+        compositionPoints.add( calculateUmbrellaPoint( compositionPoints.get( 0 ), angle - 20.0, length ) );
+        compositionPoints.add( new Point2D( relationSourceIntersectPoint.getX(), relationSourceIntersectPoint.getY() ) );
+
+        return compositionPoints;
+    }
+
+    private Point2D calculateUmbrellaPoint( Point2D intersectionPoint, double angle, double length ) {
         Point2D point = new Point2D(
                 calculateUmbrellaTipX( length, angle, intersectionPoint.getX() ),
                 calculateUmbrellaTipY( length, angle, intersectionPoint.getY() )
         );
         return point;
     }
-    public double calculateUmbrellaTipX( double length, double angle, double actualX ) {
+    private double calculateUmbrellaTipX( double length, double angle, double actualX ) {
         return length * Math.cos( Math.toRadians( angle ) ) + actualX;
     }
-    public double calculateUmbrellaTipY( double length, double angle, double actualY ) {
+    private double calculateUmbrellaTipY( double length, double angle, double actualY ) {
         return length * Math.sin( Math.toRadians( angle ) ) + actualY;
+    }
+
+    private double getRelationMarginLength( ContentType type ) {
+        return 10.0;
     }
 
     /**
@@ -234,6 +274,18 @@ public class CompositionEdgeDiagram {
         }
 
         return normalLineInclination;
+    }
+
+    public double calculateDegreeFromStart( Point2D startPoint, Point2D endPoint ) {
+        double inclination = Math.acos( ( startPoint.getX() - endPoint.getX() )
+                / Math.sqrt( ( startPoint.getX() - endPoint.getX() ) * ( startPoint.getX() - endPoint.getX() ) + ( startPoint.getY() - endPoint.getY() ) * ( startPoint.getY() - endPoint.getY() ) ) );
+        double angle = Math.toDegrees( inclination );
+
+        if( startPoint.getY() < endPoint.getY() ) angle = 180 - angle; // 開始ノードが終了ノードより上に位置している場合
+        else if( startPoint.getY() > endPoint.getY() ) angle = 180 + angle;
+        else angle = 180 - angle; // 2つのノードが真横に存在している場合 angle == 180 or 360
+
+        return angle;
     }
 
     public Point2D calculateIntersectionPointLineAndEndNodeSide( Point2D startPoint, Point2D endPoint, double endNodeWidth, double endNodeHeight ) {

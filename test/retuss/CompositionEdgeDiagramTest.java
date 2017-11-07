@@ -528,4 +528,35 @@ public class CompositionEdgeDiagramTest {
         assertThat( actual15, is( false ) );
         assertThat( actual16, is( false ) );
     }
+
+    @Test
+    public void 関係元のポイントと関係先のポイントを入力すると関係先における関係の角度を返す() {
+        Point2D centerPoint = new Point2D( 100.0, 100.0 );
+        Point2D upperPoint = new Point2D( 100.0, 0.0 );
+        Point2D righterPoint = new Point2D( 200.0, 100.0 );
+        Point2D bottomPoint = new Point2D( 100.0, 200.0 );
+        Point2D lefterPoint = new Point2D( 0.0, 100.0 );
+        Point2D upperRightPoint = new Point2D( 200.0, 0.0 );
+        Point2D bottomRightPoint = new Point2D( 200.0, 200.0 );
+        Point2D bottomLeftPoint = new Point2D( 0.0, 200.0 );
+        Point2D upperLeftPoint = new Point2D( 0.0, 0.0 );
+
+        double actual1 = obj.calculateDegreeFromStart( centerPoint, upperPoint );
+        double actual2 = obj.calculateDegreeFromStart( centerPoint, righterPoint );
+        double actual3 = obj.calculateDegreeFromStart( centerPoint, bottomPoint );
+        double actual4 = obj.calculateDegreeFromStart( centerPoint, lefterPoint );
+        double actual5 = obj.calculateDegreeFromStart( centerPoint, upperRightPoint );
+        double actual6 = obj.calculateDegreeFromStart( centerPoint, bottomRightPoint );
+        double actual7 = obj.calculateDegreeFromStart( centerPoint, bottomLeftPoint );
+        double actual8 = obj.calculateDegreeFromStart( centerPoint, upperLeftPoint );
+
+        assertThat( actual1, is( 270.0 ) );
+        assertThat( actual2, is( 0.0 ) );
+        assertThat( actual3, is( 90.0 ) );
+        assertThat( actual4, is( 180.0 ) );
+        assertThat( actual5, is( 315.0 ) );
+        assertThat( actual6, is( 45.0 ) );
+        assertThat( actual7, is( 135.0 ) );
+        assertThat( actual8, is( 225.0 ) );
+    }
 }
