@@ -160,6 +160,7 @@ public class UtilityJavaFXComponent {
      *         <li> A : 多角形の自己交差内の領域（多角形の領域内） </li>
      *     </ui>
      * </p>
+     *
      * <p>
      *     多角形の自己交差の図形 <br>
      *     --- --- --- --- --- ---<br>

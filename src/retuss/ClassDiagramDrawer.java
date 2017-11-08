@@ -1,6 +1,5 @@
 package retuss;
 
-import com.sun.prism.image.CompoundTexture;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -9,10 +8,17 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * <p> クラス図描画クラス </p>
+ *
+ * <p>
+ *     このクラスは、クラス図を描画する際にキャンバスの操作などを行うクラスです。
+ * </p>
+ */
 public class ClassDiagramDrawer {
     GraphicsContext gc;
     private List< NodeDiagram > nodes = new ArrayList<>();
-    private CompositionEdgeDiagram compositions = new CompositionEdgeDiagram();
+    private EdgeDiagram relations = new EdgeDiagram();
 
     private int currentNodeNumber = -1;
     private double mouseX = 0.0;
@@ -29,56 +35,96 @@ public class ClassDiagramDrawer {
         return nodes;
     }
 
+    /**
+     * 操作中のノード番号を返す。
+     *
+     * @return 操作中のノード番号 何も操作していない場合は -1 を返す。
+     */
     public int getCurrentNodeNumber() {
         return currentNodeNumber;
     }
 
+    /**
+     * {@link Controller} クラスから {@link javafx.scene.canvas.Canvas} クラスが持つ {@link GraphicsContext} クラスのインスタンスを受け取り、 {@link EdgeDiagram} クラスのインスタンスに渡す。
+     * また、キャンバスの縁を描画する。
+     *
+     * @param gc {@link Controller} クラスから受け取るグラフィックスコンテキスト
+     */
     public void setGraphicsContext( GraphicsContext gc ) {
         this.gc = gc;
-        compositions.setGraphicsContext( this.gc );
+        relations.setGraphicsContext( this.gc );
         drawDiagramCanvasEdge();
     }
 
+    /**
+     * クラス図キャンバスにおいて操作しているマウスの位置を受け取る。
+     *
+     * @param x マウスのX軸
+     * @param y マウスのY軸
+     */
     public void setMouseCoordinates( double x, double y ) {
         mouseX = x;
         mouseY = y;
     }
 
+    /**
+     * クラス図においてダイアログなどで取得したテキストを受け取る。
+     *
+     * @param text 名前や内容の文字列
+     */
     public void setNodeText( String text ) {
         nodeText = text;
     }
 
-    public void allReDrawNode() {
+    /**
+     * クラス図キャンバスにおける全てのノード、エッジおよびキャンバスの縁を描画する。
+     * 上書きするのを防ぐために、最初にキャンバスをまっさらにする。
+     */
+    public void allReDrawCanvas() {
         gc.clearRect( 0.0, 0.0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight() );
 
         drawDiagramCanvasEdge();
         allReDrawEdge();
+        allReDrawNode();
+    }
+
+    /**
+     * クラス図キャンバスにおける全てのノードを描画する。
+     */
+    private void allReDrawNode() {
         for( int i = 0; i < nodes.size(); i++ ) {
             drawNode( i );
         }
     }
 
-    public void allReDrawEdge() {
-        for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
-            int relationId = nodes.get( compositions.getRelationId( ContentType.Composition, i ) ).getNodeId();
-            int relationSourceId = nodes.get( compositions.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
+    /**
+     * クラス図キャンバスにおける全てのエッジ（関係）を描画する。
+     */
+    private void allReDrawEdge() {
+        for(int i = 0; i < relations.getCompositionsCount(); i++ ) {
+            int relationId = nodes.get( relations.getRelationId( ContentType.Composition, i ) ).getNodeId();
+            int relationSourceId = nodes.get( relations.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
             double relationWidth = nodes.get( relationId ).getWidth();
             double relationHeight = nodes.get( relationId ).getHeight();
             double relationSourceWidth = nodes.get( relationSourceId ).getWidth();
             double relationSourceHeight = nodes.get( relationSourceId ).getHeight();
 
-            compositions.draw( relationWidth, relationHeight, relationSourceWidth, relationSourceHeight, i );
+            relations.draw( relationWidth, relationHeight, relationSourceWidth, relationSourceHeight, i );
         }
     }
 
-    public void createDrawnNode( int number ) {
+    /**
+     * クラス図キャンバスにおけるノードの初期化を行う。
+     *
+     * @param number
+     */
+    public void setupDrawnNode( int number ) {
         if( nodeText.length() <= 0 ) return;
 
         nodes.get( number ).setGraphicsContext( gc );
         nodes.get( number ).setMouseCoordinates( mouseX, mouseY );
         nodes.get( number ).createNodeText( ContentType.Title, nodeText );
         nodes.get( number ).setChosen( false );
-        nodes.get( number ).draw();
     }
 
     public void drawNode( int number ) {
@@ -95,7 +141,7 @@ public class ClassDiagramDrawer {
     public void addDrawnNode( List< Button > buttons ) {
         for( Button button : buttons ) {
             if( button.isDefaultButton() ) {
-                createDrawnNode( button );
+                setupDrawnNode( button );
                 break;
             }
         }
@@ -140,19 +186,19 @@ public class ClassDiagramDrawer {
         nodes.get( nodeNumber ).deleteNodeText( type, contentNumber );
     }
 
-    private void createDrawnNode( Button button ) {
+    private void setupDrawnNode( Button button ) {
         if( nodeText.length() <= 0 ) return;
 
         if( button.getText().equals( "Class" ) ) {
             ClassNodeDiagram classNodeDiagram = new ClassNodeDiagram();
             nodes.add( classNodeDiagram );
             currentNodeNumber = nodes.size() - 1;
-            createDrawnNode( currentNodeNumber );
+            setupDrawnNode( currentNodeNumber );
         } else if( button.getText().equals( "Note" ) ) {
             NoteNodeDiagram noteNodeDiagram = new NoteNodeDiagram();
             nodes.add( noteNodeDiagram );
             currentNodeNumber = nodes.size() - 1;
-            createDrawnNode( currentNodeNumber );
+            setupDrawnNode( currentNodeNumber );
         }
     }
 
@@ -164,11 +210,11 @@ public class ClassDiagramDrawer {
             int fromNodeId = currentNodeNumber;
             getNodeDiagramId( toMouseX, toMouseY );
             int toNodeId = currentNodeNumber;
-            compositions.createEdgeText( ContentType.Composition, name );
-            compositions.setRelationId( ContentType.Composition, compositions.getCompositionsCount() - 1, toNodeId );
-            compositions.setRelationSourceId( ContentType.Composition, compositions.getCompositionsCount() - 1, fromNodeId );
-            compositions.setRelationPoint( ContentType.Composition, compositions.getCompositionsCount() - 1, nodes.get( toNodeId ).getPoint() );
-            compositions.setRelationSourcePoint( ContentType.Composition, compositions.getCompositionsCount() - 1, nodes.get( fromNodeId ).getPoint() );
+            relations.createEdgeText( ContentType.Composition, name );
+            relations.setRelationId( ContentType.Composition, relations.getCompositionsCount() - 1, toNodeId );
+            relations.setRelationSourceId( ContentType.Composition, relations.getCompositionsCount() - 1, fromNodeId );
+            relations.setRelationPoint( ContentType.Composition, relations.getCompositionsCount() - 1, nodes.get( toNodeId ).getPoint() );
+            relations.setRelationSourcePoint( ContentType.Composition, relations.getCompositionsCount() - 1, nodes.get( fromNodeId ).getPoint() );
         }
     }
 
@@ -188,8 +234,8 @@ public class ClassDiagramDrawer {
                 break;
             }
         }
-        for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
-            if( compositions.isAlreadyDrawnAnyEdge( ContentType.Composition, i, new Point2D( mouseX, mouseY ) ) ) {
+        for(int i = 0; i < relations.getCompositionsCount(); i++ ) {
+            if( relations.isAlreadyDrawnAnyEdge( ContentType.Composition, i, new Point2D( mouseX, mouseY ) ) ) {
                 act = true;
                 break;
             }
@@ -199,16 +245,16 @@ public class ClassDiagramDrawer {
     }
 
     public RelationshipAttribution searchDrawnEdge( double mouseX, double mouseY ) {
-        RelationshipAttribution relation = compositions.searchCurrentRelation( new Point2D( mouseX, mouseY ) );
+        RelationshipAttribution relation = relations.searchCurrentRelation( new Point2D( mouseX, mouseY ) );
         return relation;
     }
 
     public void changeDrawnEdge( double mouseX, double mouseY, String content ) {
-        compositions.changeCurrentRelation( new Point2D( mouseX, mouseY ), content );
+        relations.changeCurrentRelation( new Point2D( mouseX, mouseY ), content );
     }
 
     public void deleteDrawnEdge( double mouseX, double mouseY ) {
-        compositions.deleteCurrentRelation( new Point2D( mouseX, mouseY ) );
+        relations.deleteCurrentRelation( new Point2D( mouseX, mouseY ) );
     }
 
     public ContentType searchDrawnAnyDiagramType( double mouseX, double mouseY ) {
@@ -220,9 +266,9 @@ public class ClassDiagramDrawer {
                 break;
             }
         }
-        for( int i = 0; i < compositions.getCompositionsCount(); i++ ) {
-            if( compositions.isAlreadyDrawnAnyEdge( ContentType.Composition, i, new Point2D( mouseX, mouseY ) ) ) {
-                type = compositions.getContentType( i );
+        for(int i = 0; i < relations.getCompositionsCount(); i++ ) {
+            if( relations.isAlreadyDrawnAnyEdge( ContentType.Composition, i, new Point2D( mouseX, mouseY ) ) ) {
+                type = relations.getContentType( i );
                 break;
             }
         }
@@ -234,10 +280,10 @@ public class ClassDiagramDrawer {
         boolean act = false;
 
         if( isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) {
-            if( compositions.hasRelationSourceNodeSelected() ) {
+            if( relations.hasRelationSourceNodeSelected() ) {
                 act = true;
                 if( type == nowStateType ) {
-                    compositions.changeRelationSourceNodeSelectedState();
+                    relations.changeRelationSourceNodeSelectedState();
                     setNodeChosen( currentNodeNumber, false );
                     nowStateType = ContentType.Undefined;
                 } else {
@@ -246,7 +292,7 @@ public class ClassDiagramDrawer {
                     nowStateType = type;
                 }
             } else {
-                compositions.changeRelationSourceNodeSelectedState();
+                relations.changeRelationSourceNodeSelectedState();
                 findNodeDiagram( mouseX, mouseY );
                 setNodeChosen( currentNodeNumber, true );
                 nowStateType = type;
@@ -261,7 +307,7 @@ public class ClassDiagramDrawer {
     public void resetNodeChosen( int number ) {
         nodes.get( number ).setChosen( false );
         nowStateType = ContentType.Undefined;
-        compositions.resetRelationSourceNodeSelectedState();
+        relations.resetRelationSourceNodeSelectedState();
     }
 
     public void setNodeChosen(int number, boolean isChosen ) {
@@ -275,8 +321,6 @@ public class ClassDiagramDrawer {
     public int getNodeDiagramId( double mouseX, double mouseY ) {
         int act = -1;
 
-        // if( ! isAlreadyDrawnAnyDiagram( mouseX, mouseY ) ) return act;
-
         // 重なっているノードの内1番上に描画しているノードはnodesリストの1番後半に存在するため、1番上に描画しているノードを取るためには尻尾から見なければならない。
         for( int i = nodes.size() - 1; i >= 0; i-- ) {
             if( nodes.get( i ).isAlreadyDrawnNode( mouseX, mouseY ) ) {
@@ -289,8 +333,8 @@ public class ClassDiagramDrawer {
         return act;
     }
 
-    public CompositionEdgeDiagram getCompositionEdgeDiagram() {
-        return compositions;
+    public EdgeDiagram getEdgeDiagram() {
+        return relations;
     }
 
     private void drawDiagramCanvasEdge() {

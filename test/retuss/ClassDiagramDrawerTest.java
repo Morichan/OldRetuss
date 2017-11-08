@@ -2,11 +2,9 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.Button;
-import javafx.scene.text.Text;
 import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -870,9 +868,9 @@ public class ClassDiagramDrawerTest {
             cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
 
             assertThat( cdd.getCurrentNodeNumber(), is( 1 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition" ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
+            assertThat( cdd.getEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition" ) );
+            assertThat( cdd.getEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
         }
 
         @Test
@@ -944,12 +942,12 @@ public class ClassDiagramDrawerTest {
             cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
             cdd.addDrawnEdge( buttons, "- composition2", secondClass.getX(), secondClass.getY() );
 
-            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition1" ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 1 ), is( "- composition2" ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 1 ), is( 1 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 1 ), is( 0 ) );
+            assertThat( cdd.getEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition1" ) );
+            assertThat( cdd.getEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
+            assertThat( cdd.getEdgeDiagram().getEdgeContentText( ContentType.Composition, 1 ), is( "- composition2" ) );
+            assertThat( cdd.getEdgeDiagram().getRelationId( ContentType.Composition, 1 ), is( 1 ) );
+            assertThat( cdd.getEdgeDiagram().getRelationSourceId( ContentType.Composition, 1 ), is( 0 ) );
         }
 
         @Test
@@ -964,9 +962,9 @@ public class ClassDiagramDrawerTest {
             cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, secondClass.getX(), secondClass.getY() );
             cdd.addDrawnEdge( buttons, "- composition", secondClass.getX(), secondClass.getY() );
 
-            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition" ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
+            assertThat( cdd.getEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition" ) );
+            assertThat( cdd.getEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
         }
 
         @Test
@@ -981,12 +979,12 @@ public class ClassDiagramDrawerTest {
             cdd.hasWaitedCorrectDrawnDiagram( ContentType.Composition, thirdClass.getX(), thirdClass.getY() );
             cdd.addDrawnEdge( buttons, "- composition2", thirdClass.getX(), thirdClass.getY() );
 
-            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition1" ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getEdgeContentText( ContentType.Composition, 1 ), is( "- composition2" ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationId( ContentType.Composition, 1 ), is( 2 ) );
-            assertThat( cdd.getCompositionEdgeDiagram().getRelationSourceId( ContentType.Composition, 1 ), is( 0 ) );
+            assertThat( cdd.getEdgeDiagram().getEdgeContentText( ContentType.Composition, 0 ), is( "- composition1" ) );
+            assertThat( cdd.getEdgeDiagram().getRelationId( ContentType.Composition, 0 ), is( 1 ) );
+            assertThat( cdd.getEdgeDiagram().getRelationSourceId( ContentType.Composition, 0 ), is( 0 ) );
+            assertThat( cdd.getEdgeDiagram().getEdgeContentText( ContentType.Composition, 1 ), is( "- composition2" ) );
+            assertThat( cdd.getEdgeDiagram().getRelationId( ContentType.Composition, 1 ), is( 2 ) );
+            assertThat( cdd.getEdgeDiagram().getRelationSourceId( ContentType.Composition, 1 ), is( 0 ) );
             assertThat( cdd.searchDrawnEdge( betweenFirstAndSecondClass.getX(), betweenFirstAndSecondClass.getY() ).getName(), is( "- composition1" ) );
             assertThat( cdd.searchDrawnEdge( betweenFirstAndThirdClass.getX(), betweenFirstAndThirdClass.getY() ).getName(), is( "- composition2" ) );
         }

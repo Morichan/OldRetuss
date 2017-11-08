@@ -18,14 +18,14 @@ public class CompositionEdgeDiagramTest {
     @Rule
     public ExpectedException indexOutOfBoundsException = ExpectedException.none();
 
-    CompositionEdgeDiagram obj;
+    EdgeDiagram obj;
 
     Point2D firstClassPoint;
     Point2D secondClassPoint;
 
     @Before
     public void setObj() {
-        obj = new CompositionEdgeDiagram();
+        obj = new EdgeDiagram();
     }
 
     @Test

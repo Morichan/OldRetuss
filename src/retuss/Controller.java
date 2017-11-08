@@ -98,11 +98,11 @@ public class Controller {
             if( util.getDefaultButtonIn( buttonsInCD ) == compositionButtonInCD ) {
                 if( ! classDiagramDrawer.hasWaitedCorrectDrawnDiagram( ContentType.Composition, mouseX, mouseY ) ) {
                     classDiagramDrawer.setMouseCoordinates( mouseX, mouseY );
-                    classDiagramDrawer.allReDrawNode();
+                    classDiagramDrawer.allReDrawCanvas();
                 } else {
                     String compositionName = showCreateCompositionNameInputDialog();
                     classDiagramDrawer.addDrawnEdge( buttonsInCD, compositionName, mouseX, mouseY );
-                    classDiagramDrawer.allReDrawNode();
+                    classDiagramDrawer.allReDrawCanvas();
                 }
             }
         } else {
@@ -111,10 +111,10 @@ public class Controller {
                 String className = showCreateClassNameInputDialog();
                 classDiagramDrawer.setNodeText( className );
                 classDiagramDrawer.addDrawnNode( buttonsInCD );
+                classDiagramDrawer.allReDrawCanvas();
             } else if( util.getDefaultButtonIn( buttonsInCD ) == compositionButtonInCD ) {
                 classDiagramDrawer.resetNodeChosen( classDiagramDrawer.getCurrentNodeNumber() );
-                classDiagramDrawer.allReDrawEdge();
-                classDiagramDrawer.allReDrawNode();
+                classDiagramDrawer.allReDrawCanvas();
             }
         }
     }
@@ -227,24 +227,24 @@ public class Controller {
         contextMenu.getItems().get(0).setOnAction(event -> {
             String className = showChangeClassNameInputDialog(classDiagramDrawer.getNodes().get(classDiagramDrawer.getCurrentNodeNumber()).getNodeText());
             classDiagramDrawer.changeDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Title, 0, className);
-            classDiagramDrawer.allReDrawNode();
+            classDiagramDrawer.allReDrawCanvas();
         });
         // クラスの削除
         contextMenu.getItems().get(1).setOnAction(event -> {
             classDiagramDrawer.deleteDrawnNode(classDiagramDrawer.getCurrentNodeNumber());
-            classDiagramDrawer.allReDrawNode();
+            classDiagramDrawer.allReDrawCanvas();
         });
         // クラスの属性の追加
         ((Menu) contextMenu.getItems().get(3)).getItems().get(0).setOnAction(event -> {
             String addAttribution = showAddClassAttributionInputDialog();
             classDiagramDrawer.addDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, addAttribution);
-            classDiagramDrawer.allReDrawNode();
+            classDiagramDrawer.allReDrawCanvas();
         });
         // クラスの操作の追加
         ((Menu) contextMenu.getItems().get(4)).getItems().get(0).setOnAction(event -> {
             String addOperation = showAddClassOperationInputDialog();
             classDiagramDrawer.addDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, addOperation);
-            classDiagramDrawer.allReDrawNode();
+            classDiagramDrawer.allReDrawCanvas();
         });
         List<String> attributions = classDiagramDrawer.getDrawnNodeTextList(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution);
         List<String> operations = classDiagramDrawer.getDrawnNodeTextList(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation);
@@ -254,7 +254,7 @@ public class Controller {
             ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(1)).getItems().get(i).setOnAction(event -> {
                 String changedAttribution = showChangeClassAttributionInputDialog(attributions.get(contentNumber));
                 classDiagramDrawer.changeDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber, changedAttribution);
-                classDiagramDrawer.allReDrawNode();
+                classDiagramDrawer.allReDrawCanvas();
             });
         }
         // クラスの各属性の削除
@@ -262,7 +262,7 @@ public class Controller {
             int contentNumber = i;
             ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(2)).getItems().get(i).setOnAction(event -> {
                 classDiagramDrawer.deleteDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, contentNumber);
-                classDiagramDrawer.allReDrawNode();
+                classDiagramDrawer.allReDrawCanvas();
             });
         }
         // クラスの各属性の表示選択
@@ -271,7 +271,7 @@ public class Controller {
             ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(3)).getItems().get(i).setOnAction(event -> {
                 classDiagramDrawer.setDrawnNodeContentBoolean(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Attribution, ContentType.Indication, contentNumber,
                         ((CheckMenuItem) ((Menu) ((Menu) contextMenu.getItems().get(3)).getItems().get(3)).getItems().get(contentNumber)).isSelected());
-                classDiagramDrawer.allReDrawNode();
+                classDiagramDrawer.allReDrawCanvas();
             });
         }
         // クラスの各操作の変更
@@ -280,7 +280,7 @@ public class Controller {
             ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(1)).getItems().get(i).setOnAction(event -> {
                 String changedOperation = showChangeClassOperationInputDialog(operations.get(contentNumber));
                 classDiagramDrawer.changeDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber, changedOperation);
-                classDiagramDrawer.allReDrawNode();
+                classDiagramDrawer.allReDrawCanvas();
             });
         }
         // クラスの各操作の削除
@@ -288,7 +288,7 @@ public class Controller {
             int contentNumber = i;
             ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(2)).getItems().get(i).setOnAction(event -> {
                 classDiagramDrawer.deleteDrawnNodeText(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, contentNumber);
-                classDiagramDrawer.allReDrawNode();
+                classDiagramDrawer.allReDrawCanvas();
             });
         }
         // クラスの各操作の表示選択
@@ -297,7 +297,7 @@ public class Controller {
             ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(3)).getItems().get(i).setOnAction(event -> {
                 classDiagramDrawer.setDrawnNodeContentBoolean(classDiagramDrawer.getCurrentNodeNumber(), ContentType.Operation, ContentType.Indication, contentNumber,
                         ((CheckMenuItem) ((Menu) ((Menu) contextMenu.getItems().get(4)).getItems().get(3)).getItems().get(contentNumber)).isSelected());
-                classDiagramDrawer.allReDrawNode();
+                classDiagramDrawer.allReDrawCanvas();
             });
         }
 
@@ -310,14 +310,12 @@ public class Controller {
             RelationshipAttribution composition = classDiagramDrawer.searchDrawnEdge( mouseX, mouseY );
             String compositionName = showChangeCompositionNameInputDialog( composition.getName() );
             classDiagramDrawer.changeDrawnEdge( mouseX, mouseY, compositionName );
-            classDiagramDrawer.allReDrawEdge();
-            classDiagramDrawer.allReDrawNode();
+            classDiagramDrawer.allReDrawCanvas();
         } );
         // コンポジション関係の削除
         contextMenu.getItems().get(1).setOnAction( event -> {
             classDiagramDrawer.deleteDrawnEdge( mouseX, mouseY );
-            classDiagramDrawer.allReDrawEdge();
-            classDiagramDrawer.allReDrawNode();
+            classDiagramDrawer.allReDrawCanvas();
         } );
 
         return contextMenu;

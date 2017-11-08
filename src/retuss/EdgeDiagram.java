@@ -3,13 +3,17 @@ package retuss;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static jdk.nashorn.internal.objects.Global.Infinity;
 
-public class CompositionEdgeDiagram {
+public class EdgeDiagram {
     GraphicsContext gc;
     private List< RelationshipAttribution > compositions = new ArrayList<>();
     private boolean hasRelationSourceNodeSelected = false;
@@ -155,7 +159,7 @@ public class CompositionEdgeDiagram {
             double xAxisLength = margin * Math.cos( radian );
             double yAxisLength = inclination * xAxisLength;
 
-            // ( 切片が0超 xor 終点のX軸が始点のX軸より大きい )
+            // ( 切片が0未満 xor 終点のX軸が始点のX軸より大きい )
             if( ( intercept < 0 && startEdge.getX() < endEdge.getX() ) ||
                     ( ! (intercept < 0) && ! (startEdge.getX() < endEdge.getX() ) ) ) sign = -1;
 
@@ -180,6 +184,7 @@ public class CompositionEdgeDiagram {
     private void drawEdge( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint, int number ) {
         drawLine( relationIntersectPoint, relationSourceIntersectPoint );
         drawEdgeUmbrella( relationIntersectPoint, relationSourceIntersectPoint, number );
+        drawEdgeName( relationIntersectPoint, relationSourceIntersectPoint, number );
     }
 
     private void drawLine( Point2D relationPoint, Point2D relationSourcePoint ) {
@@ -194,6 +199,18 @@ public class CompositionEdgeDiagram {
             drawEdgeNavigation( relationIntersectPoint, relationSourceIntersectPoint );
             drawEdgeComposition( relationIntersectPoint, relationSourceIntersectPoint );
         }
+    }
+
+    private void drawEdgeName( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint, int number ) {
+        double angle = calculateDegreeFromStart( relationIntersectPoint, relationSourceIntersectPoint );
+        double length = 20.0;
+        Point2D fontPoint = calculateUmbrellaPoint( relationIntersectPoint, angle - 20.0, length );
+        Text text = new Text( getEdgeContentText( ContentType.Composition, number ) );
+        text.setFont( Font.font( "Consolas" , FontWeight.LIGHT, 15 ) );
+        gc.setFill( Color.BLACK );
+        gc.setFont( text.getFont() );
+        gc.setTextAlign( TextAlignment.LEFT );
+        gc.fillText( text.getText(), fontPoint.getX(), fontPoint.getY() );
     }
 
     private void drawEdgeNavigation( Point2D relationIntersectPoint, Point2D relationSourceIntersectPoint ) {
