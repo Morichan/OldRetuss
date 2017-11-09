@@ -1,8 +1,11 @@
 package retuss;
 
 import javafx.geometry.Point2D;
+<<<<<<< HEAD
 import javafx.scene.canvas.GraphicsContext;
 
+=======
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 
 public class RelationshipAttribution extends Attribution {
     private int relationId;

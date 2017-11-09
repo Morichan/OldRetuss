@@ -2,28 +2,21 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import javafx.scene.text.Text;
-import mockit.Expectations;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ClassNodeDiagramTest {
-
-    @Rule
-    public ExpectedException indexOutOfBoundsException = ExpectedException.none();
+class ClassNodeDiagramTest {
 
     ClassNodeDiagram obj;
 
-    @Before
+    @BeforeEach
     public void setObj() {
         obj = new ClassNodeDiagram();
     }
@@ -41,7 +34,7 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxWidth( longClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
-        assertThat( actual, is( longClassName.getLayoutBounds().getWidth() + obj.getClassNameSpace() ) );
+        assertThat( actual ).isEqualTo( longClassName.getLayoutBounds().getWidth() + obj.getClassNameSpace() );
     }
 
     @Test
@@ -57,7 +50,7 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
-        assertThat( actual, is( attributionsAreNotWideWidthFromDefault.get( 0 ).getLayoutBounds().getWidth() + obj.getClassNameSpace() ) );
+        assertThat( actual ).isEqualTo( attributionsAreNotWideWidthFromDefault.get( 0 ).getLayoutBounds().getWidth() + obj.getClassNameSpace() );
     }
 
     @Test
@@ -73,7 +66,7 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
-        assertThat( actual, is( attributionsAreNotWideWidthFromDefault.get( 1 ).getLayoutBounds().getWidth() + obj.getClassNameSpace() ) );
+        assertThat( actual ).isEqualTo( attributionsAreNotWideWidthFromDefault.get( 1 ).getLayoutBounds().getWidth() + obj.getClassNameSpace() );
     }
 
     @Test
@@ -89,7 +82,7 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
-        assertThat( actual, is( operationsAreNotWideWidthFromDefault.get( 2 ).getLayoutBounds().getWidth() + obj.getClassNameSpace() ) );
+        assertThat( actual ).isEqualTo( operationsAreNotWideWidthFromDefault.get( 2 ).getLayoutBounds().getWidth() + obj.getClassNameSpace() );
     }
 
     @Test
@@ -105,7 +98,7 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxWidth( shortClassName, attributionsAreNotWideWidthFromDefault, operationsAreNotWideWidthFromDefault );
 
-        assertThat( actual, is( 100.0 ) );
+        assertThat( actual ).isEqualTo( 100.0 );
     }
 
     @Test
@@ -114,7 +107,7 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxAttributionHeight( attributionsAreNot );
 
-        assertThat( actual, is( 20.0 ));
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
@@ -123,81 +116,85 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxAttributionHeight( attributionIsOne );
 
-        assertThat( actual, is( 20.0 ));
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス属性が複数存在する場合はデフォルト高の複数倍を返す() {
+        // Arrange
         List< ClassData > attributionsAreMoreTwo = new ArrayList<>();
+
+        // Act
         attributionsAreMoreTwo.add( new Attribution( "attribution1" ) );
         attributionsAreMoreTwo.add( new Attribution( "attribution2" ) );
-
-        double actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 2 ));
+        double actual1 = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
         attributionsAreMoreTwo.add( new Attribution( "attribution3" ) );
-
-        actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 3 ));
+        double actual2 = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
         attributionsAreMoreTwo.add( new Attribution( "attribution4" ) );
-
-        actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 4 ));
+        double actual3 = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
         attributionsAreMoreTwo.add( new Attribution( "attribution5" ) );
+        double actual4 = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
 
-        actual = obj.calculateMaxAttributionHeight( attributionsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 5 ));
+        // Assert
+        assertThat( actual1 ).isEqualTo( 20.0 * 2 );
+        assertThat( actual2 ).isEqualTo( 20.0 * 3 );
+        assertThat( actual3 ).isEqualTo( 20.0 * 4 );
+        assertThat( actual4 ).isEqualTo( 20.0 * 5 );
     }
 
     @Test
     public void クラス属性が1つ存在しそれが未表示の場合はデフォルト高を返す() {
         List< ClassData > attributionIsOne = Arrays.asList( new Attribution( "attribution1" ) );
-        attributionIsOne.get( 0 ).setIndication( false );
 
+        attributionIsOne.get( 0 ).setIndication( false );
         double actual = obj.calculateMaxAttributionHeight( attributionIsOne );
 
-        assertThat( actual, is( 20.0 ));
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス属性が3つ存在し1つが未表示の場合はデフォルト高の3倍を返す() {
-        List< ClassData > attributions = Arrays.asList( new Attribution( "notVisibilityAttribution" ), new Attribution( "visibilityAttribution1" ), new Attribution( "visibilityAttribution2" ) );
-        attributions.get( 0 ).setIndication( false );
+        List< ClassData > attributions = Arrays.asList(
+                new Attribution( "notVisibilityAttribution" ),
+                new Attribution( "visibilityAttribution1" ),
+                new Attribution( "visibilityAttribution2" ) );
 
+        attributions.get( 0 ).setIndication( false );
         double actual = obj.calculateMaxAttributionHeight( attributions );
 
-        assertThat( actual, is( 20.0 * 3 ));
+        assertThat( actual ).isEqualTo( 20.0 * 3 );
     }
 
     @Test
     public void クラス属性が3つ存在し2つが未表示の場合はデフォルト高の2倍を返す() {
-        List< ClassData > attributions = Arrays.asList( new Attribution( "notVisibilityAttribution1" ), new Attribution( "notVisibilityAttribution2" ), new Attribution( "visibilityAttribution" ) );
+        List< ClassData > attributions = Arrays.asList(
+                new Attribution( "notVisibilityAttribution1" ),
+                new Attribution( "notVisibilityAttribution2" ),
+                new Attribution( "visibilityAttribution" ) );
 
         attributions.get( 0 ).setIndication( false );
         attributions.get( 1 ).setIndication( false );
-
         double actual = obj.calculateMaxAttributionHeight( attributions );
 
-        assertThat( actual, is( 20.0 * 2 ));
+        assertThat( actual ).isEqualTo( 20.0 * 2 );
     }
 
     @Test
     public void クラス属性が3つ存在し全て未表示の場合はデフォルト高を返す() {
-        List< ClassData > attributions = Arrays.asList( new Attribution( "notVisibilityAttribution1" ), new Attribution( "notVisibilityAttribution2" ), new Attribution( "notVisibilityAttribution3" ) );
+        List< ClassData > attributions = Arrays.asList(
+                new Attribution( "notVisibilityAttribution1" ),
+                new Attribution( "notVisibilityAttribution2" ),
+                new Attribution( "notVisibilityAttribution3" ) );
 
         attributions.get( 0 ).setIndication( false );
         attributions.get( 1 ).setIndication( false );
         attributions.get( 2 ).setIndication( false );
-
         double actual = obj.calculateMaxAttributionHeight( attributions );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
@@ -206,7 +203,7 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxOperationHeight( operationsAreNot );
 
-        assertThat( actual, is( 20.0 ));
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
@@ -215,36 +212,33 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxOperationHeight( operationIsOne );
 
-        assertThat( actual, is( 20.0 ));
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス操作が複数存在する場合はデフォルト高の複数倍を返す() {
+        // Arrange
         List< ClassData > operationsAreMoreTwo = new ArrayList<>();
+
+        // Act
         operationsAreMoreTwo.add( new Operation( "operation1" ) );
         operationsAreMoreTwo.add( new Operation( "operation2" ) );
-
-        double actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 2 ) );
+        double actual1 = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
         operationsAreMoreTwo.add( new Operation( "operation3" ) );
-
-        actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 3 ) );
+        double actual2 = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
         operationsAreMoreTwo.add( new Operation( "operation4" ) );
-
-        actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 4 ) );
+        double actual3 = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
         operationsAreMoreTwo.add( new Operation( "operation5" ) );
+        double actual4 = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
 
-        actual = obj.calculateMaxOperationHeight( operationsAreMoreTwo );
-
-        assertThat( actual, is( 20.0 * 5 ) );
+        // Assert
+        assertThat( actual1 ).isEqualTo( 20.0 * 2 );
+        assertThat( actual2 ).isEqualTo( 20.0 * 3 );
+        assertThat( actual3 ).isEqualTo( 20.0 * 4 );
+        assertThat( actual4 ).isEqualTo( 20.0 * 5 );
     }
 
     @Test
@@ -254,134 +248,150 @@ public class ClassNodeDiagramTest {
 
         double actual = obj.calculateMaxOperationHeight( operationIsOne );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス操作が3つ存在し1つが未表示の場合はデフォルト高の3倍を返す() {
-        List< ClassData > operations = Arrays.asList( new Operation( "notVisibilityOperation" ), new Operation( "visibilityOperation1" ), new Operation( "visibilityOperation2" ) );
+        List< ClassData > operations = Arrays.asList(
+                new Operation( "notVisibilityOperation" ),
+                new Operation( "visibilityOperation1" ),
+                new Operation( "visibilityOperation2" ) );
         operations.get( 0 ).setIndication( false );
 
         double actual = obj.calculateMaxOperationHeight( operations );
 
-        assertThat( actual, is( 20.0 * 3 ));
+        assertThat( actual ).isEqualTo( 20.0 * 3 );
     }
 
     @Test
     public void クラス操作が3つ存在し2つが未表示の場合はデフォルト高の2倍を返す() {
-        List< ClassData > operations = Arrays.asList( new Operation( "notVisibilityOperation1" ), new Operation( "notVisibilityOperation2" ), new Operation( "visibilityOperation" ) );
+        List< ClassData > operations = Arrays.asList(
+                new Operation( "notVisibilityOperation1" ),
+                new Operation( "notVisibilityOperation2" ),
+                new Operation( "visibilityOperation" ) );
+
         operations.get( 0 ).setIndication( false );
         operations.get( 1 ).setIndication( false );
-
         double actual = obj.calculateMaxOperationHeight( operations );
 
-        assertThat( actual, is( 20.0 * 2 ));
+        assertThat( actual ).isEqualTo( 20.0 * 2 );
     }
 
     @Test
     public void クラス操作が3つ存在し全て未表示の場合はデフォルト高を返す() {
-        List< ClassData > operations = Arrays.asList( new Operation( "notVisibilityOperation1" ), new Operation( "notVisibilityOperation2" ), new Operation( "notVisibilityOperation3" ) );
+        List< ClassData > operations = Arrays.asList(
+                new Operation( "notVisibilityOperation1" ),
+                new Operation( "notVisibilityOperation2" ),
+                new Operation( "notVisibilityOperation3" ) );
+
         operations.get( 0 ).setIndication( false );
         operations.get( 1 ).setIndication( false );
         operations.get( 2 ).setIndication( false );
-
         double actual = obj.calculateMaxOperationHeight( operations );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス属性が存在しない場合は属性1つ分の高さを返す() {
         List< ClassData > attributions = new ArrayList<>();
+
         for( ClassData attribution : attributions ) {
             obj.createNodeText( ContentType.Attribution, attribution.getName() );
         }
         obj.calculateMaxAttributionHeight( attributions );
-
         double actual = obj.calculateStartOperationHeight( attributions );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス属性が1つ存在する場合は属性1つ分の高さを返す() {
         List< ClassData > attributions = Arrays.asList( new Attribution( "oneVisibilityAttribution" ) );
+
         for( ClassData attribution : attributions ) {
             obj.createNodeText( ContentType.Attribution, attribution.getName() );
         }
         obj.calculateMaxAttributionHeight( attributions );
-
         double actual = obj.calculateStartOperationHeight( attributions );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス属性が2つ存在する場合は属性2つ分の高さを返す() {
-        List< ClassData > attributions = Arrays.asList( new Attribution( "visibilityAttribution1"), new Attribution( "visibilityAttribution2" ) );
+        List< ClassData > attributions = Arrays.asList(
+                new Attribution( "visibilityAttribution1"),
+                new Attribution( "visibilityAttribution2" ) );
+
         for( ClassData attribution : attributions ) {
             obj.createNodeText( ContentType.Attribution, attribution.getName() );
         }
         obj.calculateMaxAttributionHeight( attributions );
-
         double actual = obj.calculateStartOperationHeight( attributions );
 
-        assertThat( actual, is( 40.0 ) );
+        assertThat( actual ).isEqualTo( 40.0 );
     }
 
     @Test
     public void 非表示のクラス属性が1つ存在する場合は属性1つ分の高さを返す() {
         List< ClassData > attributions = Arrays.asList( new Attribution( "notVisibilityAttribution" ) );
+
         for( ClassData attribution : attributions ) {
             obj.createNodeText( ContentType.Attribution, attribution.getName() );
         }
         obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Indication, 0, false );
         obj.calculateMaxAttributionHeight( attributions );
-
         double actual = obj.calculateStartOperationHeight( attributions );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void クラス属性が2つ存在し1つ目が非表示の場合は属性2つ分の高さを返す() {
-        List< ClassData > attributions = Arrays.asList( new Attribution( "notVisibilityAttribution" ), new Attribution( "visibilityAttribution" ) );
+        List< ClassData > attributions = Arrays.asList(
+                new Attribution( "notVisibilityAttribution" ),
+                new Attribution( "visibilityAttribution" ) );
+
         for( ClassData attribution : attributions ) {
             obj.createNodeText( ContentType.Attribution, attribution.getName() );
         }
         obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Indication, 0, false );
         obj.calculateMaxAttributionHeight( attributions );
-
         double actual = obj.calculateStartOperationHeight( attributions );
 
-        assertThat( actual, is( 40.0 ) );
+        assertThat( actual ).isEqualTo( 40.0 );
     }
 
     @Test
     public void 非表示のクラス属性が2つ存在する場合は属性1つ分の高さを返す() {
-        List< ClassData > attributions = Arrays.asList( new Attribution( "notVisibilityAttribution1" ), new Attribution( "notVisibilityAttribution2" ) );
+        List< ClassData > attributions = Arrays.asList(
+                new Attribution( "notVisibilityAttribution1" ),
+                new Attribution( "notVisibilityAttribution2" ) );
 
         attributions.get( 0 ).setIndication( false );
         attributions.get( 1 ).setIndication( false );
         obj.calculateMaxAttributionHeight( attributions );
-
         double actual = obj.calculateStartOperationHeight( attributions );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
     public void 非表示のクラス属性が3つ存在する場合は属性1つ分の高さを返す() {
-        List< ClassData > attributions = Arrays.asList( new Attribution( "notVisibilityAttribution1" ), new Attribution( "notVisibilityAttribution2" ), new Attribution( "notVisibilityAttribution3" ) );
+        List< ClassData > attributions = Arrays.asList(
+                new Attribution( "notVisibilityAttribution1" ),
+                new Attribution( "notVisibilityAttribution2" ),
+                new Attribution( "notVisibilityAttribution3" ) );
 
         attributions.get( 0 ).setIndication( false );
         attributions.get( 1 ).setIndication( false );
         attributions.get( 2 ).setIndication( false );
         obj.calculateMaxAttributionHeight( attributions );
-
         double actual = obj.calculateStartOperationHeight( attributions );
 
-        assertThat( actual, is( 20.0 ) );
+        assertThat( actual ).isEqualTo( 20.0 );
     }
 
     @Test
@@ -394,36 +404,39 @@ public class ClassNodeDiagramTest {
 
         boolean actual = obj.isAlreadyDrawnNode( clickedX, clickedY );
 
-        assertThat( actual, is( true ) );
+        assertThat( actual ).isTrue();
     }
 
     @Test
     public void クラスが大きくなった場合の位置に存在するかどうかを判定する() {
+        // Arrange
         double clickedX = 100;
         double clickedY = 200;
         obj.createNodeText( ContentType.Title, "ClassName" );
         List< String > attributions = Arrays.asList( "attribution1", "attribution2", "attribution3" );
         List< String > operations = Arrays.asList( "operation1", "operation2", "operation3" );
+
+        // Act
         for( String attribution : attributions ) {
             obj.createNodeText( ContentType.Attribution, attribution );
         }
         for( String operation : operations ) {
             obj.createNodeText( ContentType.Operation, operation );
         }
-
         obj.setMouseCoordinates( clickedX, clickedY );
         obj.calculateWidthAndHeight( 140, 40.0 + 60.0 + 60.0 );
 
-        List< Point2D > inClassPoint = Arrays.asList(
+        // Assert
+        List<Point2D> inClassPoint = Arrays.asList(
                 new Point2D( 100, 200 ), new Point2D( 31, 121 ), new Point2D( 169, 121 ), new Point2D( 169, 279 ), new Point2D( 31, 279 ) );
         List< Point2D > outClassPoint = Arrays.asList(
                 new Point2D( 30, 120 ), new Point2D( 170, 120 ), new Point2D( 170, 280 ), new Point2D( 30, 280 ),
                 new Point2D( 100, 120 ), new Point2D( 170, 200 ), new Point2D( 100, 280 ), new Point2D( 30, 200 ) );
         for( Point2D point : inClassPoint ) {
-            assertThat( obj.isAlreadyDrawnNode( point.getX(), point.getY() ), is( true ) );
+            assertThat( obj.isAlreadyDrawnNode( point.getX(), point.getY() ) ).isTrue();
         }
         for( Point2D point : outClassPoint ) {
-            assertThat( obj.isAlreadyDrawnNode( point.getX(), point.getY() ), is( false ) );
+            assertThat( obj.isAlreadyDrawnNode( point.getX(), point.getY() ) ).isFalse();
         }
     }
 
@@ -434,7 +447,7 @@ public class ClassNodeDiagramTest {
 
         String actual = obj.getNodeText();
 
-        assertThat( actual, is( className ) );
+        assertThat( actual ).isEqualTo( className );
     }
 
     @Test
@@ -446,7 +459,7 @@ public class ClassNodeDiagramTest {
         obj.createNodeText( ContentType.Attribution, expected );
         String actual = obj.getNodeContentText( ContentType.Attribution, 0 );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -460,7 +473,7 @@ public class ClassNodeDiagramTest {
         obj.changeNodeText( ContentType.Attribution, 0, expected );
         String actual = obj.getNodeContentText( ContentType.Attribution, 0 );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -472,21 +485,19 @@ public class ClassNodeDiagramTest {
         obj.createNodeText( ContentType.Attribution, expected );
         obj.deleteNodeText( ContentType.Attribution, 0 );
 
-        indexOutOfBoundsException.expect( IndexOutOfBoundsException.class );
-        obj.getNodeContentText( ContentType.Attribution, 0 );
+        assertThrows( IndexOutOfBoundsException.class, () -> obj.getNodeContentText( ContentType.Attribution, 0 ) );
     }
 
     @Test
     public void 属性を非表示にする() {
         String className = "ClassName";
         String classAttribution = "- attribution : int";
-        boolean expected = false;
 
         obj.createNodeText( ContentType.Title, className );
         obj.createNodeText( ContentType.Attribution, classAttribution );
-        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Indication, 0, expected );
+        obj.setNodeContentBoolean( ContentType.Attribution, ContentType.Indication, 0, false );
 
-        assertThat( obj.getNodeContentsBoolean( ContentType.Attribution, ContentType.Indication).get( 0 ), is( expected ) );
+        assertThat( obj.getNodeContentsBoolean( ContentType.Attribution, ContentType.Indication).get( 0 ) ).isFalse();
     }
 
     @Test
@@ -498,7 +509,7 @@ public class ClassNodeDiagramTest {
         obj.createNodeText( ContentType.Operation, expected );
         String actual = obj.getNodeContentText( ContentType.Operation, 0 );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -512,7 +523,7 @@ public class ClassNodeDiagramTest {
         obj.changeNodeText( ContentType.Operation, 0, expected );
         String actual = obj.getNodeContentText( ContentType.Operation, 0 );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -524,21 +535,19 @@ public class ClassNodeDiagramTest {
         obj.createNodeText( ContentType.Operation, expected );
         obj.deleteNodeText( ContentType.Operation, 0 );
 
-        indexOutOfBoundsException.expect( IndexOutOfBoundsException.class );
-        obj.getNodeContentText( ContentType.Operation, 0 );
+        assertThrows( IndexOutOfBoundsException.class, () -> obj.getNodeContentText( ContentType.Operation, 0 ) );
     }
 
     @Test
     public void 操作を非表示にする() {
         String className = "ClassName";
         String classOperation = "- operation() : void";
-        boolean expected = false;
 
         obj.createNodeText( ContentType.Title, className );
         obj.createNodeText( ContentType.Operation, classOperation );
-        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Indication, 0, expected );
+        obj.setNodeContentBoolean( ContentType.Operation, ContentType.Indication, 0, false );
 
-        assertThat( obj.getNodeContentsBoolean( ContentType.Operation, ContentType.Indication).get( 0 ), is( expected ) );
+        assertThat( obj.getNodeContentsBoolean( ContentType.Operation, ContentType.Indication).get( 0 ) ).isFalse();
     }
 
     @Test
@@ -549,7 +558,7 @@ public class ClassNodeDiagramTest {
 
         Point2D actual = obj.getPoint();
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -563,7 +572,7 @@ public class ClassNodeDiagramTest {
         double actualWidth = obj.getWidth();
         double actualHeight = obj.getHeight();
 
-        assertThat( actualWidth, is( expectedWidth ) );
-        assertThat( actualHeight, is( expectedHeight ) );
+        assertThat( actualWidth ).isEqualTo( expectedWidth );
+        assertThat( actualHeight ).isEqualTo( expectedHeight );
     }
 }

@@ -1,20 +1,21 @@
 package retuss;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AttributionTest {
+class AttributionTest {
     Attribution attribution;
     List< Attribution > attributions = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         attribution = new Attribution();
 
@@ -29,7 +30,7 @@ public class AttributionTest {
 
         attribution.setName( expected );
 
-        assertThat( attribution.getName(), is( expected ) );
+        assertThat( attribution.getName() ).isEqualTo( expected );
     }
 
     @Test
@@ -38,7 +39,7 @@ public class AttributionTest {
 
         attribution.setIndication( expected );
 
-        assertThat( attribution.isIndicate(), is( expected ) );
+        assertThat( attribution.isIndicate() ).isEqualTo( expected );
     }
 
     @Test
@@ -49,7 +50,7 @@ public class AttributionTest {
             attributions.get( i ).setName( expected.get( i ) );
 
         for( int i = 0; i < expected.size(); i++ )
-            assertThat( attributions.get( i ).getName(), is( expected.get( i ) ) );
+            assertThat( attributions.get( i ).getName() ).isEqualTo( expected.get( i ) );
     }
 
     @Test
@@ -60,6 +61,7 @@ public class AttributionTest {
             attributions.get( i ).setIndication( expected.get( i ) );
 
         for( int i = 0; i < expected.size(); i++ )
-            assertThat( attributions.get( i ).isIndicate(), is( expected.get( i ) ) );
+            assertThat( attributions.get( i ).isIndicate() ).isEqualTo( expected.get( i ) );
     }
+
 }

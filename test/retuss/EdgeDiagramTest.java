@@ -1,29 +1,23 @@
 package retuss;
 
 import javafx.geometry.Point2D;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static jdk.nashorn.internal.objects.Global.Infinity;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-
-public class EdgeDiagramTest {
-    @Rule
-    public ExpectedException indexOutOfBoundsException = ExpectedException.none();
+class EdgeDiagramTest {
 
     EdgeDiagram obj;
 
     Point2D firstClassPoint;
     Point2D secondClassPoint;
 
-    @Before
+    @BeforeEach
     public void setObj() {
         obj = new EdgeDiagram();
     }
@@ -35,8 +29,8 @@ public class EdgeDiagramTest {
         obj.createEdgeText( ContentType.Composition, expected );
         String actual = obj.getEdgeContentText( ContentType.Composition, 0 );
 
-        assertThat( actual, is( expected ) );
-        assertThat( obj.getCompositionsCount(), is( 1 ));
+        assertThat( actual ).isEqualTo( expected );
+        assertThat( obj.getCompositionsCount() ).isEqualTo( 1 );
     }
 
     @Test
@@ -48,7 +42,7 @@ public class EdgeDiagramTest {
         obj.changeEdgeText( ContentType.Composition, 0, expected );
         String actual = obj.getEdgeContentText( ContentType.Composition, 0 );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -58,8 +52,7 @@ public class EdgeDiagramTest {
         obj.createEdgeText( ContentType.Composition, expected );
         obj.deleteEdgeText( ContentType.Composition, 0 );
 
-        indexOutOfBoundsException.expect( IndexOutOfBoundsException.class );
-        obj.getEdgeContentText( ContentType.Composition, 0 );
+        assertThrows( IndexOutOfBoundsException.class, () -> obj.getEdgeContentText( ContentType.Composition, 0 ) );
     }
 
     @Test
@@ -69,7 +62,7 @@ public class EdgeDiagramTest {
 
         obj.setRelationId( ContentType.Composition, 0, expected );
 
-        assertThat( obj.getRelationId( ContentType.Composition, 0 ), is( expected ) );
+        assertThat( obj.getRelationId( ContentType.Composition, 0 ) ).isEqualTo( expected );
     }
 
     @Test
@@ -79,7 +72,7 @@ public class EdgeDiagramTest {
 
         obj.setRelationSourceId( ContentType.Composition, 0, expected );
 
-        assertThat( obj.getRelationSourceId( ContentType.Composition, 0 ), is( expected ) );
+        assertThat( obj.getRelationSourceId( ContentType.Composition, 0 ) ).isEqualTo( expected );
     }
 
     @Test
@@ -94,20 +87,19 @@ public class EdgeDiagramTest {
         obj.changeRelationSourceNodeSelectedState();
         boolean thirdActual = obj.hasRelationSourceNodeSelected();
 
-        assertThat( firstActual, is( firstExpected ) );
-        assertThat( secondActual, is( secondExpected ) );
-        assertThat( thirdActual, is( thirdExpected ) );
+        assertThat( firstActual ).isEqualTo( firstExpected );
+        assertThat( secondActual ).isEqualTo( secondExpected );
+        assertThat( thirdActual ).isEqualTo( thirdExpected );
     }
 
     @Test
     public void 関連の関係元を選択しているかどうかをリセットする() {
-        boolean expected = false;
-
         obj.changeRelationSourceNodeSelectedState();
         obj.resetRelationSourceNodeSelectedState();
+
         boolean actual = obj.hasRelationSourceNodeSelected();
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isFalse();
     }
 
     @Test
@@ -118,7 +110,7 @@ public class EdgeDiagramTest {
         obj.setRelationPoint( ContentType.Composition, 0, expected );
         Point2D actual = obj.getRelationPoint( ContentType.Composition, 0 );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -129,7 +121,7 @@ public class EdgeDiagramTest {
         obj.setRelationSourcePoint( ContentType.Composition, 0, expected );
         Point2D actual = obj.getRelationSourcePoint( ContentType.Composition, 0 );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -137,14 +129,13 @@ public class EdgeDiagramTest {
         firstClassPoint = new Point2D( 100.0, 200.0 );
         secondClassPoint = new Point2D( 100.0, 400.0 );
         Point2D checkPoint = new Point2D( firstClassPoint.getX(), secondClassPoint.getY() - ( secondClassPoint.getY() - firstClassPoint.getY() ) / 2 );
-        boolean expected = true;
 
         obj.createEdgeText( ContentType.Composition, "- composition" );
         obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
         obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
         boolean actual = obj.isAlreadyDrawnAnyEdge( ContentType.Composition, 0, checkPoint );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isTrue();
     }
 
     @Test
@@ -152,14 +143,13 @@ public class EdgeDiagramTest {
         firstClassPoint = new Point2D( 100.0, 200.0 );
         secondClassPoint = new Point2D( 300.0, 200.0 );
         Point2D checkPoint = new Point2D( firstClassPoint.getX() + ( secondClassPoint.getX() - firstClassPoint.getX() ) / 2, firstClassPoint.getY() );
-        boolean expected = true;
 
         obj.createEdgeText( ContentType.Composition, "- composition" );
         obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
         obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
         boolean actual = obj.isAlreadyDrawnAnyEdge( ContentType.Composition, 0, checkPoint );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isTrue();
     }
 
     @Test
@@ -169,14 +159,21 @@ public class EdgeDiagramTest {
         Point2D checkPoint = new Point2D(
                 firstClassPoint.getX() + ( secondClassPoint.getX() - firstClassPoint.getX() ) / 2,
                 firstClassPoint.getY() + ( secondClassPoint.getY() - firstClassPoint.getY() ) / 2 );
+<<<<<<< HEAD
         boolean expected = true;
+=======
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 
         obj.createEdgeText( ContentType.Composition, "- composition" );
         obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
         obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
         boolean actual = obj.isAlreadyDrawnAnyEdge( ContentType.Composition, 0, checkPoint );
 
+<<<<<<< HEAD
         assertThat( actual, is( expected ) );
+=======
+        assertThat( actual ).isTrue();
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -187,14 +184,21 @@ public class EdgeDiagramTest {
         Point2D checkPoint = new Point2D(
                 firstClassPoint.getX() + ( secondClassPoint.getX() - firstClassPoint.getX() ) / 2 + beyondMarginLength,
                 firstClassPoint.getY() + ( secondClassPoint.getY() - firstClassPoint.getY() ) / 2 - beyondMarginLength );
+<<<<<<< HEAD
         boolean expected = false;
+=======
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 
         obj.createEdgeText( ContentType.Composition, "- composition" );
         obj.setRelationPoint( ContentType.Composition, 0, secondClassPoint );
         obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
         boolean actual = obj.isAlreadyDrawnAnyEdge( ContentType.Composition, 0, checkPoint );
 
+<<<<<<< HEAD
         assertThat( actual, is( expected ) );
+=======
+        assertThat( actual ).isFalse();
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -251,6 +255,7 @@ public class EdgeDiagramTest {
         List< Point2D > actual7 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, bottomLeftPoint );
         List< Point2D > actual8 = obj.createOneEdgeQuadrangleWithMargin( 2.0, centerPoint, upperLeftPoint );
 
+<<<<<<< HEAD
         assertThat( actual1, is( expected1 ) );
         assertThat( actual2, is( expected2 ) );
         assertThat( actual3, is( expected3 ) );
@@ -259,6 +264,16 @@ public class EdgeDiagramTest {
         assertThat( actual6, is( expected6 ) );
         assertThat( actual7, is( expected7 ) );
         assertThat( actual8, is( expected8 ) );
+=======
+        assertThat( actual1 ).isEqualTo( expected1 );
+        assertThat( actual2 ).isEqualTo( expected2 );
+        assertThat( actual3 ).isEqualTo( expected3 );
+        assertThat( actual4 ).isEqualTo( expected4 );
+        assertThat( actual5 ).isEqualTo( expected5 );
+        assertThat( actual6 ).isEqualTo( expected6 );
+        assertThat( actual7 ).isEqualTo( expected7 );
+        assertThat( actual8 ).isEqualTo( expected8 );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -282,6 +297,7 @@ public class EdgeDiagramTest {
         double actual7 = obj.calculateNormalLineInclination( centerPoint, bottomLeftPoint ); // 南西
         double actual8 = obj.calculateNormalLineInclination( centerPoint, upperLeftPoint ); // 北西
 
+<<<<<<< HEAD
         assertThat( actual1, is( 0.0 ) );
         assertThat( actual2, is( Infinity ) );
         assertThat( actual3, is( 0.0 ) );
@@ -290,6 +306,16 @@ public class EdgeDiagramTest {
         assertThat( actual6, is( 1.0 ) );
         assertThat( actual7, is( -1.0 ) );
         assertThat( actual8, is( 1.0 ) );
+=======
+        assertThat( actual1 ).isEqualTo( 0.0 );
+        assertThat( Double.isInfinite( actual2 ) ).isTrue();
+        assertThat( actual3 ).isEqualTo( 0.0 );
+        assertThat( Double.isInfinite( actual4 ) ).isTrue();
+        assertThat( actual5 ).isEqualTo( -1.0 );
+        assertThat( actual6 ).isEqualTo( 1.0 );
+        assertThat( actual7 ).isEqualTo( -1.0 );
+        assertThat( actual8 ).isEqualTo( 1.0 );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -299,7 +325,11 @@ public class EdgeDiagramTest {
         obj.createEdgeText( expected, "- composition" );
         ContentType actual = obj.getContentType( 0 );
 
+<<<<<<< HEAD
         assertThat( actual, is( expected ) );
+=======
+        assertThat( actual ).isEqualTo( expected );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -313,7 +343,11 @@ public class EdgeDiagramTest {
         obj.setRelationSourcePoint( ContentType.Composition, 0, firstClassPoint );
         RelationshipAttribution actual = obj.searchCurrentRelation( firstClassPoint );
 
+<<<<<<< HEAD
         assertThat( actual.getName(), is( expected.getName() ) );
+=======
+        assertThat( actual.getName() ).isEqualTo( expected.getName() );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -329,12 +363,19 @@ public class EdgeDiagramTest {
         obj.changeCurrentRelation( betweenFirstAndSecondClassPoint, "+ changedComposition" );
         RelationshipAttribution actual = obj.searchCurrentRelation( betweenFirstAndSecondClassPoint );
 
+<<<<<<< HEAD
         assertThat( actual.getName(), is( expected.getName() ) );
+=======
+        assertThat( actual.getName() ).isEqualTo( expected.getName() );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
     public void 関係の内容を削除する() {
+<<<<<<< HEAD
         RelationshipAttribution expected = null;
+=======
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         firstClassPoint = new Point2D( 100.0, 200.0 );
         secondClassPoint = new Point2D( 300.0, 400.0 );
         Point2D betweenFirstAndSecondClassPoint = new Point2D( 200.0, 300.0 );
@@ -345,7 +386,11 @@ public class EdgeDiagramTest {
         obj.deleteCurrentRelation( betweenFirstAndSecondClassPoint );
         RelationshipAttribution actual = obj.searchCurrentRelation( betweenFirstAndSecondClassPoint );
 
+<<<<<<< HEAD
         assertThat( actual, is( expected ) );
+=======
+        assertThat( actual ).isNull();
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -361,10 +406,17 @@ public class EdgeDiagramTest {
         String actual2 = obj.getEdgeContentText( ContentType.Composition, 1 );
         String actual3 = obj.getEdgeContentText( ContentType.Composition, 2 );
 
+<<<<<<< HEAD
         assertThat( actual1, is( expected1 ) );
         assertThat( actual2, is( expected2 ) );
         assertThat( actual3, is( expected3 ) );
         assertThat( obj.getCompositionsCount(), is( 3 ));
+=======
+        assertThat( actual1 ).isEqualTo( expected1 );
+        assertThat( actual2 ).isEqualTo( expected2 );
+        assertThat( actual3 ).isEqualTo( expected3 );
+        assertThat( obj.getCompositionsCount() ).isEqualTo( 3 );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -395,6 +447,7 @@ public class EdgeDiagramTest {
         Point2D actual13 = obj.calculateIntersectionPointLineAndEndNodeSide( upperRightPoint, centerPoint, 100.0, 150.0 );
         Point2D actual14 = obj.calculateIntersectionPointLineAndEndNodeSide( upperLeftPoint, centerPoint, 100.0, 150.0 );
 
+<<<<<<< HEAD
         assertThat( actual1, is( new Point2D( 100.0, 60.0 ) ) );
         assertThat( actual2, is( new Point2D( 150.0, 100.0 ) ) );
         assertThat( actual3, is( new Point2D( 100.0, 140.0 ) ) );
@@ -410,6 +463,23 @@ public class EdgeDiagramTest {
         assertThat( actual12, is( new Point2D( 50.0, 50.0 ) ) );
         assertThat( actual13, is( new Point2D( 150.0, 50.0 ) ) );
         assertThat( actual14, is( new Point2D( 50.0, 50.0 ) ) );
+=======
+        assertThat( actual1 ).isEqualTo( new Point2D( 100.0, 60.0 ) );
+        assertThat( actual2 ).isEqualTo( new Point2D( 150.0, 100.0 ) );
+        assertThat( actual3 ).isEqualTo( new Point2D( 100.0, 140.0 ) );
+        assertThat( actual4 ).isEqualTo( new Point2D( 50.0, 100.0 ) );
+        assertThat( actual5 ).isEqualTo( new Point2D( 140.0, 60.0 ) );
+        assertThat( actual6 ).isEqualTo( new Point2D( 140.0, 140.0 ) );
+        assertThat( actual7 ).isEqualTo( new Point2D( 60.0, 140.0 ) );
+        assertThat( actual8 ).isEqualTo( new Point2D( 60.0, 60.0 ) );
+
+        assertThat( actual9 ).isEqualTo( new Point2D( 150.0, 50.0 ) );
+        assertThat( actual10 ).isEqualTo( new Point2D( 150.0, 150.0 ) );
+        assertThat( actual11 ).isEqualTo( new Point2D( 50.0, 150.0 ) );
+        assertThat( actual12 ).isEqualTo( new Point2D( 50.0, 50.0 ) );
+        assertThat( actual13 ).isEqualTo( new Point2D( 150.0, 50.0 ) );
+        assertThat( actual14 ).isEqualTo( new Point2D( 50.0, 50.0 ) );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -433,6 +503,7 @@ public class EdgeDiagramTest {
         boolean actual7 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, bottomLeftPoint );
         boolean actual8 = obj.isHigherThanSecondNodeThatFirstNode( centerPoint, upperLeftPoint );
 
+<<<<<<< HEAD
         assertThat( actual1, is( false ) );
         assertThat( actual2, is( false ) );
         assertThat( actual3, is( true ) );
@@ -441,6 +512,16 @@ public class EdgeDiagramTest {
         assertThat( actual6, is( true ) );
         assertThat( actual7, is( true ) );
         assertThat( actual8, is( false ) );
+=======
+        assertThat( actual1 ).isFalse();
+        assertThat( actual2 ).isFalse();
+        assertThat( actual3 ).isTrue();
+        assertThat( actual4 ).isFalse();
+        assertThat( actual5 ).isFalse();
+        assertThat( actual6 ).isTrue();
+        assertThat( actual7 ).isTrue();
+        assertThat( actual8 ).isFalse();
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -464,6 +545,7 @@ public class EdgeDiagramTest {
         boolean actual7 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, bottomLeftPoint );
         boolean actual8 = obj.isLefterThanSecondNodeThatFirstNode( centerPoint, upperLeftPoint );
 
+<<<<<<< HEAD
         assertThat( actual1, is( false ) );
         assertThat( actual2, is( true ) );
         assertThat( actual3, is( false ) );
@@ -472,6 +554,16 @@ public class EdgeDiagramTest {
         assertThat( actual6, is( true ) );
         assertThat( actual7, is( false ) );
         assertThat( actual8, is( false ) );
+=======
+        assertThat( actual1 ).isFalse();
+        assertThat( actual2 ).isTrue();
+        assertThat( actual3 ).isFalse();
+        assertThat( actual4 ).isFalse();
+        assertThat( actual5 ).isTrue();
+        assertThat( actual6 ).isTrue();
+        assertThat( actual7 ).isFalse();
+        assertThat( actual8 ).isFalse();
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -510,6 +602,7 @@ public class EdgeDiagramTest {
         boolean actual15 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, bottomLeftPoint, narrowWidth, highHeight );
         boolean actual16 = obj.isIntersectedFromUpperOrBottomSideInSecondNode( centerPoint, upperLeftPoint, narrowWidth, highHeight );
 
+<<<<<<< HEAD
         assertThat( actual1, is( true ) );
         assertThat( actual2, is( false ) );
         assertThat( actual3, is( true ) );
@@ -527,6 +620,25 @@ public class EdgeDiagramTest {
         assertThat( actual14, is( false ) );
         assertThat( actual15, is( false ) );
         assertThat( actual16, is( false ) );
+=======
+        assertThat( actual1 ).isTrue();
+        assertThat( actual2 ).isFalse();
+        assertThat( actual3 ).isTrue();
+        assertThat( actual4 ).isFalse();
+        assertThat( actual5 ).isTrue();
+        assertThat( actual6 ).isTrue();
+        assertThat( actual7 ).isTrue();
+        assertThat( actual8 ).isTrue();
+
+        assertThat( actual9 ).isTrue();
+        assertThat( actual10 ).isFalse();
+        assertThat( actual11 ).isTrue();
+        assertThat( actual12 ).isFalse();
+        assertThat( actual13 ).isFalse();
+        assertThat( actual14 ).isFalse();
+        assertThat( actual15 ).isFalse();
+        assertThat( actual16 ).isFalse();
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     @Test
@@ -550,6 +662,7 @@ public class EdgeDiagramTest {
         double actual7 = obj.calculateDegreeFromStart( centerPoint, bottomLeftPoint );
         double actual8 = obj.calculateDegreeFromStart( centerPoint, upperLeftPoint );
 
+<<<<<<< HEAD
         assertThat( actual1, is( 270.0 ) );
         assertThat( actual2, is( 0.0 ) );
         assertThat( actual3, is( 90.0 ) );
@@ -558,5 +671,15 @@ public class EdgeDiagramTest {
         assertThat( actual6, is( 45.0 ) );
         assertThat( actual7, is( 135.0 ) );
         assertThat( actual8, is( 225.0 ) );
+=======
+        assertThat( actual1 ).isEqualTo( 270.0 );
+        assertThat( actual2 ).isEqualTo( 0.0 );
+        assertThat( actual3 ).isEqualTo( 90.0 );
+        assertThat( actual4 ).isEqualTo( 180.0 );
+        assertThat( actual5 ).isEqualTo( 315.0 );
+        assertThat( actual6 ).isEqualTo( 45.0 );
+        assertThat( actual7 ).isEqualTo( 135.0 );
+        assertThat( actual8 ).isEqualTo( 225.0 );
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 }

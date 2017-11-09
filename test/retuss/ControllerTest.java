@@ -6,49 +6,26 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import mockit.*;
-import mockit.internal.mockups.MockupBridge;
-import org.junit.*;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.experimental.runners.Enclosed;
+import org.junit.jupiter.api.*;
 import org.testfx.api.FxRobotException;
-import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.IOException;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(Enclosed.class)
-public class ControllerTest {
+class ControllerTest {
 
-    public static class WithoutGuiTest extends ApplicationTest {
-        @Override
-        public void start( Stage stage ) {
-            // そもそも何もしないため何も記述しない
-        }
-
-        @Test
-        public void GUIを表示するだけで必ず通るテスト() {
-            // つまり何も記述しない
-        }
-    }
-
-    public static class クラス図の場合 extends ApplicationTest {
-        @Rule
-        public ExpectedException fxRobotException = ExpectedException.none();
-
+    @Nested
+    public class クラス図の場合 extends ApplicationTest {
         Stage stage;
         Point2D xButtonOnDialogBox;
         String okButtonOnDialogBox;
@@ -76,7 +53,7 @@ public class ControllerTest {
             this.stage = stage;
         }
 
-        @Before
+        @BeforeEach
         public void setup() {
             xButtonOnDialogBox = new Point2D( 1050.0, 350.0 );
             okButtonOnDialogBox = "OK";
@@ -105,7 +82,7 @@ public class ControllerTest {
             checkMenu = "表示選択";
         }
 
-        @After
+        @BeforeEach
         public void reset() {
             ClassNodeDiagram.resetNodeCount();
         }
@@ -116,9 +93,9 @@ public class ControllerTest {
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
             Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();
 
-            assertThat( normalButton.isDefaultButton(), is( false ) );
-            assertThat( classButton.isDefaultButton(), is( false ) );
-            assertThat( noteButton.isDefaultButton(), is( false ) );
+            assertThat( normalButton.isDefaultButton() ).isFalse();
+            assertThat( classButton.isDefaultButton() ).isFalse();
+            assertThat( noteButton.isDefaultButton() ).isFalse();
         }
 
         @Test
@@ -129,9 +106,9 @@ public class ControllerTest {
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
             Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();
 
-            assertThat( normalButton.isDefaultButton(), is( true ) );
-            assertThat( classButton.isDefaultButton(), is( false ) );
-            assertThat( noteButton.isDefaultButton(), is( false ) );
+            assertThat( normalButton.isDefaultButton() ).isTrue();
+            assertThat( classButton.isDefaultButton() ).isFalse();
+            assertThat( noteButton.isDefaultButton() ).isFalse();
         }
 
         @Test
@@ -142,9 +119,9 @@ public class ControllerTest {
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
             Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();
 
-            assertThat( normalButton.isDefaultButton(), is( false ) );
-            assertThat( classButton.isDefaultButton(), is( true ) );
-            assertThat( noteButton.isDefaultButton(), is( false ) );
+            assertThat( normalButton.isDefaultButton() ).isFalse();
+            assertThat( classButton.isDefaultButton() ).isTrue();
+            assertThat( noteButton.isDefaultButton() ).isFalse();
         }
 
         @Test
@@ -155,9 +132,9 @@ public class ControllerTest {
             Button normalButton = ( Button ) lookup( "#normalButtonInCD" ).query();
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
 
-            assertThat( normalButton.isDefaultButton(), is( false ) );
-            assertThat( classButton.isDefaultButton(), is( false ) );
-            assertThat( noteButton.isDefaultButton(), is( true ) );
+            assertThat( normalButton.isDefaultButton() ).isFalse();
+            assertThat( classButton.isDefaultButton() ).isFalse();
+            assertThat( noteButton.isDefaultButton() ).isTrue();
         }
 
         @Test
@@ -169,33 +146,32 @@ public class ControllerTest {
             Button classButton = ( Button ) lookup( "#classButtonInCD" ).query();
             Button noteButton = ( Button ) lookup( "#noteButtonInCD" ).query();
 
-            assertThat( normalButton.isDefaultButton(), is( false ) );
-            assertThat( classButton.isDefaultButton(), is( true ) );
-            assertThat( noteButton.isDefaultButton(), is( false ) );
+            assertThat( normalButton.isDefaultButton() ).isFalse();
+            assertThat( classButton.isDefaultButton() ).isTrue();
+            assertThat( noteButton.isDefaultButton() ).isFalse();
         }
 
         @Test
         public void クラスアイコンを選択していない際にキャンバスをクリックしても何も表示しない( @Mocked TextInputDialog mock ) {
-            new Expectations( TextInputDialog.class ) {{
+            clickOn( "#classDiagramCanvas" );
+
+            assertThrows( FxRobotException.class, () -> clickOn( okButtonOnDialogBox ) );
+
+            new Verifications() {{
                 mock.showAndWait();
                 times = 0;
             }};
-
-            clickOn( "#classDiagramCanvas" );
-
-            fxRobotException.expect( FxRobotException.class );
-            clickOn( okButtonOnDialogBox );
         }
 
         @Test
         public void クラスアイコンを選択している際にキャンバスをクリックするとクラス名の入力ウィンドウを表示する( @Mocked TextInputDialog mock ) {
-            new Expectations( TextInputDialog.class ) {{
+            clickOn( "#classButtonInCD" );
+            clickOn( "#classDiagramCanvas" );
+
+            new Verifications() {{
                 mock.showAndWait();
                 times = 1;
             }};
-
-            clickOn( "#classButtonInCD" );
-            clickOn( "#classDiagramCanvas" );
         }
 
         @Test
@@ -210,15 +186,15 @@ public class ControllerTest {
             Paint strokeColor = gc.getStroke();
             TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            assertThat( fillColor ).isEqualTo( Color.BLACK );
+            assertThat( strokeColor ).isEqualTo( Color.BLACK );
+            assertThat( textAlignment ).isEqualTo( TextAlignment.CENTER );
 
             clickOn( "#normalButtonInCD" );
             rightClickOn( "#classDiagramCanvas" );
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "ClassName" );
         }
 
         @Test
@@ -235,10 +211,10 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( "#classDiagramCanvas" );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "FirstClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "FirstClassName" );
             rightClickOn( secondClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "SecondClassName" );
         }
 
         @Test
@@ -251,7 +227,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( "#classDiagramCanvas" );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -261,7 +237,7 @@ public class ControllerTest {
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
 
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -274,7 +250,7 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
 
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -288,8 +264,8 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
 
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( "ClassNameクラスの名前の変更" ) );
-            assertThat( scrollPane.getContextMenu().getItems().get( 1 ).getText(), is( "ClassNameクラスをモデルから削除" ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).isEqualTo( "ClassNameクラスの名前の変更" );
+            assertThat( scrollPane.getContextMenu().getItems().get( 1 ).getText() ).isEqualTo( "ClassNameクラスをモデルから削除" );
         }
 
         @Test
@@ -306,7 +282,7 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -326,10 +302,10 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( secondClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "SecondClassName" );
         }
 
         @Test
@@ -354,13 +330,13 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( secondClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "SecondClassName" );
             rightClickOn( thirdClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ThirdClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "ThirdClassName" );
         }
 
         @Test
@@ -385,10 +361,10 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ThirdClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "ThirdClassName" );
             rightClickOn( secondClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "SecondClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "SecondClassName" );
         }
 
         @Test
@@ -403,7 +379,7 @@ public class ControllerTest {
             rightClickOn( secondClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
 
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -422,7 +398,7 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas );
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ChangedClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "ChangedClassName" );
         }
 
         @Test
@@ -440,7 +416,7 @@ public class ControllerTest {
             rightClickOn( firstClickedClassDiagramCanvas );
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "ClassName" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "ClassName" );
         }
 
         @Test
@@ -461,13 +437,13 @@ public class ControllerTest {
             Paint strokeColor = gc.getStroke();
             TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+            assertThat( fillColor ).isEqualTo( Color.BLACK );
+            assertThat( strokeColor ).isEqualTo( Color.BLACK );
+            assertThat( textAlignment ).isEqualTo( TextAlignment.LEFT );
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "- attribution : int" ) );
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText() ).isEqualTo( "- attribution : int" );
         }
 
         @Test
@@ -493,7 +469,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "- attribution : double" ) );
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText() ).isEqualTo( "- attribution : double" );
         }
 
         @Test
@@ -517,7 +493,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "なし" ) );
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText() ).isEqualTo( "なし" );
         }
 
         @Test
@@ -541,11 +517,11 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected() ).isFalse();
 
             GraphicsContext gc = getGraphicsContext();
             TextAlignment textAlignment = gc.getTextAlign();
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            assertThat( textAlignment ).isEqualTo( TextAlignment.CENTER );
         }
 
         @Test
@@ -568,7 +544,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected() ).isFalse();
             moveTo( classAttributionMenu );
             moveTo( addMenu );
             moveTo( checkMenu );
@@ -576,7 +552,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( true ) );
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 3 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected() ).isTrue();
         }
 
         @Test
@@ -597,13 +573,13 @@ public class ControllerTest {
             Paint strokeColor = gc.getStroke();
             TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.LEFT ) );
+            assertThat( fillColor ).isEqualTo( Color.BLACK );
+            assertThat( strokeColor ).isEqualTo( Color.BLACK );
+            assertThat( textAlignment ).isEqualTo( TextAlignment.LEFT );
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "+ operation() : void" ) );
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText() ).isEqualTo( "+ operation() : void" );
         }
 
         @Test
@@ -629,7 +605,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "+ operation() : double" ) );
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText() ).isEqualTo( "+ operation() : double" );
         }
 
         @Test
@@ -653,7 +629,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText(), is( "なし" ) );
+            assertThat( ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 1 ) ).getItems().get( 0 ).getText() ).isEqualTo( "なし" );
         }
 
         @Test
@@ -677,11 +653,11 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected() ).isFalse();
 
             GraphicsContext gc = getGraphicsContext();
             TextAlignment textAlignment = gc.getTextAlign();
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            assertThat( textAlignment ).isEqualTo( TextAlignment.CENTER );
         }
 
         @Test
@@ -704,7 +680,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( false ) );
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected() ).isFalse();
             moveTo( classOperationMenu );
             moveTo( addMenu );
             moveTo( checkMenu );
@@ -712,7 +688,7 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected(), is( true ) );
+            assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) scrollPane.getContextMenu().getItems().get( 4 ) ).getItems().get( 3 ) ).getItems().get( 0 ) ).isSelected() ).isTrue();
         }
 
         @Test
@@ -725,16 +701,16 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 39 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 39 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 39 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 39 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
         }
 
         @Test
@@ -747,28 +723,28 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 41 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -801,16 +777,16 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 59 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 59 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 59 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 59 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
         }
 
         @Test
@@ -843,28 +819,28 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 61 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 61 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -918,49 +894,45 @@ public class ControllerTest {
 
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() + 39 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() + 39 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 49, firstClickedClassDiagramCanvas.getY() - 39 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 49, firstClickedClassDiagramCanvas.getY() - 39 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "Test" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "Test" );
 
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() - 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() + 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() + 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() + 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() - 51, firstClickedClassDiagramCanvas.getY() );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX() + 51, firstClickedClassDiagramCanvas.getY() - 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( firstClickedClassDiagramCanvas.getX(), firstClickedClassDiagramCanvas.getY() - 41 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
         public void コンポジションアイコンを選択している際にキャンバスに描かれているClassNameクラスをクリックするとClassNameクラスの縁の色を変更する() {
-            new MockUp< ClassDiagramDrawer >() {
-                @Mock
-                private void drawDiagramCanvasEdge() {}
-            };
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
             write( "ClassName" );
@@ -973,17 +945,13 @@ public class ControllerTest {
             Paint strokeColor = gc.getStroke();
             TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.RED ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            assertThat( fillColor ).isEqualTo( Color.BLACK );
+            assertThat( strokeColor ).isEqualTo( Color.RED );
+            assertThat( textAlignment ).isEqualTo( TextAlignment.CENTER );
         }
 
         @Test
         public void コンポジションアイコンを選択している際にキャンバスに描かれているClassNameクラスをクリックした後にクラスを描画していない箇所をクリックするとClassNameクラスの縁の色を元に戻す() {
-            new MockUp< ClassDiagramDrawer >() {
-                @Mock
-                private void drawDiagramCanvasEdge() {}
-            };
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
             write( "ClassName" );
@@ -997,9 +965,9 @@ public class ControllerTest {
             Paint strokeColor = gc.getStroke();
             TextAlignment textAlignment = gc.getTextAlign();
 
-            assertThat( fillColor, is( Color.BLACK ) );
-            assertThat( strokeColor, is( Color.BLACK ) );
-            assertThat( textAlignment, is( TextAlignment.CENTER ) );
+            assertThat( fillColor ).isEqualTo( Color.BLACK );
+            assertThat( strokeColor ).isEqualTo( Color.BLACK );
+            assertThat( textAlignment ).isEqualTo( TextAlignment.CENTER );
         }
 
         @Test
@@ -1021,15 +989,11 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "- composition" );
         }
 
         @Test
         public void コンポジションアイコンを選択している際にキャンバスに描かれているFirstClassNameクラスをクリックし描画されていない箇所をクリックした後でFirstClassNameクラスをクリックすると縁の色を変更するがDialogは表示しない() {
-            new MockUp< ClassDiagramDrawer >() {
-                @Mock
-                private void drawDiagramCanvasEdge() {}
-            };
             clickOn( "#classButtonInCD" );
             clickOn( firstClickedClassDiagramCanvas );
             write( "FirstClassName" );
@@ -1042,9 +1006,8 @@ public class ControllerTest {
             GraphicsContext gc = getGraphicsContext();
             Paint strokeColor = gc.getStroke();
 
-            assertThat( strokeColor, is( Color.RED ) );
-            fxRobotException.expect( FxRobotException.class );
-            clickOn( okButtonOnDialogBox );
+            assertThat( strokeColor ).isEqualTo( Color.RED );
+            assertThrows( FxRobotException.class, () -> clickOn( okButtonOnDialogBox ) );
         }
 
         @Test
@@ -1070,16 +1033,16 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( noDrawnPoint1 );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( noDrawnPoint2 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( noDrawnPoint3 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
             rightClickOn( noDrawnPoint4 );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -1106,7 +1069,7 @@ public class ControllerTest {
             rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "+ changedComposition" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "+ changedComposition" );
         }
 
         @Test
@@ -1131,7 +1094,7 @@ public class ControllerTest {
             rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu(), is( nullValue() ) );
+            assertThat( scrollPane.getContextMenu() ).isNull();
         }
 
         @Test
@@ -1157,7 +1120,7 @@ public class ControllerTest {
             rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
 
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition2" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "- composition2" );
         }
 
         @Test
@@ -1186,11 +1149,11 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition1" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "- composition1" );
 
             rightClickOn( betweenFirstAndThirdClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- composition2" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "- composition2" );
         }
 
         @Test
@@ -1223,15 +1186,15 @@ public class ControllerTest {
             clickOn( "#normalButtonInCD" );
             rightClickOn( betweenFirstAndSecondClickedClassDiagramCanvas );
             ScrollPane scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositionFromFirstToSecond" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "- compositionFromFirstToSecond" );
 
             rightClickOn( betweenSecondAndThirdClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositionFromSecondToThird" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "- compositionFromSecondToThird" );
 
             rightClickOn( betweenFirstAndThirdClickedClassDiagramCanvas );
             scrollPane = getScrollPaneBelowClassDiagramCanvas();
-            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText(), is( startsWith( "- compositionFromThirdToFirst" ) ) );
+            assertThat( scrollPane.getContextMenu().getItems().get( 0 ).getText() ).startsWith( "- compositionFromThirdToFirst" );
         }
 
 

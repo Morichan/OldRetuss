@@ -29,7 +29,11 @@ public class NoteNodeDiagram extends NodeDiagram {
     public void setNodeContentBoolean( ContentType parent, ContentType child, int contentNumber, boolean isChecked ) {}
 
     @Override
+<<<<<<< HEAD
     public List< Boolean > getNodeContentsBoolean( ContentType parent, ContentType type ) { return null; }
+=======
+    public List< Boolean > getNodeContentsBoolean(ContentType parent, ContentType type ) { return null; }
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 
     @Override
     public void draw() {

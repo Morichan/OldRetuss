@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/Retuss.iml" filepath="$PROJECT_DIR$/Retuss.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/RetussJava9.iml" filepath="$PROJECT_DIR$/RetussJava9.iml" />
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     </modules>
   </component>
 </project>

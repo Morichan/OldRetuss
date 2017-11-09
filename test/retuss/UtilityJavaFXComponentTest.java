@@ -2,21 +2,19 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class UtilityJavaFXComponentTest {
+class UtilityJavaFXComponentTest extends JavaFXComponentTest {
     UtilityJavaFXComponent util;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         util = new UtilityJavaFXComponent();
     }
@@ -29,7 +27,7 @@ public class UtilityJavaFXComponentTest {
 
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
 
-        assertThat( buttons.get( 0 ).isDefaultButton(), is( true ) );
+        assertThat( buttons.get( 0 ).isDefaultButton() ).isTrue();
     }
 
     @Test
@@ -41,8 +39,8 @@ public class UtilityJavaFXComponentTest {
 
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
 
-        assertThat( buttons.get( 0 ).isDefaultButton(), is( true ) );
-        assertThat( buttons.get( 1 ).isDefaultButton(), is( false ) );
+        assertThat( buttons.get( 0 ).isDefaultButton() ).isTrue();
+        assertThat( buttons.get( 1 ).isDefaultButton() ).isFalse();
     }
 
     @Test
@@ -55,9 +53,9 @@ public class UtilityJavaFXComponentTest {
 
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
 
-        assertThat( buttons.get( 0 ).isDefaultButton(), is( false ) );
-        assertThat( buttons.get( 1 ).isDefaultButton(), is( true ) );
-        assertThat( buttons.get( 2 ).isDefaultButton(), is( false ) );
+        assertThat( buttons.get( 0 ).isDefaultButton() ).isFalse();
+        assertThat( buttons.get( 1 ).isDefaultButton() ).isTrue();
+        assertThat( buttons.get( 2 ).isDefaultButton() ).isFalse();
     }
 
     @Test
@@ -70,9 +68,9 @@ public class UtilityJavaFXComponentTest {
 
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, noteButton );
 
-        assertThat( buttons.get( 0 ).isDefaultButton(), is( false ) );
-        assertThat( buttons.get( 1 ).isDefaultButton(), is( false ) );
-        assertThat( buttons.get( 2 ).isDefaultButton(), is( true ) );
+        assertThat( buttons.get( 0 ).isDefaultButton() ).isFalse();
+        assertThat( buttons.get( 1 ).isDefaultButton() ).isFalse();
+        assertThat( buttons.get( 2 ).isDefaultButton() ).isTrue();
     }
 
     @Test
@@ -85,8 +83,8 @@ public class UtilityJavaFXComponentTest {
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
 
-        assertThat( buttons.get( 0 ).isDefaultButton(), is( false ) );
-        assertThat( buttons.get( 1 ).isDefaultButton(), is( true ) );
+        assertThat( buttons.get( 0 ).isDefaultButton() ).isFalse();
+        assertThat( buttons.get( 1 ).isDefaultButton() ).isTrue();
     }
 
     @Test
@@ -99,7 +97,7 @@ public class UtilityJavaFXComponentTest {
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, normalButton );
         Button clickedButton = util.getDefaultButtonIn( buttons );
 
-        assertThat( clickedButton, is( normalButton ) );
+        assertThat( clickedButton ).isEqualTo( normalButton );
     }
 
     @Test
@@ -112,7 +110,7 @@ public class UtilityJavaFXComponentTest {
         buttons = util.setAllDefaultButtonIsFalseWithout( buttons, classButton );
         Button clickedButton = util.getDefaultButtonIn( buttons );
 
-        assertThat( clickedButton, is( classButton ) );
+        assertThat( clickedButton ).isEqualTo( classButton );
     }
 
     @Test
@@ -165,51 +163,51 @@ public class UtilityJavaFXComponentTest {
 
         ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility, operationsVisibility );
 
-        assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
-        assertThat( actual.getItems().size(), is( 5 ) );
+        assertThat( actual.getItems().size() ).isEqualTo( expected.getItems().size() );
+        assertThat( actual.getItems().size() ).isEqualTo( 5 );
         for( int i = 0; i < actual.getItems().size(); i++ ) {
-            assertThat( actual.getItems().get( i ).getText(), is( expected.getItems().get( i ).getText() ) );
+            assertThat( actual.getItems().get( i ).getText() ).isEqualTo( expected.getItems().get( i ).getText() );
         }
 
-        assertThat( actual.getItems().get( 0 ), instanceOf( expected.getItems().get( 0 ).getClass() ) );
-        assertThat( actual.getItems().get( 1 ), instanceOf( expected.getItems().get( 1 ).getClass() ) );
-        assertThat( actual.getItems().get( 2 ), instanceOf( expected.getItems().get( 2 ).getClass() ) );
-        assertThat( actual.getItems().get( 3 ), instanceOf( expected.getItems().get( 3 ).getClass() ) );
-        assertThat( actual.getItems().get( 4 ), instanceOf( expected.getItems().get( 4 ).getClass() ) );
+        assertThat( actual.getItems().get( 0 ) ).isInstanceOf( expected.getItems().get( 0 ).getClass() );
+        assertThat( actual.getItems().get( 1 ) ).isInstanceOf( expected.getItems().get( 1 ).getClass() );
+        assertThat( actual.getItems().get( 2 ) ).isInstanceOf( expected.getItems().get( 2 ).getClass() );
+        assertThat( actual.getItems().get( 3 ) ).isInstanceOf( expected.getItems().get( 3 ).getClass() );
+        assertThat( actual.getItems().get( 4 ) ).isInstanceOf( expected.getItems().get( 4 ).getClass() );
 
-        assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().size(), is( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().size() ) );
+        assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().size() ).isEqualTo( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().size() );
         for( int i = 0; i < ( ( Menu ) actual.getItems().get( 3 ) ).getItems().size(); i++ ) {
-            assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ).getText(), is( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ).getText() ) );
-            assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ), instanceOf( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ).getClass() ) );
+            assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ).getText() ).isEqualTo( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ).getText() );
+            assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).isInstanceOf( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ).getClass() );
 
             if( i == 0 ) continue;
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size(), is( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size() ) );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size() ).isEqualTo( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size() );
             for( int j = 0; j < ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size(); j++ ) {
-                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getText(), is( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getText() ) );
-                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ), instanceOf( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getClass() ) );
+                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getText() ).isEqualTo( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getText() );
+                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ) ).isInstanceOf( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ).getClass() );
             }
 
             if( i != 3 ) continue;
             for( int j = 0; j < ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size(); j++ ) {
-                assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ) ).isSelected(), is( true ) );
+                assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( j ) ).isSelected() ).isTrue();
             }
         }
 
-        assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().size(), is( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().size() ) );
+        assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().size() ).isEqualTo( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().size() );
         for( int i = 0; i < ( ( Menu ) actual.getItems().get( 4 ) ).getItems().size(); i++ ) {
-            assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ).getText(), is( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ).getText() ) );
-            assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ), instanceOf( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ).getClass() ) );
+            assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ).getText() ).isEqualTo( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ).getText() );
+            assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).isInstanceOf( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ).getClass() );
 
             if( i == 0 ) continue;
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().size(), is( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size() ) );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().size() ).isEqualTo( ( ( Menu ) ( ( Menu ) expected.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size() );
             for( int j = 0; j < ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().size(); j++ ) {
-                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getText(), is( ( ( Menu ) ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getText() ) );
-                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ), instanceOf( ( ( Menu ) ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getClass() ) );
+                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getText() ).isEqualTo( ( ( Menu ) ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getText() );
+                assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ) ).isInstanceOf( ( ( Menu ) ( ( Menu ) expected.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ).getClass() );
             }
 
             if( i != 3 ) continue;
             for( int j = 0; j < ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size(); j++ ) {
-                assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ) ).isSelected(), is( true ) );
+                assertThat( ( ( CheckMenuItem ) ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( j ) ).isSelected() ).isTrue();
             }
         }
     }
@@ -254,20 +252,20 @@ public class UtilityJavaFXComponentTest {
 
         ContextMenu actual = util.getClassContextMenuInCD( className, ContentType.Class, attributions, operations, attributionsVisibility, operationsVisibility );
 
-        assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
-        assertThat( actual.getItems().size(), is( 5 ) );
+        assertThat( actual.getItems().size() ).isEqualTo( expected.getItems().size() );
+        assertThat( actual.getItems().size() ).isEqualTo( 5 );
 
-        assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().size(), is( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().size() ) );
+        assertThat( ( ( Menu ) actual.getItems().get( 3 ) ).getItems().size() ).isEqualTo( ( ( Menu ) expected.getItems().get( 3 ) ).getItems().size() );
         for( int i = 1; i < ( ( Menu ) actual.getItems().get( 3 ) ).getItems().size(); i++ ) {
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size(), is( 1 ) );
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( 0 ).getText(), is( expectedMenuText ) );
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( 0 ).isDisable(), is( true ) );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().size() ).isEqualTo( 1 );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( 0 ).getText() ).isEqualTo( expectedMenuText );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 3 ) ).getItems().get( i ) ).getItems().get( 0 ).isDisable() ).isTrue();
         }
-        assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().size(), is( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().size() ) );
+        assertThat( ( ( Menu ) actual.getItems().get( 4 ) ).getItems().size() ).isEqualTo( ( ( Menu ) expected.getItems().get( 4 ) ).getItems().size() );
         for( int i = 1; i < ( ( Menu ) actual.getItems().get( 4 ) ).getItems().size(); i++ ) {
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().size(), is( 1 ) );
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).getText(), is( expectedMenuText ) );
-            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).isDisable(), is( true ) );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().size() ).isEqualTo( 1 );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).getText() ).isEqualTo( expectedMenuText );
+            assertThat( ( ( Menu ) ( ( Menu ) actual.getItems().get( 4 ) ).getItems().get( i ) ).getItems().get( 0 ).isDisable() ).isEqualTo( true );
         }
     }
 
@@ -282,10 +280,10 @@ public class UtilityJavaFXComponentTest {
 
         ContextMenu actual = util.getClassContextMenuInCD( composition, ContentType.Composition );
 
-        assertThat( actual.getItems().size(), is( expected.getItems().size() ) );
-        assertThat( actual.getItems().size(), is( 2 ) );
+        assertThat( actual.getItems().size() ).isEqualTo( expected.getItems().size() );
+        assertThat( actual.getItems().size() ).isEqualTo( 2 );
         for( int i = 0; i < actual.getItems().size(); i++ ) {
-            assertThat( actual.getItems().get( i ).getText(), is( expected.getItems().get( i ).getText() ) );
+            assertThat( actual.getItems().get( i ).getText() ).isEqualTo( expected.getItems().get( i ).getText() );
         }
     }
 
@@ -315,14 +313,14 @@ public class UtilityJavaFXComponentTest {
         boolean actual7 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle2, onLinePoint2 );
         boolean actual8 = util.isInsidePointFromPolygonUsingJavaAwtPolygonMethod( quadrangle2, onEdgePoint2 );
 
-        assertThat( actual1, is( true ) );
-        assertThat( actual2, is( false ) );
-        assertThat( actual3, is( true ) );
-        assertThat( actual4, is( true ) );
-        assertThat( actual5, is( true ) );
-        assertThat( actual6, is( false ) );
-        assertThat( actual7, is( true ) );
-        assertThat( actual8, is( true ) );
+        assertThat( actual1 ).isTrue();
+        assertThat( actual2 ).isFalse();
+        assertThat( actual3 ).isTrue();
+        assertThat( actual4 ).isTrue();
+        assertThat( actual5 ).isTrue();
+        assertThat( actual6 ).isFalse();
+        assertThat( actual7 ).isTrue();
+        assertThat( actual8 ).isTrue();
     }
 
     @Test
@@ -362,16 +360,16 @@ public class UtilityJavaFXComponentTest {
         boolean actual9 = util.isInsidePointFromPolygonUsingWNA( polygonWithSelfCross, holePoint );
         boolean actual10 = util.isInsidePointFromPolygonUsingWNA( polygonWithSelfCross, selfCrossPoint );
 
-        assertThat( actual1, is( true ) );
-        assertThat( actual2, is( false ) );
-        assertThat( actual3, is( true ) );
-        assertThat( actual4, is( true ) );
-        assertThat( actual5, is( true ) );
-        assertThat( actual6, is( false ) );
-        assertThat( actual7, is( true ) );
-        assertThat( actual8, is( true ) );
-        assertThat( actual9, is( false ) );
-        assertThat( actual10, is( true ) );
+        assertThat( actual1 ).isTrue();
+        assertThat( actual2 ).isFalse();
+        assertThat( actual3 ).isTrue();
+        assertThat( actual4 ).isTrue();
+        assertThat( actual5 ).isTrue();
+        assertThat( actual6 ).isFalse();
+        assertThat( actual7 ).isTrue();
+        assertThat( actual8 ).isTrue();
+        assertThat( actual9 ).isFalse();
+        assertThat( actual10 ).isTrue();
     }
 
     @Test
@@ -386,7 +384,7 @@ public class UtilityJavaFXComponentTest {
 
         List< Point2D > actual = util.calculateTopListFromNode( center, width, height );
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -416,13 +414,13 @@ public class UtilityJavaFXComponentTest {
         boolean actual1And7 = util.isIntersected( line1S, line1E, line7S, line7E );
         boolean actual1And8 = util.isIntersected( line1S, line1E, line8S, line8E );
 
-        assertThat( actual1And2, is( true ) );
-        assertThat( actual1And3, is( false ) );
-        assertThat( actual1And4, is( true ) );
-        assertThat( actual1And5, is( true ) );
-        assertThat( actual1And6, is( true ) );
-        assertThat( actual1And7, is( false ) );
-        assertThat( actual1And8, is( false ) );
+        assertThat( actual1And2 ).isTrue();
+        assertThat( actual1And3 ).isFalse();
+        assertThat( actual1And4 ).isTrue();
+        assertThat( actual1And5 ).isTrue();
+        assertThat( actual1And6 ).isTrue();
+        assertThat( actual1And7 ).isFalse();
+        assertThat( actual1And8 ).isFalse();
     }
 
     @Test
@@ -459,12 +457,12 @@ public class UtilityJavaFXComponentTest {
         Point2D actual1And7 = util.calculateCrossPoint( line1S, line1E, line7S, line7E );
         Point2D actual1And8 = util.calculateCrossPoint( line1S, line1E, line8S, line8E );
 
-        assertThat( actual1And2, is( expected1And2 ) );
-        assertThat( actual1And3, is( expected1And3 ) );
-        assertThat( actual1And4, is( expected1And4 ) );
-        assertThat( actual1And5, is( expected1And5 ) );
-        assertThat( actual1And6, is( expected1And6 ) );
-        assertThat( actual1And7, is( expected1And7 ) );
-        assertThat( actual1And8, is( expected1And8 ) );
+        assertThat( actual1And2 ).isEqualTo( expected1And2 );
+        assertThat( actual1And3 ).isEqualTo( expected1And3 );
+        assertThat( actual1And4 ).isEqualTo( expected1And4 );
+        assertThat( actual1And5 ).isEqualTo( expected1And5 );
+        assertThat( actual1And6 ).isEqualTo( expected1And6 );
+        assertThat( actual1And7 ).isEqualTo( expected1And7 );
+        assertThat( actual1And8 ).isEqualTo( expected1And8 );
     }
 }

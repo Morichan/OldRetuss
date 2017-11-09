@@ -1,20 +1,19 @@
 package retuss;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class OperationTest {
+class OperationTest {
     Operation operation;
     List< Operation > operations = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         operation = new Operation();
 
@@ -29,7 +28,7 @@ public class OperationTest {
 
         operation.setName( expected );
 
-        assertThat( operation.getName(), is( expected ) );
+        assertThat( operation.getName() ).isEqualTo( expected );
     }
 
     @Test
@@ -38,7 +37,7 @@ public class OperationTest {
 
         operation.setIndication( expected );
 
-        assertThat( operation.isIndicate(), is( expected ) );
+        assertThat( operation.isIndicate() ).isEqualTo( expected );
     }
 
     @Test
@@ -49,7 +48,7 @@ public class OperationTest {
             operations.get( i ).setName( expected.get( i ) );
 
         for( int i = 0; i < expected.size(); i++ )
-            assertThat( operations.get( i ).getName(), is( expected.get( i ) ) );
+            assertThat( operations.get( i ).getName() ).isEqualTo( expected.get( i ) );
     }
 
     @Test
@@ -60,6 +59,6 @@ public class OperationTest {
             operations.get( i ).setIndication( expected.get( i ) );
 
         for( int i = 0; i < expected.size(); i++ )
-            assertThat( operations.get( i ).isIndicate(), is( expected.get( i ) ) );
+            assertThat( operations.get( i ).isIndicate() ).isEqualTo( expected.get( i ) );
     }
 }

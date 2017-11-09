@@ -2,8 +2,15 @@ package retuss;
 
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+<<<<<<< HEAD
 import javafx.scene.text.*;
 import javafx.scene.text.Font;
+=======
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 
 import java.util.ArrayList;
 import java.util.Arrays;

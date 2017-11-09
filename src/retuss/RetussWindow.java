@@ -1,6 +1,7 @@
 package retuss;
 
 import javafx.application.Application;
+<<<<<<< HEAD
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,6 +27,16 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * 機能：ウィンドウを表示
  */
+=======
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+>>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 public class RetussWindow extends Application {
 
     /**

@@ -1,26 +1,21 @@
 package retuss;
 
-import mockit.*;
+import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-
-import javafx.application.Application;
-import mockit.integration.junit4.JMockit;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import mockit.*;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-@RunWith(JMockit.class)
-public class RetussWindowTest {
+class RetussWindowTest {
     @Mocked
     private Application app;
 
     @Tested
-    private RetussWindow retussWindow = new RetussWindow();
+    RetussWindow retussWindow = new RetussWindow();
 
     @Test
     public void main文を実行するとlaunchメソッドを1回実行する() {

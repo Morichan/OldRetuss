@@ -1,22 +1,20 @@
 package retuss;
 
-import com.sun.org.apache.regexp.internal.RE;
 import javafx.geometry.Point2D;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class RelationshipAttributionTest {
+class RelationshipAttributionTest {
     RelationshipAttribution attribution;
     List< RelationshipAttribution> attributions = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         attribution = new RelationshipAttribution();
 
@@ -31,7 +29,7 @@ public class RelationshipAttributionTest {
 
         attribution.setName( expected );
 
-        assertThat( attribution.getName(), is( expected ) );
+        assertThat( attribution.getName() ).isEqualTo( expected );
     }
 
     @Test
@@ -40,7 +38,7 @@ public class RelationshipAttributionTest {
 
         attribution.setIndication( expected );
 
-        assertThat( attribution.isIndicate(), is( expected ) );
+        assertThat( attribution.isIndicate() ).isEqualTo( expected );
     }
 
     @Test
@@ -51,7 +49,7 @@ public class RelationshipAttributionTest {
             attributions.get( i ).setName( expected.get( i ) );
 
         for( int i = 0; i < expected.size(); i++ )
-            assertThat( attributions.get( i ).getName(), is( expected.get( i ) ) );
+            assertThat( attributions.get( i ).getName() ).isEqualTo( expected.get( i ) );
     }
 
     @Test
@@ -62,7 +60,7 @@ public class RelationshipAttributionTest {
             attributions.get( i ).setIndication( expected.get( i ) );
 
         for( int i = 0; i < expected.size(); i++ )
-            assertThat( attributions.get( i ).isIndicate(), is( expected.get( i ) ) );
+            assertThat( attributions.get( i ).isIndicate() ).isEqualTo( expected.get( i ) );
     }
 
     @Test
@@ -71,7 +69,7 @@ public class RelationshipAttributionTest {
 
         attribution.setRelationId( expected );
 
-        assertThat( attribution.getRelationId(), is( expected ) );
+        assertThat( attribution.getRelationId() ).isEqualTo( expected );
     }
 
     @Test
@@ -80,7 +78,7 @@ public class RelationshipAttributionTest {
 
         attribution.setRelationSourceId( expected );
 
-        assertThat( attribution.getRelationSourceId(), is( expected ) );
+        assertThat( attribution.getRelationSourceId() ).isEqualTo( expected );
     }
 
     @Test
@@ -90,7 +88,7 @@ public class RelationshipAttributionTest {
         attribution.setRelationPoint( expected );
         Point2D actual = attribution.getRelationPoint();
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 
     @Test
@@ -100,6 +98,6 @@ public class RelationshipAttributionTest {
         attribution.setRelationSourcePoint( expected );
         Point2D actual = attribution.getRelationSourcePoint();
 
-        assertThat( actual, is( expected ) );
+        assertThat( actual ).isEqualTo( expected );
     }
 }
