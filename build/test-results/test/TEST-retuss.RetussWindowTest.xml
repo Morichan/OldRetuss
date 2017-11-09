@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="retuss.RetussWindowTest" tests="3" skipped="3" failures="0" errors="0" timestamp="2017-10-04T12:30:13" hostname="DESKTOP-P8UMP5G" time="8.049">
+  <properties/>
+  <testcase name="main文を実行するとlaunchメソッドを1回実行する" classname="retuss.RetussWindowTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <testcase name="main文を実行するとlaunchメソッドを1回実行する" classname="retuss.RetussWindowTest" time="0.001">
+    <skipped/>
+  </testcase>
+  <testcase name="main文を実行するとlaunchメソッドを1回実行する" classname="retuss.RetussWindowTest" time="0.0">
+    <skipped/>
+  </testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UtilityJavaFXComponent.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Retuss</a> &gt; <a href="index.source.html" class="el_package">retuss</a> &gt; <span class="el_source">UtilityJavaFXComponent.java</span></div><h1>UtilityJavaFXComponent.java</h1><pre class="source lang-java linenums">package retuss;
+
+import javafx.scene.control.Button;
+
+import java.util.List;
+
+/**
+ * JavaFX繧ｳ繝ｳ繝昴�ｼ繝阪Φ繝医↓縺ｾ縺､繧上ｋ讒倥��縺ｪ繝ｦ繝ｼ繝�繧｣繝ｪ繝�繧｣繧呈署萓帙☆繧九��
+ */
+<span class="fc" id="L10">public class UtilityJavaFXComponent {</span>
+
+    /**
+     * 陦ｨ遉ｺ縺励※縺�繧九�懊ち繝ｳ縺ｮ蜀�縲�驕ｸ謚槭＠縺溘�懊ち繝ｳ繧稚rue縺ｫ縲√◎繧御ｻ･螟悶�ｮ繝懊ち繝ｳ繧断alse縺ｫ縺吶ｋ縲�
+     *
+     * @param buttonSetsToTrue true縺ｫ繧ｻ繝�繝医☆繧九�懊ち繝ｳ
+     */
+    public List&lt; Button &gt; setAllDefaultButtonIsFalseWithout( List&lt; Button &gt; buttons, Button buttonSetsToTrue ) {
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        for( Button button : buttons ) {</span>
+<span class="fc bfc" id="L19" title="All 2 branches covered.">            if( button.equals( buttonSetsToTrue ) ) {</span>
+<span class="fc" id="L20">                button.setDefaultButton( true );</span>
+            } else {
+<span class="fc" id="L22">                button.setDefaultButton( false );</span>
+            }
+<span class="fc" id="L24">        }</span>
+
+<span class="fc" id="L26">        return buttons;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>

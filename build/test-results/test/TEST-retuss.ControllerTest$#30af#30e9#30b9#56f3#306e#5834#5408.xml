@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="retuss.ControllerTest$クラス図の場合" tests="15" skipped="0" failures="0" errors="0" timestamp="2017-10-04T12:30:14" hostname="DESKTOP-P8UMP5G" time="6.896">
+  <properties/>
+  <testcase name="ノートボタンをクリックするとノートボタンをオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.858"/>
+  <testcase name="どのボタンもクリックしてない場合は全てのボタンをオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.207"/>
+  <testcase name="クラスアイコンを選択している際にキャンバスをクリックするとクラスを描画する" classname="retuss.ControllerTest$クラス図の場合" time="0.178"/>
+  <testcase name="クラスボタンをクリックするとクラスボタンをオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.432"/>
+  <testcase name="クラスボタンを選択している際にクラスボタンをクリックするとオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.609"/>
+  <testcase name="ノートボタンをクリックするとノートボタンをオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.446"/>
+  <testcase name="どのボタンもクリックしてない場合は全てのボタンをオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.163"/>
+  <testcase name="クラスアイコンを選択している際にキャンバスをクリックするとクラスを描画する" classname="retuss.ControllerTest$クラス図の場合" time="0.152"/>
+  <testcase name="クラスボタンをクリックするとクラスボタンをオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.449"/>
+  <testcase name="クラスボタンを選択している際にクラスボタンをクリックするとオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.591"/>
+  <testcase name="ノートボタンをクリックするとノートボタンをオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.425"/>
+  <testcase name="どのボタンもクリックしてない場合は全てのボタンをオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.168"/>
+  <testcase name="クラスアイコンを選択している際にキャンバスをクリックするとクラスを描画する" classname="retuss.ControllerTest$クラス図の場合" time="0.133"/>
+  <testcase name="クラスボタンをクリックするとクラスボタンをオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.443"/>
+  <testcase name="クラスボタンを選択している際にクラスボタンをクリックするとオンにして他をオフにする" classname="retuss.ControllerTest$クラス図の場合" time="0.58"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="retuss.ControllerTest$WithoutGuiTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2017-10-04T12:30:13" hostname="DESKTOP-P8UMP5G" time="8.003">
+  <properties/>
+  <testcase name="GUIを表示するだけで必ず通るテスト" classname="retuss.ControllerTest$WithoutGuiTest" time="0.943"/>
+  <testcase name="GUIを表示するだけで必ず通るテスト" classname="retuss.ControllerTest$WithoutGuiTest" time="0.172"/>
+  <testcase name="GUIを表示するだけで必ず通るテスト" classname="retuss.ControllerTest$WithoutGuiTest" time="0.161"/>
+  <testcase name="GUIを表示するだけで必ず通るテスト" classname="retuss.ControllerTest$WithoutGuiTest" time="0.16"/>
+  <testcase name="GUIを表示するだけで必ず通るテスト" classname="retuss.ControllerTest$WithoutGuiTest" time="0.163"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

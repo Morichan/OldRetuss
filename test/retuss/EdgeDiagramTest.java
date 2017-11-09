@@ -14,7 +14,7 @@ import static jdk.nashorn.internal.objects.Global.Infinity;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
-public class CompositionEdgeDiagramTest {
+public class EdgeDiagramTest {
     @Rule
     public ExpectedException indexOutOfBoundsException = ExpectedException.none();
 

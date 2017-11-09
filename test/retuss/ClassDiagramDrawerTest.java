@@ -51,7 +51,7 @@ public class ClassDiagramDrawerTest {
                 classNodeDiagram.draw();
             }};
 
-            classNodeDiagram.resetNodeCount();
+            ClassNodeDiagram.resetNodeCount();
         }
 
         @Test

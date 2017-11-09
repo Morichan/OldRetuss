@@ -12,7 +12,7 @@ import retuss.*;
         OperationTest.class,
         RelationshipAttributionTest.class,
         ClassNodeDiagramTest.class,
-        CompositionEdgeDiagramTest.class,
+        EdgeDiagramTest.class,
 } )
 public class AllTests {
 }

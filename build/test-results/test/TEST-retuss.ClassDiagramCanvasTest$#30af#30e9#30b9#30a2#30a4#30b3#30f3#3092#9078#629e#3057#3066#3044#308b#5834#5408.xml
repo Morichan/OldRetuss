@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="retuss.ClassDiagramCanvasTest$クラスアイコンを選択している場合" tests="4" skipped="0" failures="0" errors="0" timestamp="2017-10-04T12:30:16" hostname="DESKTOP-P8UMP5G" time="0.538">
+  <properties/>
+  <testcase name="キャンバスをクリックするとクラスを描画する" classname="retuss.ClassDiagramCanvasTest$クラスアイコンを選択している場合" time="0.054"/>
+  <testcase name="キャンバスをクリックするとクラスを描画する" classname="retuss.ClassDiagramCanvasTest$クラスアイコンを選択している場合" time="0.03"/>
+  <testcase name="キャンバスをクリックするとクラスを描画する" classname="retuss.ClassDiagramCanvasTest$クラスアイコンを選択している場合" time="0.028"/>
+  <testcase name="キャンバスをクリックするとクラスを描画する" classname="retuss.ClassDiagramCanvasTest$クラスアイコンを選択している場合" time="0.029"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

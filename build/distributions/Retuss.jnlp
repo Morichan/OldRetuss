@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Retuss.jnlp">
+  <information>
+    <title>Retuss</title>
+    <vendor>Unknown</vendor>
+    <description>Retuss</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Retuss.jar" size="7526" download="null" />
+  </resources>
+<security>
+  <all-permissions/>
+</security>
+  <jfx:javafx-desc  width="1024" height="768" main-class="RetussWindow"  name="Retuss" />
+  <update check="background"/>
+</jnlp>

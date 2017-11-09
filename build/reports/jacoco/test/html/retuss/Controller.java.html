@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ja"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Controller.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Retuss</a> &gt; <a href="index.source.html" class="el_package">retuss</a> &gt; <span class="el_source">Controller.java</span></div><h1>Controller.java</h1><pre class="source lang-java linenums">package retuss;
+
+import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * RETUSS繧ｦ繧｣繝ｳ繝峨え縺ｮ蜍穂ｽ懃ｮ｡逅�繧ｯ繝ｩ繧ｹ
+ *
+ * retussMain.fxml縺ｨretussCode.fxml縺ｫ縺翫￠繧九す繧ｰ繝翫Ν繝上Φ繝峨Λ繧呈桶縺�縲�
+ */
+<span class="fc" id="L19">public class Controller {</span>
+    @FXML
+    Button normalButtonInCD;
+    @FXML
+    Button classButtonInCD;
+    @FXML
+    Button noteButtonInCD;
+    @FXML
+    Canvas classDiagramCanvas;
+
+<span class="fc" id="L29">    UtilityJavaFXComponent util = new UtilityJavaFXComponent();</span>
+
+<span class="fc" id="L31">    List&lt; Button &gt; buttonsInCD = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L33">    private GraphicsContext gc = null;</span>
+
+    /**
+     * 繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ
+     *
+     * Java縺ｫ縺翫￠繧矩�壼ｸｸ縺ｮ繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ縺ｯ菴ｿ縺医↑縺�縺溘ａ縲（nitialize繝｡繧ｽ繝�繝峨ｒFXML邨檎罰縺ｧ隱ｭ縺ｿ霎ｼ繧�莉墓ｧ倥↓縺ｪ縺｣縺ｦ縺�繧九��
+     */
+    @FXML
+    void initialize() {
+<span class="fc" id="L42">        buttonsInCD.addAll( Arrays.asList( normalButtonInCD, classButtonInCD, noteButtonInCD ) );</span>
+<span class="fc" id="L43">    }</span>
+
+    @FXML
+    public void selectNormalInCD() {
+<span class="nc" id="L47">        buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, normalButtonInCD );</span>
+<span class="nc" id="L48">    }</span>
+    @FXML
+    public void selectClassInCD() {
+<span class="fc" id="L51">        buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, classButtonInCD );</span>
+<span class="fc" id="L52">    }</span>
+    @FXML
+    public void selectNoteInCD() {
+<span class="fc" id="L55">        buttonsInCD = util.setAllDefaultButtonIsFalseWithout( buttonsInCD, noteButtonInCD );</span>
+<span class="fc" id="L56">    }</span>
+
+    @FXML
+    public void clickedCanvasInCD( MouseEvent event ) {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if( gc == null ) gc = classDiagramCanvas.getGraphicsContext2D();</span>
+
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if( event.getButton() == MouseButton.PRIMARY ) {</span>
+<span class="nc" id="L63">            clickedCanvasByPrimaryButtonInCD();</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        } else if( event.getButton() == MouseButton.SECONDARY ) {</span>
+<span class="nc" id="L65">            clickedCanvasBySecondaryButtonInCD();</span>
+        }
+<span class="nc" id="L67">    }</span>
+
+    //--------------------------//
+    // 繧ｷ繧ｰ繝翫Ν繝上Φ繝峨Λ縺薙％縺ｾ縺ｧ //
+    //--------------------------//
+
+    private void clickedCanvasByPrimaryButtonInCD() {
+
+<span class="nc" id="L75">    }</span>
+
+    private void clickedCanvasBySecondaryButtonInCD() {
+
+<span class="nc" id="L79">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.7.8.201612092310</span></div></body></html>
