@@ -1,7 +1,3 @@
-# RETUSSについて
+# このリポジトリは古くなっています！
 
-__RETUSS__ (Real-time Ensure Traceability between UML and Source-code System) は、UMLとソースコード間のトレーサビリティをリアルタイムに維持するツールです。
-
-## 言い訳
-
-現在は何もありませんが、これから少しずつ大きくしていこうと思います。
+[Java9に移行した全く新しいRETUSS](https://github.com/Morichan/Retuss) をお楽しみください！
