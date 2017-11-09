@@ -91,11 +91,7 @@ public class ClassDiagramDrawer {
     /**
      * クラス図キャンバスにおける全てのノードを描画する。
      */
-<<<<<<< HEAD
-    private void allReDrawNode() {
-=======
     public void allReDrawNode() {
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         for( int i = 0; i < nodes.size(); i++ ) {
             drawNode( i );
         }
@@ -104,11 +100,7 @@ public class ClassDiagramDrawer {
     /**
      * クラス図キャンバスにおける全てのエッジ（関係）を描画する。
      */
-<<<<<<< HEAD
-    private void allReDrawEdge() {
-=======
     public void allReDrawEdge() {
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         for(int i = 0; i < relations.getCompositionsCount(); i++ ) {
             int relationId = nodes.get( relations.getRelationId( ContentType.Composition, i ) ).getNodeId();
             int relationSourceId = nodes.get( relations.getRelationSourceId( ContentType.Composition, i ) ).getNodeId();
@@ -146,11 +138,7 @@ public class ClassDiagramDrawer {
         return nodes.get( number ).getHeight();
     }
 
-<<<<<<< HEAD
-    public void addDrawnNode( List< Button > buttons ) {
-=======
     public void addDrawnNode( List<Button> buttons ) {
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         for( Button button : buttons ) {
             if( button.isDefaultButton() ) {
                 setupDrawnNode( button );

@@ -11,11 +11,6 @@ import javafx.scene.text.TextAlignment;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
-import static jdk.nashorn.internal.objects.Global.Infinity;
-
-=======
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 public class EdgeDiagram {
     GraphicsContext gc;
     private List< RelationshipAttribution > compositions = new ArrayList<>();
@@ -141,11 +136,7 @@ public class EdgeDiagram {
         double inclination = calculateNormalLineInclination( startEdge, endEdge );
         int sign = 1;
 
-<<<<<<< HEAD
-        if( inclination == Infinity ) {
-=======
         if( Double.isInfinite( inclination ) ) {
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
             if( startEdge.getX() > endEdge.getX() ) sign = -1;
             edgePolygon.add( new Point2D( startEdge.getX(), startEdge.getY() - margin * sign ) );
             edgePolygon.add( new Point2D( endEdge.getX(), endEdge.getY() - margin * sign ) );
@@ -289,21 +280,12 @@ public class EdgeDiagram {
         double inclination = calculateInclination( startPoint, endPoint );
         double normalLineInclination = 0.0;
 
-<<<<<<< HEAD
-        if( inclination != Infinity && inclination != 0.0 ) {
-            normalLineInclination = 1 / inclination;
-        } else if( inclination == Infinity ) {
-            normalLineInclination = 0.0;
-        } else if( inclination == 0.0 ) {
-            normalLineInclination = Infinity;
-=======
         if( ! Double.isInfinite( inclination ) && inclination != 0.0 ) {
             normalLineInclination = 1 / inclination;
         } else if( Double.isInfinite( inclination ) ) {
             normalLineInclination = 0.0;
         } else if( inclination == 0.0 ) {
             normalLineInclination = Double.POSITIVE_INFINITY;
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         }
 
         return normalLineInclination;
@@ -364,21 +346,11 @@ public class EdgeDiagram {
     }
 
     public boolean isHigherThanSecondNodeThatFirstNode( Point2D firstNode, Point2D secondNode ) {
-<<<<<<< HEAD
-        if( firstNode.subtract( secondNode ).getY() < 0 ) return true;
-        else return false;
-    }
-
-    public boolean isLefterThanSecondNodeThatFirstNode( Point2D firstNode, Point2D secondNode ) {
-        if( firstNode.subtract( secondNode ).getX() < 0 ) return true;
-        else return false;
-=======
         return firstNode.subtract( secondNode ).getY() < 0;
     }
 
     public boolean isLefterThanSecondNodeThatFirstNode( Point2D firstNode, Point2D secondNode ) {
         return firstNode.subtract( secondNode ).getX() < 0;
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
     }
 
     public boolean isIntersectedFromUpperOrBottomSideInSecondNode( Point2D firstNode, Point2D secondNode, double secondNodeWidth, double secondNodeHeight ) {
@@ -411,11 +383,7 @@ public class EdgeDiagram {
         if( width != 0.0 ) {
             inclination = height / width;
         } else {
-<<<<<<< HEAD
-            inclination = Infinity;
-=======
             inclination = Double.POSITIVE_INFINITY;
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         }
 
         return inclination;

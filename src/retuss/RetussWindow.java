@@ -1,33 +1,6 @@
 package retuss;
 
 import javafx.application.Application;
-<<<<<<< HEAD
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
-
-/**
- * RETUSSのウィンドウを管理するクラス
- *
- * 機能：ウィンドウを表示
- */
-=======
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -36,7 +9,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 public class RetussWindow extends Application {
 
     /**

@@ -1,14 +1,6 @@
 package retuss;
 
 import javafx.geometry.Point2D;
-<<<<<<< HEAD
-import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-
-import java.awt.*;
-=======
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.ContextMenu;
@@ -17,7 +9,6 @@ import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 
 import java.awt.Polygon;
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +22,7 @@ public class UtilityJavaFXComponent {
      *
      * @param buttonSetsToTrue trueにセットするボタン
      */
-<<<<<<< HEAD
-    public List< Button > setAllDefaultButtonIsFalseWithout( List< Button > buttons, Button buttonSetsToTrue ) {
-=======
     public List<Button> setAllDefaultButtonIsFalseWithout(List< Button > buttons, Button buttonSetsToTrue ) {
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         for( Button button : buttons ) {
             if( button.equals( buttonSetsToTrue ) ) {
                 button.setDefaultButton( true );
@@ -64,11 +51,7 @@ public class UtilityJavaFXComponent {
         return buttons.get( count );
     }
 
-<<<<<<< HEAD
-    public ContextMenu getClassContextMenuInCD( String nodeName, ContentType nodeType ) {
-=======
     public ContextMenu getClassContextMenuInCD(String nodeName, ContentType nodeType ) {
->>>>>>> origin/future_transferToJava9AndJUnit5AndAssertJ
         ContextMenu popup = new ContextMenu();
 
         if( nodeType == ContentType.Composition ) {
